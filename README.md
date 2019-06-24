@@ -35,6 +35,8 @@ The objective of this summer research is to create an R package that allows user
   * Jenny Bryan's [Happy git with R](http://happygitwithr.com/).
   
   * Also check out [using version control with RStudio](https://support.rstudio.com/hc/en-us/articles/200532077-Version-Control-with-Git-and-SVN) and [this video on Git and RStudio](https://www.rstudio.com/resources/webinars/rstudio-essentials-webinar-series-managing-part-2/).
+  
+  * Introduction to [R projects](https://teachdatascience.com/projects/)
 
 
 **2.  Adhere to good programming practices.**
@@ -50,7 +52,7 @@ The objective of this summer research is to create an R package that allows user
     
   *  Hillary Parker's blog post [Writing an R package from scratch](https://hilaryparker.com/2014/04/29/writing-an-r-package-from-scratch/)
   
-  *  Hadley Wickham's [R pacakges](http://r-pkgs.had.co.nz/) book.
+  *  Hadley Wickham's [R packages](http://r-pkgs.had.co.nz/) book.
   
   *  RStudio's video on [Package writing in RStudio](https://www.rstudio.com/resources/webinars/rstudio-essentials-webinar-series-programming-part-3/).
   
