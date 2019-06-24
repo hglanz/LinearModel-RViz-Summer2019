@@ -28,6 +28,8 @@ The objective of this summer research is to create an R package that allows user
 
 **1.  Utilize GitHub to collaborate on project materials and updates.**
 
+  * [Github Desktop](https://desktop.github.com/)
+
   * Karl Broman's [github tutorial](http://kbroman.org/github_tutorial/)
 
   * Jenny Bryan's [Happy git with R](http://happygitwithr.com/).
