@@ -11,6 +11,13 @@ ggplot(data = iris, aes(x = Sepal.Length, y = Sepal.Width, col = Species)) +
 model2 <- lm(Sepal.Width ~ Sepal.Length * Species, data = iris)
 ggPredict(model2)
 
+ggplot(data = iris, aes(x = Sepal.Length, y = Sepal.Width, col = Species)) + 
+    geom_point()
+
+ggplot(data = iris, aes(x = Sepal.Length, y = Sepal.Width, col = Species)) + 
+    geom_point() +
+    geom_smooth(method = 'lm', se = FALSE)
+
 plot_ly(iris, x = ~Sepal.Length, y = ~Sepal.Width, color = ~Species, type = 'scatter', showlegend = TRUE) %>%
     add_lines(x = ~Sepal.Length, y = fitted(model2))
 
@@ -56,26 +63,25 @@ ggPredict(model3)
 plot_ly(iris, x = ~Sepal.Length, y = ~Sepal.Width, color = ~Species, type = 'scatter', showlegend = TRUE) %>%
     add_lines(x = ~Sepal.Length, y = fitted(model3))
 
-###Quadratic with same slopes diff intercepts
-ggplot(data = polydata, aes(x = x, y = y, col = cat)) + geom_point() + geom_smooth()
+library(readxl)
+polydata <- read_excel("C:/Users/jackl_000/Desktop/polydata.xlsx")
 
+###Quadratic with same slopes diff intercepts
 ggplot(data = polydata, aes(x = x, y = y, col = cat)) +
     geom_point() +
-    geom_smooth(method = 'lm', se = FALSE, formula = y ~ x + I(x^2))
-    #stat_smooth(method = 'lm', se = FALSE, formula = y ~ x + I(x^2))# also works
+    #geom_smooth(method = 'lm', se = FALSE, formula = y ~ x + I(x^2))
+    stat_smooth(method = 'lm', se = FALSE, formula = y ~ x + I(x^2))# also works
 
-model4 <- lm(y ~ x + I(x^2) + cat + x:cat, data = polydata)
+model4 <- lm(y ~ x + I(x^2) + cat, data = polydata)
 
 ggplot(data = polydata, aes(x = x, y = y, col = cat)) +
     geom_point() +
     stat_function(fun=function(x) 
-        model4$coefficients[1] + model4$coefficients[2]*x + 
-            model4$coefficients[3]*x^2, 
+        model4$coefficients[1] + model4$coefficients[2]*x + model4$coefficients[3]*x^2, 
         aes(col = 'A')) + 
     stat_function(fun=function(x) 
-        model4$coefficients[1] + model4$coefficients[2]*x + 
-            model4$coefficients[3]*x^2 + model4$coefficients[5]*x + model4$coefficients[4], 
-        aes(col = 'B')) 
+        model4$coefficients[1] + model4$coefficients[2]*x + model4$coefficients[3]*x^2 + model4$coefficients[4], 
+        aes(col = 'B'))
 
 plot_ly(polydata, x = ~x, y = ~y, color = ~cat, type = 'scatter', showlegend = TRUE) %>%
     add_lines(x = ~x, y = predict(model4))
@@ -95,11 +101,25 @@ ggplot(data = polydata, aes(x = x, y = y, col = cat)) +
         aes(col = 'B')) 
 
 plot_ly(polydata, x = ~x, y = ~y, color = ~cat, type = 'scatter', showlegend = TRUE) %>%
-    add_trace(x=~x, y=~fitted(model5), type="scatter", mode="lines", data = polydata)
+    add_lines(x=~x, y=~fitted(model5), type="scatter", data = polydata)
 
 #plotly would be smoother with more points and tighter but this shows the problems for using plotly with quadratic
 
+model6 <- lm(y ~ x + I(x^2) + x:cat + I(x^2):cat, data = polydata)
 
+ggplot(data = polydata, aes(x = x, y = y, col = cat)) +
+    geom_point() +
+    stat_function(fun=function(x) 
+        model6$coefficients[1] + model6$coefficients[2]*x + 
+            model6$coefficients[3]*x^2, 
+        aes(col = 'A')) + 
+    stat_function(fun=function(x) 
+        model6$coefficients[1] + model6$coefficients[2]*x + 
+            I(x^2)*model6$coefficients[5]+model6$coefficients[3]*x^2 + model6$coefficients[4]*x, 
+        aes(col = 'B')) 
+
+plot_ly(polydata, x = ~x, y = ~y, color = ~cat, type = 'scatter', showlegend = TRUE) %>%
+    add_lines(x=~x, y=~fitted(model5), type="scatter", data = polydata)
 
 
 
