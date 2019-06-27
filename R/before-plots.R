@@ -6,17 +6,10 @@ library(plotly)
 ###Different intercepts, different slopes
 ggplot(data = iris, aes(x = Sepal.Length, y = Sepal.Width, col = Species)) + 
     geom_point() +
-    geom_smooth(method = lm, se = FALSE)
+    geom_smooth(method = lm, se = FALSE) #geom_smooth only does full model
 
 model2 <- lm(Sepal.Width ~ Sepal.Length * Species, data = iris)
 ggPredict(model2)
-
-ggplot(data = iris, aes(x = Sepal.Length, y = Sepal.Width, col = Species)) + 
-    geom_point()
-
-ggplot(data = iris, aes(x = Sepal.Length, y = Sepal.Width, col = Species)) + 
-    geom_point() +
-    geom_smooth(method = 'lm', se = FALSE)
 
 plot_ly(iris, x = ~Sepal.Length, y = ~Sepal.Width, color = ~Species, type = 'scatter', showlegend = TRUE) %>%
     add_lines(x = ~Sepal.Length, y = fitted(model2))
@@ -122,4 +115,4 @@ plot_ly(polydata, x = ~x, y = ~y, color = ~cat, type = 'scatter', showlegend = T
     add_lines(x=~x, y=~fitted(model5), type="scatter", data = polydata)
 
 
-
+#visreg doesn't work with lm made models and cat variables and interactions

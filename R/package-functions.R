@@ -14,45 +14,62 @@ library(plotly)
 #TODO List
 #Figure out correct move with interactions, include them?, just one?, all of them?
 #make model a input -> would streamline the code
-
+#Add a SE ribbon
 #figure out how to create slope in polynomial functions
 
 
 rl <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_intercept = FALSE, poly = 1, interactions = 0) {
-    if (poly != 1)
+    if (is_tibble(data))
+    {
+        data <- as.data.frame(data)
+    }
+    if (poly >= 1)
     {
         plot <- rl_polynomial(data, x, y, cat, plotly, same_slope, same_intercept, poly, interactions)
-    } else 
+    } else if (poly = 1)
     {
-        if (same_slope == FALSE)
-        {
-            if (same_intercept == FALSE)
-            {
-                plot <- rl_full_model(data, x, y, cat)
-            } else 
-            {
-                plot <- rl_same_intercept(data, x, y, cat)
-            }
-        } else
-        {
-            if (same_intercept == FALSE)
-            {
-                plot <- rl_same_slope(data, x, y, cat)
-            } else 
-            {
-                plot <- rl_same_line(data, x, y, cat)
-            }
-       }
+        plot <- rl_linear(data, x, y, cat, plotly, same_slope, same_intercept)
+    } else
+    {
+        stop('Please enter valid parameters')
     }
-    if (plotly == TRUE)
+    plot
+}
+
+rl_linear <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_intercept = FALSE)
+{
+    if (is_tibble(data))
     {
-        plot <- ggplotly(plot)
+        data <- as.data.frame(data)
+    }
+    if (same_slope == FALSE)
+    {
+        if (same_intercept == FALSE)
+        {
+            plot <- rl_full_model(data, x, y, cat)
+        } else 
+        {
+            plot <- rl_same_intercept(data, x, y, cat)
+        }
+    } else
+    {
+        if (same_intercept == FALSE)
+        {
+            plot <- rl_same_slope(data, x, y, cat)
+        } else 
+        {
+            plot <- rl_same_line(data, x, y, cat)
+        }
     }
     plot
 }
 
 rl_polynomial <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_intercept = FALSE, poly = 2, interactions = 0)
-{
+{    
+    if (is_tibble(data))
+    {
+        data <- as.data.frame(data)
+    }
     if (same_slope == FALSE)
     {
         if (same_intercept == FALSE)
@@ -78,21 +95,67 @@ rl_polynomial <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, s
 rl_poly_full_model <- function(data, x, y, cat, poly)
 {
     #TODO
-}
-
-rl_poly_same_intercept <- function(data, x, y, cat, poly)
-{
-    #TODO
-}
-
-rl_poly_same_slope <- function(data, x, y, cat, poly)
-{
+    
+    if (is_tibble(data))
+    {
+        data <- as.data.frame(data)
+    }
     newx <- data[,x]
     newy <- data[,y]
     newcat <- as.factor(as.character(data[,cat]))
     if (length(newx) == length(newy) && length(newy) == length(newcat))
     {
-        model <- lm(newy ~ poly(newx, degrees = poly, raw = TRUE) + newcat, data = data) #howtodo with raised to 3, 4, 5 6?
+        
+        
+    } else
+    {
+        stop('Please enter valid parameters')
+    }
+    if (plotly = TRUE)
+    {
+        plot <- ggplotly(plot)
+    }
+    plot
+}
+
+rl_poly_same_intercept <- function(data, x, y, cat, poly)
+{
+    #TODO
+    
+    if (is_tibble(data))
+    {
+        data <- as.data.frame(data)
+    }
+    newx <- data[,x]
+    newy <- data[,y]
+    newcat <- as.factor(as.character(data[,cat]))
+    if (length(newx) == length(newy) && length(newy) == length(newcat))
+    {
+        
+        
+    } else
+    {
+        stop('Please enter valid parameters')
+    }
+    if (plotly = TRUE)
+    {
+        plot <- ggplotly(plot)
+    }
+    plot
+}
+
+rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE)
+{
+    if (is_tibble(data))
+    {
+        data <- as.data.frame(data)
+    }
+    newx <- data[,x]
+    newy <- data[,y]
+    newcat <- as.factor(as.character(data[,cat]))
+    if (length(newx) == length(newy) && length(newy) == length(newcat))
+    {
+        model <- lm(newy ~ poly(newx, degrees = poly, raw = TRUE) + newcat, data = data)
         intercept <- model$coefficients[1]
         
         #unsure how to go about this.
@@ -116,16 +179,39 @@ rl_poly_same_slope <- function(data, x, y, cat, poly)
     {
         stop('Please enter valid parameters')
     }
+    if (plotly = TRUE)
+    {
+        plot <- ggplotly(plot)
+    }
     plot
 }
 
 rl_poly_same_line <- function(data, x, y, cat, poly)
 {
-    #TODO
+    if (is_tibble(data))
+    {
+        data <- as.data.frame(data)
+    }
+    newx <- data[,x]
+    newy <- data[,y]
+    newcat <- as.factor(as.character(data[,cat]))
+    if (length(newx) == length(newy) && length(newy) == length(newcat))
+    {
+
+        
+    } else
+    {
+        stop('Please enter valid parameters')
+    }
+    if (plotly = TRUE)
+    {
+        plot <- ggplotly(plot)
+    }
+    plot
 }
 
 
-rl_full_model <- function(data, x, y, cat)
+rl_full_model <- function(data, x, y, cat, plotly = FALSE)
 {
     newx <- data[,x]
     newy <- data[,y]
@@ -148,10 +234,14 @@ rl_full_model <- function(data, x, y, cat)
     {
         stop('Please enter valid parameters')
     }
+    if (plotly = TRUE)
+    {
+        plot <- ggplotly(plot)
+    }
     plot
 }
 
-rl_same_intercept <- function(data, x, y, cat)
+rl_same_intercept <- function(data, x, y, cat, plotly = FALSE)
 {
     newx <- data[,x]
     newy <- data[,y]
@@ -178,10 +268,14 @@ rl_same_intercept <- function(data, x, y, cat)
     {
         stop('Please enter valid parameters')
     }
+    if (plotly = TRUE)
+    {
+        plot <- ggplotly(plot)
+    }
     plot
 }
 
-rl_same_slope <- function(data, x, y, cat)
+rl_same_slope <- function(data, x, y, cat, plotly = FALSE)
 {
     newx <- data[,x]
     newy <- data[,y]
@@ -204,10 +298,14 @@ rl_same_slope <- function(data, x, y, cat)
     {
         stop('Please enter valid parameters')
     }
+    if (plotly = TRUE)
+    {
+        plot <- ggplotly(plot)
+    }
     plot
 }
 
-rl_same_line <- function(data, x, y, cat)
+rl_same_line <- function(data, x, y, cat, plotly = FALSE)
 {
     newx <- data[,x]
     newy <- data[,y]
@@ -219,13 +317,16 @@ rl_same_line <- function(data, x, y, cat)
             geom_point() + 
             geom_abline(aes(slope = model$coefficients[2],
                             intercept = model$coefficients[1]))
-    } else 
+    } else
     {
         stop('Please enter valid parameters')
     }
+    if (plotly = TRUE)
+    {
+        plot <- ggplotly(plot)
+    }
     plot
 }
-
 
 rl_plotly <- function(data, x, y, cat, plotly = TRUE, same_slope = FALSE, same_intercept = FALSE)
 {
