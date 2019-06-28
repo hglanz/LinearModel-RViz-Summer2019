@@ -15,10 +15,11 @@ library(plotly)
 #Figure out correct move with interactions, include them?, just one?, all of them?
 #make model a input -> would streamline the code
 #Add a SE ribbon
-#figure out how to create slope in polynomial functions
+#figure out how to create multiple stat_functions in polynomial functions
 
 
-rl <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_intercept = FALSE, poly = 1, interactions = 0) {
+rl <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_intercept = FALSE, poly = 1, interactions = 0) 
+{
     if (is_tibble(data))
     {
         data <- as.data.frame(data)
@@ -111,7 +112,7 @@ rl_poly_full_model <- function(data, x, y, cat, poly)
     {
         stop('Please enter valid parameters')
     }
-    if (plotly = TRUE)
+    if (plotly == TRUE)
     {
         plot <- ggplotly(plot)
     }
@@ -137,7 +138,7 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly)
     {
         stop('Please enter valid parameters')
     }
-    if (plotly = TRUE)
+    if (plotly == TRUE)
     {
         plot <- ggplotly(plot)
     }
@@ -157,37 +158,42 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE)
     {
         model <- lm(newy ~ poly(newx, degrees = poly, raw = TRUE) + newcat, data = data)
         intercept <- model$coefficients[1]
-        
-        #unsure how to go about this.
-        slopes <- matrix(model$coefficients[2])
-        for (i in 3:(poly+1))
+        slopeString <- ''
+        for (i in 1:2)
         {
-            slopes <- rbind(slopes, model$coefficients[i])
+            coef <- paste("'poly(newx, degrees = poly, raw = TRUE)", i, "'", sep = '')
+            newSlopeString <- paste('model$coefficients[', coef, "]*x^", i, sep = '')
+            slopeString <- paste(slopeString, newSlopeString, sep = ' + ')
         }
         
         plot <- ggplot(data = data, aes(x = newx, y = newy, col = newcat)) +
             geom_point() +
-            stat_function(fun = function(x) intercept +
-                              t(slope)%*%t(matrix(poly(newx, poly))), #must add additional slopes. this doesn't work
+            stat_function(fun = function(x) intercept + eval(parse(text = slopeString)),
                           aes(col = levels(newcat)[1]))
+        
+        
         for (i in 1:(length(levels(newcat))-1))
         {
-            plot <- plot + stat_function(fun = function(x) intercept + slope + model$coefficients[i+1+poly], aes_string(col = shQuote(levels(newcat)[i+1]))) #may convert to aes_string with shQuote
+            plot <- plot + stat_function(fun = function(x) 
+                    intercept + eval(parse(text = slopeString)) + model$coefficients[i+1+poly], #BROKEN
+                    aes(col = (levels(newcat)[i+1])))
         }
-        
     } else
     {
         stop('Please enter valid parameters')
     }
-    if (plotly = TRUE)
+    if (plotly == TRUE)
     {
         plot <- ggplotly(plot)
     }
     plot
-}
+} 
+rl_poly_same_slope(data, x, y, cat, 2)
 
 rl_poly_same_line <- function(data, x, y, cat, poly)
 {
+    #TODO
+    
     if (is_tibble(data))
     {
         data <- as.data.frame(data)
@@ -203,7 +209,7 @@ rl_poly_same_line <- function(data, x, y, cat, poly)
     {
         stop('Please enter valid parameters')
     }
-    if (plotly = TRUE)
+    if (plotly == TRUE)
     {
         plot <- ggplotly(plot)
     }
@@ -234,7 +240,7 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE)
     {
         stop('Please enter valid parameters')
     }
-    if (plotly = TRUE)
+    if (plotly == TRUE)
     {
         plot <- ggplotly(plot)
     }
@@ -268,7 +274,7 @@ rl_same_intercept <- function(data, x, y, cat, plotly = FALSE)
     {
         stop('Please enter valid parameters')
     }
-    if (plotly = TRUE)
+    if (plotly == TRUE)
     {
         plot <- ggplotly(plot)
     }
@@ -298,7 +304,7 @@ rl_same_slope <- function(data, x, y, cat, plotly = FALSE)
     {
         stop('Please enter valid parameters')
     }
-    if (plotly = TRUE)
+    if (plotly == TRUE)
     {
         plot <- ggplotly(plot)
     }
@@ -321,7 +327,7 @@ rl_same_line <- function(data, x, y, cat, plotly = FALSE)
     {
         stop('Please enter valid parameters')
     }
-    if (plotly = TRUE)
+    if (plotly == TRUE)
     {
         plot <- ggplotly(plot)
     }
