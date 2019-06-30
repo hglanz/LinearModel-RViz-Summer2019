@@ -1,7 +1,7 @@
 library(ggiraphExtra)
 
 fullModel <- lm(Sepal.Width ~ Sepal.Length * Species, data = iris)
-ggPredict(fullModel)
+ggPredict(fullModel, interactive = TRUE)
 
 sameSlopeModel <- lm(Sepal.Width ~ Sepal.Length + Species, data = iris)
 ggPredict(sameSlopeModel)
