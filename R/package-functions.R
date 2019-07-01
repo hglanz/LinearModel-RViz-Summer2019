@@ -15,7 +15,7 @@ library(plotly)
 #Figure out correct move with interactions, include them?, just one?, all of them?
 #make model a input -> would streamline the code
 #Add a SE ribbon
-#figure out how to create multiple stat_functions in polynomial functions
+
 
 
 rl <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_intercept = FALSE, poly = 1, interactions = 0) 
@@ -93,7 +93,7 @@ rl_polynomial <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, s
     plot
 }
 
-rl_poly_full_model <- function(data, x, y, cat, poly)
+rl_poly_full_model <- function(data, x, y, cat, poly, interactiosn)
 {
     #TODO
     
@@ -106,7 +106,6 @@ rl_poly_full_model <- function(data, x, y, cat, poly)
     newcat <- as.factor(as.character(data[,cat]))
     if (length(newx) == length(newy) && length(newy) == length(newcat))
     {
-        
         
     } else
     {
@@ -119,10 +118,8 @@ rl_poly_full_model <- function(data, x, y, cat, poly)
     plot
 }
 
-rl_poly_same_intercept <- function(data, x, y, cat, poly)
+rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = 0)
 {
-    #TODO
-    
     if (is_tibble(data))
     {
         data <- as.data.frame(data)
@@ -132,7 +129,53 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly)
     newcat <- as.factor(as.character(data[,cat]))
     if (length(newx) == length(newy) && length(newy) == length(newcat))
     {
+        interactionsString <- paste('newy ~ poly(newx, degrees = interactions, raw = TRUE)+')
+        for (i in 1:interactions)
+        {
+            interactionsString <- paste(interactionsString, 'newcat:I(newx^', i, ')')
+            if (i != interactions)
+            {
+                interactionsString <- paste(interactionsString, '+')
+            }
+        }
         
+        model <- lm(eval(parse(text = interactionsString)), data = data)
+        intercept <- model$coefficients[1]
+        
+        slopeString <- ''
+        for (i in 1:poly)
+        {
+            coef <- paste("'poly(newx, degrees = interactions, raw = TRUE)", i, "'", sep = '')
+            newSlopeString <- paste('model$coefficients[', coef, "]*x^", i, sep = '')
+            slopeString <- paste(slopeString, newSlopeString, sep = ' + ')
+        }
+        
+        plot <- ggplot(data = data, aes(x = newx, y = newy, col = newcat)) +
+            geom_point() +
+            stat_function(fun = function(x) intercept + eval(parse(text = slopeString)),
+                          aes(col = levels(newcat)[length(levels(newcat))]))
+        
+        statFunctions <- list()
+        for (i in 1:(length(levels(newcat))-1))
+        {
+            statFunctions[[i]] <- paste('stat_function(aes(color = levels(newcat)[', 
+                i, ']), fun = function(x) intercept + eval(parse(text = slopeString))')
+            for (j in 1:interactions)
+            {
+                statFunctions[[i]] <- paste(statFunctions[[i]], 
+                    " + model$coefficients['newcat", 
+                    levels(newcat)[i], ":I(newx^", 
+                    j, ")']*x^", j, sep = '')
+            }
+        }
+        
+        #unknown symbol error, what is wrong here?
+        for (i in 1:(length(levels(newcat))-1))
+        {
+            print(i)
+            plot <- plot + eval(parse(text = statFunctions[[i]]))
+            print(i)
+        }
         
     } else
     {
@@ -158,8 +201,9 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE)
     {
         model <- lm(newy ~ poly(newx, degrees = poly, raw = TRUE) + newcat, data = data)
         intercept <- model$coefficients[1]
+        
         slopeString <- ''
-        for (i in 1:2)
+        for (i in 1:poly)
         {
             coef <- paste("'poly(newx, degrees = poly, raw = TRUE)", i, "'", sep = '')
             newSlopeString <- paste('model$coefficients[', coef, "]*x^", i, sep = '')
@@ -171,13 +215,17 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE)
             stat_function(fun = function(x) intercept + eval(parse(text = slopeString)),
                           aes(col = levels(newcat)[1]))
         
+        statFunctions <- list()
+        for (i in 1:(length(levels(newcat))-1))
+        {
+            statFunctions[i] <- paste("stat_function(fun = function(x) intercept + eval(parse(text = slopeString)) + model$coefficients[", i, "+1+", poly, "], aes(col = (levels(newcat)[", i, "+1])))")
+        }
         
         for (i in 1:(length(levels(newcat))-1))
         {
-            plot <- plot + stat_function(fun = function(x) 
-                    intercept + eval(parse(text = slopeString)) + model$coefficients[i+1+poly], #BROKEN
-                    aes(col = (levels(newcat)[i+1])))
+            plot <- plot + eval(parse(text = statFunctions[i]))
         }
+
     } else
     {
         stop('Please enter valid parameters')
@@ -188,12 +236,9 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE)
     }
     plot
 } 
-rl_poly_same_slope(data, x, y, cat, 2)
 
-rl_poly_same_line <- function(data, x, y, cat, poly)
+rl_poly_same_line <- function(data, x, y, cat, poly, plotly = FALSE)
 {
-    #TODO
-    
     if (is_tibble(data))
     {
         data <- as.data.frame(data)
@@ -203,7 +248,20 @@ rl_poly_same_line <- function(data, x, y, cat, poly)
     newcat <- as.factor(as.character(data[,cat]))
     if (length(newx) == length(newy) && length(newy) == length(newcat))
     {
-
+        model <- lm(newy ~ poly(newx, degrees = poly, raw = TRUE), data = data)
+        intercept <- model$coefficients[1]
+        
+        slopeString <- ''
+        for (i in 1:poly)
+        {
+            coef <- paste("'poly(newx, degrees = poly, raw = TRUE)", i, "'", sep = '')
+            newSlopeString <- paste('model$coefficients[', coef, "]*x^", i, sep = '')
+            slopeString <- paste(slopeString, newSlopeString, sep = ' + ')
+        }
+        
+        plot <- ggplot(data = data, aes(x = newx, y = newy, col = newcat)) +
+            geom_point() +
+            stat_function(color = 'black', fun = function(x) intercept + eval(parse(text = slopeString)))
         
     } else
     {
@@ -215,7 +273,6 @@ rl_poly_same_line <- function(data, x, y, cat, poly)
     }
     plot
 }
-
 
 rl_full_model <- function(data, x, y, cat, plotly = FALSE)
 {
