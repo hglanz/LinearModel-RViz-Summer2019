@@ -4,7 +4,7 @@ library(ggiraphExtra)
 library(plotly)
 
 ###Different intercepts, different slopes
-ggplot(data = iris, aes(x = Sepal.Length, y = Sepal.Width, col = Species)) + 
+g <- ggplot(data = iris, aes(x = Sepal.Length, y = Sepal.Width, col = Species)) + 
     geom_point() +
     geom_smooth(method = lm, se = FALSE) #geom_smooth only does full model
 
@@ -116,3 +116,111 @@ plot_ly(polydata, x = ~x, y = ~y, color = ~cat, type = 'scatter', showlegend = T
 
 
 #visreg doesn't work with lm made models and cat variables and interactions
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+model2 <- lm(Sepal.Width ~ Sepal.Length * Species, data = iris)
+ggPredict(model2)
+
+xname=names(model2$model)[2]
+yname=names(model2$model)[1]
+
+data <- model2$model
+data$data_id=rownames(data)
+iris$tooltip=paste0(data$data_id,"\n",xname,"=",data[[xname]],"\n",yname,"=",data[[yname]])
+
+
+p <- ggplot(data = iris, aes(x = Sepal.Length,
+                             y = Sepal.Width, 
+                             col = Species, 
+                             fill = Species,
+                             tooltip = tooltip,
+                             group = Species))+
+    geom_point_interactive() +
+    geom_line_interactive()
+
+tooltip_css <- "background-color:white;font-style:italic;padding:10px;border-radius:10px 20px 10px 20px;"
+hover_css="r:4px;cursor:pointer;stroke:red;stroke-width:2px;"
+selected_css = "fill:#FF3333;stroke:black;"
+
+p <- ggiraph(code=print(p),
+             tooltip_extra_css=tooltip_css,
+             tooltip_opacity=.75,
+             zoom_max=10,
+             hover_css=hover_css,
+             selected_css=selected_css)
