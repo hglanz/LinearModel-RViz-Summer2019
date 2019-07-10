@@ -1,5 +1,6 @@
 library(tidyverse)
 library(plotly)
+library(ggiraph)
 
 #data is the data frame. tibbles currently don't work
 #x is string of x variable name
@@ -10,14 +11,15 @@ library(plotly)
 #same_intercept is boolean if they want the regression lines to have the same intercept Set to FALSE
 #poly is a integer value to declare how many polynomial variables the use wants. Set to 1, i.e. no polynomial 
 #interactions is a integer value for if the user wants to include interactions in the polynomial model. Note only matters when poly > 1 and inteactions <= poly. Set to 0
+#se creates 95% ribbon around
+#interactive is boolean to make interactive
 
 #TODO List
 #make model a input -> would streamline the code
 #interactive/stickylabels functions
 
 
-
-rl <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_intercept = FALSE, poly = 1, interactions = 0, se = FALSE)
+rl <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_intercept = FALSE, poly = 1, interactions = poly, se = FALSE, interactive = FALSE)
 {
     if (is_tibble(data))
     {
@@ -33,10 +35,14 @@ rl <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_interce
     {
         stop('Please enter valid parameters')
     }
+    if (interactive == TRUE)
+    {
+        plot <- make_interactive(plot, data, x, y, cat)
+    }
     plot
 }
 
-rl_linear <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_intercept = FALSE, se = FALSE)
+rl_linear <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_intercept = FALSE, se = FALSE, interactive = FALSE)
 {
     if (is_tibble(data))
     {
@@ -61,10 +67,14 @@ rl_linear <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_
             plot <- rl_same_line(data, x, y, cat, plotly, se)
         }
     }
+    if (interactive == TRUE)
+    {
+        plot <- make_interactive(plot, data, x, y, cat)
+    }
     plot
 }
 
-rl_polynomial <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_intercept = FALSE, poly = 2, interactions = 1, se = FALSE)
+rl_polynomial <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_intercept = FALSE, poly = 2, interactions = 1, se = FALSE, interactive = FALSE)
 {    
     if (is_tibble(data))
     {
@@ -89,10 +99,14 @@ rl_polynomial <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, s
             plot <- rl_poly_same_line(data, x, y, cat, poly, plotly, se)
         }
     }
+    if (interactive == TRUE)
+    {
+        plot <- make_interactive(plot, data, x, y, cat)
+    }
     plot
 }
 
-rl_poly_full_model <- function(data, x, y, cat, poly, interactions = 1, plotly = FALSE, se = FALSE)
+rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotly = FALSE, se = FALSE, interactive = FALSE)
 {
     if (is_tibble(data))
     {
@@ -176,10 +190,14 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = 1, plotly =
     {
         plot <- rl_poly_same_line(data, x, y, cat, poly, plotly)
     }
+    if (interactive == TRUE)
+    {
+        plot <- make_interactive(plot, data, x, y, cat)
+    }
     plot
 }
 
-rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, plotly = FALSE, se = FALSE)
+rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, plotly = FALSE, se = FALSE, interactive = FALSE)
 {
     if (is_tibble(data))
     {
@@ -254,10 +272,14 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
     {
         plot <- rl_poly_same_line(data, x, y, cat, poly, plotly)
     }
+    if (interactive == TRUE)
+    {
+        plot <- make_interactive(plot, data, x, y, cat)
+    }
     plot
 }
 
-rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, se = FALSE)
+rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, se = FALSE, interactive = FALSE)
 {
     if (is_tibble(data))
     {
@@ -307,10 +329,14 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, se = FALSE
     {
         plot <- ggplotly(plot)
     }
+    if (interactive == TRUE)
+    {
+        plot <- make_interactive(plot, data, x, y, cat)
+    }
     plot
 } 
 
-rl_poly_same_line <- function(data, x, y, cat, poly, plotly = FALSE, se = FALSE)
+rl_poly_same_line <- function(data, x, y, cat, poly, plotly = FALSE, se = FALSE, interactive = FALSE)
 {
     if (is_tibble(data))
     {
@@ -348,11 +374,19 @@ rl_poly_same_line <- function(data, x, y, cat, poly, plotly = FALSE, se = FALSE)
     {
         plot <- ggplotly(plot)
     }
+    if (interactive == TRUE)
+    {
+        plot <- make_interactive(plot, data, x, y, cat)
+    }
     plot
 }
 
-rl_full_model <- function(data, x, y, cat, plotly = FALSE, se = FALSE)
+rl_full_model <- function(data, x, y, cat, plotly = FALSE, se = FALSE, interactive = FALSE)
 {
+    if (is_tibble(data))
+    {
+        data <- as.data.frame(data)
+    }
     newx <- data[,x]
     newy <- data[,y]
     newcat <- as.factor(as.character(data[,cat]))
@@ -382,11 +416,19 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, se = FALSE)
     {
         plot <- ggplotly(plot)
     }
+    if (interactive == TRUE)
+    {
+        plot <- make_interactive(plot, data, x, y, cat)
+    }
     plot
 }
 
-rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, se = FALSE)
+rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, se = FALSE, interactive = FALSE)
 {
+    if (is_tibble(data))
+    {
+        data <- as.data.frame(data)
+    }
     newx <- data[,x]
     newy <- data[,y]
     newcat <- as.factor(as.character(data[,cat]))
@@ -420,11 +462,19 @@ rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, se = FALSE)
     {
         plot <- ggplotly(plot)
     }
+    if (interactive == TRUE)
+    {
+        plot <- make_interactive(plot, data, x, y, cat)
+    }
     plot
 }
 
-rl_same_slope <- function(data, x, y, cat, plotly = FALSE, se = FALSE)
+rl_same_slope <- function(data, x, y, cat, plotly = FALSE, se = FALSE, interactive = FALSE)
 {
+    if (is_tibble(data))
+    {
+        data <- as.data.frame(data)
+    }
     newx <- data[,x]
     newy <- data[,y]
     newcat <- as.factor(as.character(data[,cat]))
@@ -454,11 +504,19 @@ rl_same_slope <- function(data, x, y, cat, plotly = FALSE, se = FALSE)
     {
         plot <- ggplotly(plot)
     }
+    if (interactive == TRUE)
+    {
+        plot <- make_interactive(plot, data, x, y, cat)
+    }
     plot
 }
 
-rl_same_line <- function(data, x, y, cat, plotly = FALSE, se = FALSE)
+rl_same_line <- function(data, x, y, cat, plotly = FALSE, se = FALSE, interactive = FALSE)
 {
+    if (is_tibble(data))
+    {
+        data <- as.data.frame(data)
+    }
     newx <- data[,x]
     newy <- data[,y]
     newcat <- as.factor(as.character(data[,cat]))
@@ -481,6 +539,10 @@ rl_same_line <- function(data, x, y, cat, plotly = FALSE, se = FALSE)
     {
         plot <- ggplotly(plot)
     }
+    if (interactive == TRUE)
+    {
+        plot <- make_interactive(plot, data, x, y, cat)
+    }
     plot
 }
 
@@ -489,7 +551,7 @@ rl_plotly <- function(data, x, y, cat, plotly = TRUE, same_slope = FALSE, same_i
     rl(data, x, y, cat, plotly = plotly, same_slope = same_slope, same_intercept = same_intercept)
 }
 
-add_se <- function(plot, data, model, newcat, one_line = TRUE)
+add_se <- function(plot, data, model, newcat, one_line = FALSE)
 {
     if (!one_line)
     {
@@ -504,5 +566,32 @@ add_se <- function(plot, data, model, newcat, one_line = TRUE)
                                        ymax = result$fit + result$se.fit), 
                                    colour = NA, alpha = .35)
     }
+    plot
+}
+
+make_interactive <- function(plot, data, x, y, cat)
+{
+    data$tooltip = paste(x,"=",data[[x]],"\n",y,"=",data[[y]], sep = ' ')
+    
+    newx <- data[,x]
+    newy <- data[,y]
+    newcat <- as.factor(as.character(data[,cat]))
+    
+    plot <- ggplot(data = data, aes(x = newx, 
+                                 y = newy, 
+                                 col = newcat, 
+                                 tooltip = tooltip)) + 
+        geom_point_interactive()
+    
+    tooltip_css <- "background-color:white;font-style:italic;padding:10px;border-radius:10px 20px 10px 20px;"
+    hover_css="r:4px;cursor:pointer;stroke:red;stroke-width:2px;"
+    selected_css = "fill:#FF3333;stroke:black;"
+    
+    plot <- ggiraph(code=print(plot),
+               tooltip_extra_css=tooltip_css,
+               tooltip_opacity=.75,
+               zoom_max=10,
+               hover_css=hover_css,
+               selected_css=selected_css)
     plot
 }
