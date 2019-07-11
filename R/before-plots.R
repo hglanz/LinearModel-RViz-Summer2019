@@ -4,7 +4,7 @@ library(ggiraphExtra)
 library(plotly)
 
 ###Different intercepts, different slopes
-g <- ggplot(data = iris, aes(x = Sepal.Length, y = Sepal.Width, col = Species)) + 
+ggplot(data = iris, aes(x = Sepal.Length, y = Sepal.Width, col = Species)) + 
     geom_point() +
     geom_smooth(method = lm, se = FALSE) #geom_smooth only does full model
 
@@ -29,6 +29,24 @@ ggplot() +
     geom_abline(aes(slope = m, 
                 intercept = b + model1$coefficients[4], 
                 color = 'virginica'))
+
+ggplot() + 
+    geom_point(data = iris, aes(x = Sepal.Length, y = Sepal.Width, col = Species)) +
+    geom_segment(aes(x = min(iris[iris$Species == 'setosa',]$Sepal.Length),
+                     xend = max(iris[iris$Species == 'setosa',]$Sepal.Length),
+                     y = min(iris[iris$Species == 'setosa',]$Sepal.Length)*m+b,
+                     yend = max(iris[iris$Species == 'setosa',]$Sepal.Length)*m+b,
+                     color = 'setosa')) +
+    geom_segment(aes(x = min(iris[iris$Species == 'versicolor',]$Sepal.Length),
+                     xend = max(iris[iris$Species == 'versicolor',]$Sepal.Length),
+                     y = min(iris[iris$Species == 'versicolor',]$Sepal.Length)*m+b+model1$coefficients[3],
+                     yend = max(iris[iris$Species == 'versicolor',]$Sepal.Length)*m+b+model1$coefficients[3],
+                     color = 'versicolor')) +
+    geom_segment(aes(x = min(iris[iris$Species == 'virginica',]$Sepal.Length),
+                     xend = max(iris[iris$Species == 'virginica',]$Sepal.Length),
+                     y = min(iris[iris$Species == 'virginica',]$Sepal.Length)*m+b+model1$coefficients[4],
+                     yend = max(iris[iris$Species == 'virginica',]$Sepal.Length)*m+b+model1$coefficients[4], 
+                     color = 'virginica'))
 
 ggPredict(model1)
 
@@ -113,87 +131,10 @@ ggplot(data = polydata, aes(x = x, y = y, col = cat)) +
 
 plot_ly(polydata, x = ~x, y = ~y, color = ~cat, type = 'scatter', showlegend = TRUE) %>%
     add_lines(x=~x, y=~fitted(model5), type="scatter", data = polydata)
-
-
 #visreg doesn't work with lm made models and cat variables and interactions
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#interactive
 model2 <- lm(Sepal.Width ~ Sepal.Length * Species, data = iris)
 ggPredict(model2)
 
