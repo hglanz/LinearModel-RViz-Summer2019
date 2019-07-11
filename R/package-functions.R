@@ -14,10 +14,6 @@ library(ggiraph)
 #se creates 95% ribbon around
 #interactive is boolean to make interactive
 
-#TODO List
-#make model a input -> would streamline the code
-#interactive/stickylabels functions
-
 
 rl <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_intercept = FALSE, poly = 1, interactions = poly, se = FALSE, interactive = FALSE)
 {
@@ -393,16 +389,22 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, se = FALSE, interacti
     if (length(newx) == length(newy) && length(newy) == length(newcat))
     {
         model <- lm(newy ~ newx * newcat, data = data)
+        b <- model$coefficients[1]
+        m <- model$coefficients[2]
         plot <- ggplot(data = data, aes(x = newx, y = newy, col = newcat)) + 
                     geom_point() + 
-                    geom_abline(aes(slope = model$coefficients[2],
-                                   intercept = model$coefficients[1],
+                    geom_segment(aes(x = min(data[newcat == levels(newcat)[1],][,x]),
+                                     xend = max(data[newcat == levels(newcat)[1],][,x]),
+                                     y = min(data[newcat == levels(newcat)[1],][,x])*m+b,
+                                     yend = max(data[newcat == levels(newcat)[1],][,x])*m+b,
                                     color = levels(newcat)[1]))
         for (i in 1:(length(levels(newcat))-1))
         {
-            plot <- plot + geom_abline(aes_string(slope = model$coefficients[2] + model$coefficients[i+length(levels(newcat))+1],
-                                           intercept = model$coefficients[1] + model$coefficients[i+2],
-                                           color = shQuote(levels(newcat)[i+1])))
+            plot <- plot + geom_segment(aes_string(x = min(data[newcat == levels(newcat)[i+1],][,x]),
+                                                   xend = max(data[newcat == levels(newcat)[i+1],][,x]),
+                                                   y = min(data[newcat == levels(newcat)[i+1],][,x])*(m+model$coefficients[i+length(levels(newcat))+1])+b+model$coefficients[i+2],
+                                                   yend = max(data[newcat == levels(newcat)[i+1],][,x])*(m+model$coefficients[i+length(levels(newcat))+1])+b+model$coefficients[i+2],
+                                                   color = shQuote(levels(newcat)[i+1])))
         }
     } else 
     {
@@ -435,20 +437,24 @@ rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, se = FALSE, inter
     if (length(newx) == length(newy) && length(newy) == length(newcat))
     {
         model <- lm(newy ~ newx + newx:newcat, data = data)
-        intercept <- model$coefficients[1]
-        slope <- model$coefficients[2]
+        b <- model$coefficients[1]
+        m <- model$coefficients[2]
         
         plot <- ggplot(data = data, aes(x = newx, y = newy, col = newcat)) +
                     geom_point() +
-                    geom_abline(aes(intercept = intercept,
-                                    slope = slope,
-                                    color = levels(newcat)[1]))
+                    geom_segment(aes(x = min(data[newcat == levels(newcat)[1],][,x]),
+                                     xend = max(data[newcat == levels(newcat)[1],][,x]),
+                                     y = b+m*min(data[newcat == levels(newcat)[1],][,x]),
+                                     yend = b+m*max(data[newcat == levels(newcat)[1],][,x]),
+                                     color = levels(newcat)[1]))
         
         for (i in 1:(length(levels(newcat))-1))
         {
-            plot <- plot + geom_abline(aes_string(intercept = intercept, 
-                                                  slope = slope + model$coefficients[i+2],
-                                                  color = shQuote(levels(newcat)[i+1])))
+            plot <- plot + geom_segment(aes_string(x = min(data[newcat == levels(newcat)[i+1],][,x]),
+                                            xend = max(data[newcat == levels(newcat)[i+1],][,x]),
+                                            y = b+(model$coefficients[i+2]+m)*min(data[newcat == levels(newcat)[i+1],][,x]),
+                                            yend = b+(model$coefficients[i+2]+m)*max(data[newcat == levels(newcat)[i+1],][,x]),
+                                            color = shQuote(levels(newcat)[1+i])))
         }
     } else 
     {
@@ -481,16 +487,24 @@ rl_same_slope <- function(data, x, y, cat, plotly = FALSE, se = FALSE, interacti
     if (length(newx) == length(newy) && length(newy) == length(newcat))
     {
         model <- lm(newy ~ newx + newcat, data = data)
+        b <- model$coefficients[1]
+        m <- model$coefficients[2]
         plot <- ggplot(data = data, aes(x = newx, y = newy, col = newcat)) + 
             geom_point() + 
-            geom_abline(aes(slope = model$coefficients[2],
-                            intercept = model$coefficients[1],
-                            color = levels(newcat)[1]))
+            geom_segment(aes(x = min(data[newcat == levels(newcat)[1],][,x]),
+                             xend = max(data[newcat == levels(newcat)[1],][,x]),
+                             y = min(data[newcat == levels(newcat)[1],][,x])*m+b,
+                             yend = max(data[newcat == levels(newcat)[1],][,x])*m+b,
+                             color = levels(newcat)[1]))
+
+        geom_segs <- list()
         for (i in 1:(length(levels(newcat))-1))
         {
-            plot <- plot + geom_abline(aes_string(slope = model$coefficients[2],
-                                                  intercept = model$coefficients[1] + model$coefficients[i+2],
-                                                  color = shQuote(levels(newcat)[i+1])))
+            plot <- plot + geom_segment(aes_string(x = min(data[newcat == levels(newcat)[1+i],][,x]),
+                                            xend = max(data[newcat == levels(newcat)[1+i],][,x]),
+                                            y = min(data[newcat == levels(newcat)[1+i],][,x])*m+model$coefficients[2+i]+b,
+                                            yend = max(data[newcat == levels(newcat)[1+i],][,x])*m+model$coefficients[2+i]+b,
+                                            color = shQuote(levels(newcat)[1+i])))
         }
     } else 
     {
@@ -523,10 +537,12 @@ rl_same_line <- function(data, x, y, cat, plotly = FALSE, se = FALSE, interactiv
     if (length(newx) == length(newy) && length(newy) == length(newcat))
     {
         model <- lm(newy ~ newx, data = data)
-        plot <- ggplot(data = data, aes(x = newx, y = newy, col = newcat)) + 
-            geom_point() + 
-            geom_abline(aes(slope = model$coefficients[2],
-                            intercept = model$coefficients[1]))
+        plot <- ggplot(data = data, aes(x = newx, y = newy)) + 
+            geom_point(data = data, aes(col = newcat)) + 
+            geom_segment(aes(x = min(newx),
+                             xend = max(newx),
+                             y = min(newx)*model$coefficients[2] + model$coefficients[1], 
+                             yend = max(newx)*model$coefficients[2] + model$coefficients[1]))
     } else
     {
         stop('Please enter valid parameters')
