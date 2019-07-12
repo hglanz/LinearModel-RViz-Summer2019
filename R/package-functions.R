@@ -11,7 +11,7 @@ library(ggiraph)
 #same_intercept is boolean if they want the regression lines to have the same intercept Set to FALSE
 #poly is a integer value to declare how many polynomial variables the use wants. Set to 1, i.e. no polynomial 
 #interactions is a integer value for if the user wants to include interactions in the polynomial model. Note only matters when poly > 1 and inteactions <= poly. Set to 0
-#se creates 95% ribbon around
+#se creates 95% colored ribbon around line, but what is it?
 #interactive is boolean to make interactive
 
 
@@ -139,7 +139,9 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
             plot <- ggplot(data = data, aes(x = newx, y = newy, col = newcat)) +
                 geom_point() +
                 stat_function(fun = function(x) intercept + catEff + eval(parse(text = slopeString)),
-                              aes(col = levels(newcat)[length(levels(newcat))]))
+                              aes(col = levels(newcat)[length(levels(newcat))]),
+                              xlim = c(min(data[data[,cat] == levels(newcat)[length(levels(newcat))],][,x]),
+                                       max(data[data[,cat] == levels(newcat)[length(levels(newcat))],][,x])))
             
             statFunctions <- list()
             catEffects <- list()
@@ -161,10 +163,12 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
                                                 levels(newcat)[i], ":I(newx^", 
                                                 j, ")']*x^", j, sep = '')
                 }
-                statFunctions[[i]] <- paste(statFunctions[[i]], ')', sep = '')
+                statFunctions[[i]] <- paste(statFunctions[[i]], 
+                                            ', xlim = c(min(data[data[,cat] == levels(newcat)[', i,
+                                            '],][,x]),max(data[data[,cat] == levels(newcat)[', i, 
+                                            '],][,x])))', sep = '')
             }
             
-            #unknown symbol error, what is wrong here?
             for (i in 1:(length(levels(newcat))-1))
             {
                 plot <- plot + eval(parse(text = statFunctions[[i]]))
@@ -229,7 +233,9 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
             plot <- ggplot(data = data, aes(x = newx, y = newy, col = newcat)) +
                 geom_point() +
                 stat_function(fun = function(x) intercept + eval(parse(text = slopeString)),
-                              aes(col = levels(newcat)[length(levels(newcat))]))
+                              aes(col = levels(newcat)[length(levels(newcat))]),
+                              xlim = c(min(data[data[,cat] == levels(newcat)[length(levels(newcat))],][,x]),
+                                       max(data[data[,cat] == levels(newcat)[length(levels(newcat))],][,x])))
             
             statFunctions <- list()
             for (i in 1:(length(levels(newcat))-1))
@@ -243,7 +249,10 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
                         levels(newcat)[i], ":I(newx^", 
                         j, ")']*x^", j, sep = '')
                 }
-                statFunctions[[i]] <- paste(statFunctions[[i]], ')', sep = '')
+                statFunctions[[i]] <- paste(statFunctions[[i]], 
+                                            ', xlim = c(min(data[data[,cat] == levels(newcat)[', i,
+                                            '],][,x]),max(data[data[,cat] == levels(newcat)[', i, 
+                                            '],][,x])))', sep = '')            
             }
             
             #unknown symbol error, what is wrong here?
@@ -300,12 +309,18 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, se = FALSE
         plot <- ggplot(data = data, aes(x = newx, y = newy, col = newcat)) +
             geom_point() +
             stat_function(fun = function(x) intercept + eval(parse(text = slopeString)),
-                          aes(col = levels(newcat)[1]))
+                          aes(col = levels(newcat)[1]),
+                          xlim = c(min(data[data[,cat] == levels(newcat)[1],][,x]),
+                                   max(data[data[,cat] == levels(newcat)[1],][,x])))
         
         statFunctions <- list()
         for (i in 1:(length(levels(newcat))-1))
         {
-            statFunctions[i] <- paste("stat_function(fun = function(x) intercept + eval(parse(text = slopeString)) + model$coefficients[", i, "+1+", poly, "], aes(col = (levels(newcat)[", i, "+1])))")
+            statFunctions[i] <- paste("stat_function(fun = function(x) intercept + eval(parse(text = slopeString)) + model$coefficients[", i, "+1+", poly, "], aes(col = (levels(newcat)[", i, "+1]))")
+            statFunctions[i] <- paste(statFunctions[i], 
+                                        ', xlim = c(min(data[data[,cat] == levels(newcat)[1+', i,
+                                        '],][,x]),max(data[data[,cat] == levels(newcat)[1+', i, 
+                                        '],][,x])))', sep = '')
         }
         
         for (i in 1:(length(levels(newcat))-1))
@@ -391,21 +406,73 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, se = FALSE, interacti
         model <- lm(newy ~ newx * newcat, data = data)
         b <- model$coefficients[1]
         m <- model$coefficients[2]
-        plot <- ggplot(data = data, aes(x = newx, y = newy, col = newcat)) + 
-                    geom_point() + 
-                    geom_segment(aes(x = min(data[newcat == levels(newcat)[1],][,x]),
-                                     xend = max(data[newcat == levels(newcat)[1],][,x]),
-                                     y = min(data[newcat == levels(newcat)[1],][,x])*m+b,
-                                     yend = max(data[newcat == levels(newcat)[1],][,x])*m+b,
-                                    color = levels(newcat)[1]))
-        for (i in 1:(length(levels(newcat))-1))
+        if (!interactive)
         {
-            plot <- plot + geom_segment(aes_string(x = min(data[newcat == levels(newcat)[i+1],][,x]),
-                                                   xend = max(data[newcat == levels(newcat)[i+1],][,x]),
-                                                   y = min(data[newcat == levels(newcat)[i+1],][,x])*(m+model$coefficients[i+length(levels(newcat))+1])+b+model$coefficients[i+2],
-                                                   yend = max(data[newcat == levels(newcat)[i+1],][,x])*(m+model$coefficients[i+length(levels(newcat))+1])+b+model$coefficients[i+2],
-                                                   color = shQuote(levels(newcat)[i+1])))
+            plot <- ggplot(data = data, aes(x = newx, y = newy, col = newcat)) + 
+                        geom_point() +
+                        geom_segment(aes(x = min(data[newcat == levels(newcat)[1],][,x]),
+                                         xend = max(data[newcat == levels(newcat)[1],][,x]),
+                                         y = min(data[newcat == levels(newcat)[1],][,x])*m+b,
+                                         yend = max(data[newcat == levels(newcat)[1],][,x])*m+b,
+                                         color = levels(newcat)[1]))
+            for (i in 1:(length(levels(newcat))-1))
+            {
+                plot <- plot + geom_segment(aes_string(x = min(data[newcat == levels(newcat)[i+1],][,x]),
+                                                       xend = max(data[newcat == levels(newcat)[i+1],][,x]),
+                                                       y = min(data[newcat == levels(newcat)[i+1],][,x])*(m+model$coefficients[i+length(levels(newcat))+1])+b+model$coefficients[i+2],
+                                                       yend = max(data[newcat == levels(newcat)[i+1],][,x])*(m+model$coefficients[i+length(levels(newcat))+1])+b+model$coefficients[i+2],
+                                                       color = shQuote(levels(newcat)[i+1])))
+            }
+        } else 
+        {
+            fit <- model$model
+            fit$data_id <- rownames(fit)
+            data$tooltip <- paste0(fit$data_id,"\n",x," = ",fit[[x]],"\n",y," = ",fit[[y]])
+            
+            plotString <- "ggplot(data = data, aes(x = newx, y = newy, col = newcat)) + 
+                geom_point_interactive(aes(tooltip = tooltip) +
+                geom_segment_interactive(aes(x = min(data[newcat == levels(newcat)[1],][,x]),
+                                 xend = max(data[newcat == levels(newcat)[1],][,x]),
+                                 y = min(data[newcat == levels(newcat)[1],][,x])*m+b,
+                                 yend = max(data[newcat == levels(newcat)[1],][,x])*m+b,
+                                 color = levels(newcat)[1],
+                                 tooltip = paste(levels(newcat)[1], '\n', y, '=', sprintf('%.3f',m, '*', x, '+', sprintf('%.3f',b), sep = ' '))))"
+            tooltips <- list()
+            for (i in 2:length(levels(newcat)))
+            {
+                tooltips[[i]] <-  paste(levels(newcat)[i], '\n', y, '=', sprintf("%.3f",m+model$coefficients[i+length(levels(newcat))]), '*', x, '+', sprintf("%.3f",b+model$coefficients[i+1]), sep = ' ')
+            }    
+            segmentString <- ' '
+            for (i in 1:(length(levels(newcat))-1))
+            {
+                segmentString <- paste(segmentString, 'geom_segment_interactive(aes(x = min(data[newcat == levels(newcat)[',i,'+1],][,x]),
+                                                            xend = max(data[newcat == levels(newcat)[',i,'+1],][,x]),
+                                                            y = min(data[newcat == levels(newcat)[',i,'+1],][,x])*(m+model$coefficients[',i,'+length(levels(newcat))+1])+b+model$coefficients[',i,'+2],
+                                                            yend = max(data[newcat == levels(newcat)[',i,'+1],][,x])*(m+model$coefficients[',i,'+length(levels(newcat))+1])+b+model$coefficients[',i,'+2],
+                                                            color = levels(newcat)[',i,'+1]),
+                                                            tooltip = tooltips[',i,'+1])')
+                if (i != length(levels(newcat))-1)
+                {
+                    segmentString <- paste(segmentString, '+')
+                }
+            }
+            
+            plot <- paste(plotString, segmentString, sep = '+')
+            plot <- eval(parse(text = plot))
+            
+            tooltip_css <- "background-color:white;font-style:italic;padding:10px;border-radius:10px 20px 10px 20px;"
+            hover_css="r:4px;cursor:pointer;stroke:red;stroke-width:2px;"
+            selected_css = "fill:#FF3333;stroke:black;"
+            
+            plot <- ggiraph(code=print(plot),
+                            tooltip_extra_css=tooltip_css,
+                            tooltip_opacity=.75,
+                            zoom_max=10,
+                            hover_css=hover_css,
+                            selected_css=selected_css)
+            plot
         }
+        
     } else 
     {
         stop('Please enter valid parameters')
@@ -418,12 +485,9 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, se = FALSE, interacti
     {
         plot <- ggplotly(plot)
     }
-    if (interactive == TRUE)
-    {
-        plot <- make_interactive(plot, data, x, y, cat)
-    }
     plot
 }
+
 
 rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, se = FALSE, interactive = FALSE)
 {
@@ -585,19 +649,8 @@ add_se <- function(plot, data, model, newcat, one_line = FALSE)
     plot
 }
 
-make_interactive <- function(plot, data, x, y, cat)
+make_interactive <- function(plot)
 {
-    data$tooltip = paste(x,"=",data[[x]],"\n",y,"=",data[[y]], sep = ' ')
-    
-    newx <- data[,x]
-    newy <- data[,y]
-    newcat <- as.factor(as.character(data[,cat]))
-    
-    plot <- ggplot(data = data, aes(x = newx, 
-                                 y = newy, 
-                                 col = newcat, 
-                                 tooltip = tooltip)) + 
-        geom_point_interactive()
     
     tooltip_css <- "background-color:white;font-style:italic;padding:10px;border-radius:10px 20px 10px 20px;"
     hover_css="r:4px;cursor:pointer;stroke:red;stroke-width:2px;"
