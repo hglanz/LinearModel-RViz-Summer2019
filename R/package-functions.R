@@ -15,7 +15,7 @@ library(ggiraph)
 #interactive is boolean to make interactive
 
 
-rl <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_intercept = FALSE, poly = 1, interactions = poly, se = FALSE, interactive = FALSE)
+rl <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_intercept = FALSE, poly = 1, interactions = poly, se = FALSE, interactive = FALSE, title = NULL, xlabel = NULL, ylabel = NULL, legendTitle = NULL)
 {
     if (is_tibble(data))
     {
@@ -38,7 +38,7 @@ rl <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_interce
     plot
 }
 
-rl_linear <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_intercept = FALSE, se = FALSE, interactive = FALSE)
+rl_linear <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_intercept = FALSE, se = FALSE, interactive = FALSE, title = NULL, xlabel = NULL, ylabel = NULL, legendTitle = NULL)
 {
     if (is_tibble(data))
     {
@@ -70,7 +70,7 @@ rl_linear <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_
     plot
 }
 
-rl_polynomial <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_intercept = FALSE, poly = 2, interactions = 1, se = FALSE, interactive = FALSE)
+rl_polynomial <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_intercept = FALSE, poly = 2, interactions = poly, se = FALSE, interactive = FALSE, title = NULL, xlabel = NULL, ylabel = NULL, legendTitle = NULL)
 {    
     if (is_tibble(data))
     {
@@ -102,7 +102,7 @@ rl_polynomial <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, s
     plot
 }
 
-rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotly = FALSE, se = FALSE, interactive = FALSE)
+rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotly = FALSE, se = FALSE, interactive = FALSE, title = NULL, xlabel = NULL, ylabel = NULL, legendTitle = NULL)
 {
     if (is_tibble(data))
     {
@@ -182,6 +182,34 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
         {
             plot <- add_se(plot = plot, data = data, newcat = newcat, model = model)
         }
+        if (is.null(title))
+        {
+            plot <- plot + ggtitle(paste(x, 'vs.', y))
+        } else
+        {
+            plot <- plot + ggtitle(title)
+        }
+        if (is.null(xlabel))
+        {
+            plot <- plot + xlab(x)
+        } else
+        {
+            plot <- plot + xlab(xlabel)
+        }
+        if (is.null(ylabel))
+        {
+            plot <- plot + ylab(y)
+        } else
+        {
+            plot <- plot + ylab(ylabel)
+        }
+        if (is.null(legendTitle))
+        {
+            plot <- plot + labs(color = cat, fill = cat)
+        } else
+        {
+            plot <- plot + labs(color = legendTitle, fill = legendTitle)
+        }
         if (plotly == TRUE)
         {
             plot <- ggplotly(plot)
@@ -190,14 +218,10 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
     {
         plot <- rl_poly_same_line(data, x, y, cat, poly, plotly)
     }
-    if (interactive == TRUE)
-    {
-        plot <- make_interactive(plot, data, x, y, cat)
-    }
     plot
 }
 
-rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, plotly = FALSE, se = FALSE, interactive = FALSE)
+rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, plotly = FALSE, se = FALSE, interactive = FALSE, title = NULL, xlabel = NULL, ylabel = NULL, legendTitle = NULL)
 {
     if (is_tibble(data))
     {
@@ -269,6 +293,34 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
         {
             plot <- add_se(plot = plot, data = data, newcat = newcat, model = model)
         }
+        if (is.null(title))
+        {
+            plot <- plot + ggtitle(paste(x, 'vs.', y))
+        } else
+        {
+            plot <- plot + ggtitle(title)
+        }
+        if (is.null(xlabel))
+        {
+            plot <- plot + xlab(x)
+        } else
+        {
+            plot <- plot + xlab(xlabel)
+        }
+        if (is.null(ylabel))
+        {
+            plot <- plot + ylab(y)
+        } else
+        {
+            plot <- plot + ylab(ylabel)
+        }
+        if (is.null(legendTitle))
+        {
+            plot <- plot + labs(color = cat, fill = cat)
+        } else
+        {
+            plot <- plot + labs(color = legendTitle, fill = legendTitle)
+        }
         if (plotly == TRUE)
         {
             plot <- ggplotly(plot)
@@ -277,14 +329,10 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
     {
         plot <- rl_poly_same_line(data, x, y, cat, poly, plotly)
     }
-    if (interactive == TRUE)
-    {
-        plot <- make_interactive(plot, data, x, y, cat)
-    }
     plot
 }
 
-rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, se = FALSE, interactive = FALSE)
+rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, se = FALSE, interactive = FALSE, title = NULL, xlabel = NULL, ylabel = NULL, legendTitle = NULL)
 {
     if (is_tibble(data))
     {
@@ -336,18 +384,43 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, se = FALSE
     {
         plot <- add_se(plot = plot, data = data, newcat = newcat, model = model)
     }
+    if (is.null(title))
+    {
+        plot <- plot + ggtitle(paste(x, 'vs.', y))
+    } else
+    {
+        plot <- plot + ggtitle(title)
+    }
+    if (is.null(xlabel))
+    {
+        plot <- plot + xlab(x)
+    } else
+    {
+        plot <- plot + xlab(xlabel)
+    }
+    if (is.null(ylabel))
+    {
+        plot <- plot + ylab(y)
+    } else
+    {
+        plot <- plot + ylab(ylabel)
+    }
+    if (is.null(legendTitle))
+    {
+        plot <- plot + labs(color = cat, fill = cat)
+    } else
+    {
+        plot <- plot + labs(color = legendTitle, fill = legendTitle)
+    }
     if (plotly == TRUE)
     {
         plot <- ggplotly(plot)
     }
-    if (interactive == TRUE)
-    {
-        plot <- make_interactive(plot, data, x, y, cat)
-    }
+
     plot
 } 
 
-rl_poly_same_line <- function(data, x, y, cat, poly, plotly = FALSE, se = FALSE, interactive = FALSE)
+rl_poly_same_line <- function(data, x, y, cat, poly, plotly = FALSE, se = FALSE, interactive = FALSE, title = NULL, xlabel = NULL, ylabel = NULL, legendTitle = NULL)
 {
     if (is_tibble(data))
     {
@@ -381,18 +454,43 @@ rl_poly_same_line <- function(data, x, y, cat, poly, plotly = FALSE, se = FALSE,
     {
         plot <- add_se(plot = plot, data = data, newcat = newcat, model = model, one_line = TRUE)
     }
+    if (is.null(title))
+    {
+        plot <- plot + ggtitle(paste(x, 'vs.', y))
+    } else
+    {
+        plot <- plot + ggtitle(title)
+    }
+    if (is.null(xlabel))
+    {
+        plot <- plot + xlab(x)
+    } else
+    {
+        plot <- plot + xlab(xlabel)
+    }
+    if (is.null(ylabel))
+    {
+        plot <- plot + ylab(y)
+    } else
+    {
+        plot <- plot + ylab(ylabel)
+    }
+    if (is.null(legendTitle))
+    {
+        plot <- plot + labs(color = cat, fill = cat)
+    } else
+    {
+        plot <- plot + labs(color = legendTitle, fill = legendTitle)
+    }
     if (plotly == TRUE)
     {
         plot <- ggplotly(plot)
     }
-    if (interactive == TRUE)
-    {
-        plot <- make_interactive(plot, data, x, y, cat)
-    }
+
     plot
 }
 
-rl_full_model <- function(data, x, y, cat, plotly = FALSE, se = FALSE, interactive = FALSE)
+rl_full_model <- function(data, x, y, cat, plotly = FALSE, se = FALSE, interactive = FALSE, title = NULL, xlabel = NULL, ylabel = NULL, legendTitle = NULL)
 {
     if (is_tibble(data))
     {
@@ -427,16 +525,17 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, se = FALSE, interacti
         {
             fit <- model$model
             fit$data_id <- rownames(fit)
-            data$tooltip <- paste0(fit$data_id,"\n",x," = ",fit[[x]],"\n",y," = ",fit[[y]])
+            data$tooltip <- paste0(fit$data_id, "\n", x, " = ", fit[['newx']], "\n", y, " = ", fit[['newy']], "\n", cat, " = ", fit[['newcat']])
             
             plotString <- "ggplot(data = data, aes(x = newx, y = newy, col = newcat)) + 
-                geom_point_interactive(aes(tooltip = tooltip) +
+                geom_point_interactive(aes(tooltip = tooltip)) +
                 geom_segment_interactive(aes(x = min(data[newcat == levels(newcat)[1],][,x]),
                                  xend = max(data[newcat == levels(newcat)[1],][,x]),
                                  y = min(data[newcat == levels(newcat)[1],][,x])*m+b,
                                  yend = max(data[newcat == levels(newcat)[1],][,x])*m+b,
                                  color = levels(newcat)[1],
-                                 tooltip = paste(levels(newcat)[1], '\n', y, '=', sprintf('%.3f',m, '*', x, '+', sprintf('%.3f',b), sep = ' '))))"
+                                 tooltip = paste(levels(newcat)[1], '\n ', y, '=', sprintf('%.3f',m), '*', x, '+', sprintf('%.3f',b), sep = ' ')))"
+            
             tooltips <- list()
             for (i in 2:length(levels(newcat)))
             {
@@ -459,37 +558,66 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, se = FALSE, interacti
             
             plot <- paste(plotString, segmentString, sep = '+')
             plot <- eval(parse(text = plot))
-            
-            tooltip_css <- "background-color:white;font-style:italic;padding:10px;border-radius:10px 20px 10px 20px;"
-            hover_css="r:4px;cursor:pointer;stroke:red;stroke-width:2px;"
-            selected_css = "fill:#FF3333;stroke:black;"
-            
-            plot <- ggiraph(code=print(plot),
-                            tooltip_extra_css=tooltip_css,
-                            tooltip_opacity=.75,
-                            zoom_max=10,
-                            hover_css=hover_css,
-                            selected_css=selected_css)
-            plot
+
         }
         
     } else 
     {
         stop('Please enter valid parameters')
     }
+    if (is.null(title))
+    {
+        plot <- plot + ggtitle(paste(x, 'vs.', y))
+    } else
+    {
+        plot <- plot + ggtitle(title)
+    }
+    if (is.null(xlabel))
+    {
+        plot <- plot + xlab(x)
+    } else
+    {
+        plot <- plot + xlab(xlabel)
+    }
+    if (is.null(ylabel))
+    {
+        plot <- plot + ylab(y)
+    } else
+    {
+        plot <- plot + ylab(ylabel)
+    }
+    if (is.null(legendTitle))
+    {
+        plot <- plot + labs(color = cat, fill = cat)
+    } else
+    {
+        plot <- plot + labs(color = legendTitle, fill = legendTitle)
+    }
     if (se == TRUE)
     {
         plot <- add_se(plot = plot, data = data, newcat = newcat, model = model)
-    }
-    if (plotly == TRUE)
+    } 
+    if (interactive == TRUE)
+    {
+        tooltip_css <- "background-color:white;padding:10px;border-radius:10px 20px 10px 20px;"
+        hover_css="r:4px;cursor:pointer;stroke:black;stroke-width:2px;"
+        selected_css = "fill:#FF3333;stroke:black;"
+        
+        
+        plot <- ggiraph(code=print(plot),
+                        tooltip_extra_css=tooltip_css,
+                        tooltip_opacity=.75,
+                        zoom_max=10,
+                        hover_css=hover_css,
+                        selected_css=selected_css)
+    } else if (plotly == TRUE)
     {
         plot <- ggplotly(plot)
     }
     plot
 }
 
-
-rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, se = FALSE, interactive = FALSE)
+rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, se = FALSE, interactive = FALSE, title = NULL, xlabel = NULL, ylabel = NULL, legendTitle = NULL)
 {
     if (is_tibble(data))
     {
@@ -504,42 +632,120 @@ rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, se = FALSE, inter
         b <- model$coefficients[1]
         m <- model$coefficients[2]
         
-        plot <- ggplot(data = data, aes(x = newx, y = newy, col = newcat)) +
-                    geom_point() +
-                    geom_segment(aes(x = min(data[newcat == levels(newcat)[1],][,x]),
-                                     xend = max(data[newcat == levels(newcat)[1],][,x]),
-                                     y = b+m*min(data[newcat == levels(newcat)[1],][,x]),
-                                     yend = b+m*max(data[newcat == levels(newcat)[1],][,x]),
-                                     color = levels(newcat)[1]))
-        
-        for (i in 1:(length(levels(newcat))-1))
+        if(!interactive)
         {
-            plot <- plot + geom_segment(aes_string(x = min(data[newcat == levels(newcat)[i+1],][,x]),
-                                            xend = max(data[newcat == levels(newcat)[i+1],][,x]),
-                                            y = b+(model$coefficients[i+2]+m)*min(data[newcat == levels(newcat)[i+1],][,x]),
-                                            yend = b+(model$coefficients[i+2]+m)*max(data[newcat == levels(newcat)[i+1],][,x]),
-                                            color = shQuote(levels(newcat)[1+i])))
+            plot <- ggplot(data = data, aes(x = newx, y = newy, col = newcat)) +
+                        geom_point() +
+                        geom_segment(aes(x = min(data[newcat == levels(newcat)[1],][,x]),
+                                         xend = max(data[newcat == levels(newcat)[1],][,x]),
+                                         y = b+m*min(data[newcat == levels(newcat)[1],][,x]),
+                                         yend = b+m*max(data[newcat == levels(newcat)[1],][,x]),
+                                         color = levels(newcat)[1]))
+        
+            for (i in 1:(length(levels(newcat))-1))
+            {
+                plot <- plot + geom_segment(aes_string(x = min(data[newcat == levels(newcat)[i+1],][,x]),
+                                                xend = max(data[newcat == levels(newcat)[i+1],][,x]),
+                                                y = b+(model$coefficients[i+2]+m)*min(data[newcat == levels(newcat)[i+1],][,x]),
+                                                yend = b+(model$coefficients[i+2]+m)*max(data[newcat == levels(newcat)[i+1],][,x]),
+                                                color = shQuote(levels(newcat)[1+i])))
+            }
+        } else
+        {
+            fit <- model$model
+            fit$data_id <- rownames(fit)
+            data$tooltip <- paste0(fit$data_id, "\n", x, " = ", fit[['newx']], "\n", y, " = ", fit[['newy']], "\n", cat, " = ", fit[['newcat']])
+            
+            plotString <- "ggplot(data = data, aes(x = newx, y = newy, col = newcat)) + 
+                           geom_point_interactive(aes(tooltip = tooltip)) +
+                           geom_segment_interactive(aes(x = min(data[newcat == levels(newcat)[1],][,x]),
+                                                        xend = max(data[newcat == levels(newcat)[1],][,x]),
+                                                        y = b+m*min(data[newcat == levels(newcat)[1],][,x]),
+                                                        yend = b+m*max(data[newcat == levels(newcat)[1],][,x]),
+                                                        color = levels(newcat)[1],
+                                                        tooltip = paste(levels(newcat)[1], '\n ', y, '=', sprintf('%.3f',m), '*', x, '+', sprintf('%.3f',b), sep = ' ')))"
+            
+            tooltips <- list()
+            for (i in 2:length(levels(newcat)))
+            {
+                tooltips[[i]] <-  paste(levels(newcat)[i], '\n', y, '=', sprintf("%.3f",m+model$coefficients[i+length(levels(newcat))]), '*', x, '+', sprintf("%.3f",b+model$coefficients[i+1]), sep = ' ')
+            }    
+            segmentString <- ' '
+            for (i in 1:(length(levels(newcat))-1))
+            {
+                segmentString <- paste(segmentString, 'geom_segment_interactive(aes_string(tooltip = tooltips[[', i, ']], 
+                                                                                           x = min(data[newcat == levels(newcat)[', i, '+1],][,x]), 
+                                                                                           xend = max(data[newcat == levels(newcat)[', i, '+1],][,x]), 
+                                                                                           y = b+(model$coefficients[', i, '+2]+m)*min(data[newcat == levels(newcat)[', i, '+1],][,x]), 
+                                                                                           yend = b+(model$coefficients[', i, '+2]+m)*max(data[newcat == levels(newcat)[', i, '+1],][,x]), 
+                                                                                          color = shQuote(levels(newcat)[1+', i, '])))')
+                if (i != length(levels(newcat))-1)
+                {
+                    segmentString <- paste(segmentString, '+')
+                }
+            }
+            
+            plot <- paste(plotString, segmentString, sep = '+')
+            plot <- eval(parse(text = plot))
         }
     } else 
     {
         stop('Please enter valid parameters')
     }
+    if (is.null(title))
+    {
+        plot <- plot + ggtitle(paste(x, 'vs.', y))
+    } else
+    {
+        plot <- plot + ggtitle(title)
+    }
+    if (is.null(xlabel))
+    {
+        plot <- plot + xlab(x)
+    } else
+    {
+        plot <- plot + xlab(xlabel)
+    }
+    if (is.null(ylabel))
+    {
+        plot <- plot + ylab(y)
+    } else
+    {
+        plot <- plot + ylab(ylabel)
+    }
+    if (is.null(legendTitle))
+    {
+        plot <- plot + labs(color = cat, fill = cat)
+    } else
+    {
+        plot <- plot + labs(color = legendTitle, fill = legendTitle)
+    }
     if (se == TRUE)
     {
         plot <- add_se(plot = plot, data = data, newcat = newcat, model = model)
     }
-    if (plotly == TRUE)
+    if (interactive == TRUE)
+    {
+        tooltip_css <- "background-color:white;padding:10px;border-radius:10px 20px 10px 20px;"
+        hover_css="r:4px;cursor:pointer;stroke:black;stroke-width:2px;"
+        selected_css = "fill:#FF3333;stroke:black;"
+        
+        
+        plot <- ggiraph(code=print(plot),
+                        tooltip_extra_css=tooltip_css,
+                        tooltip_opacity=.75,
+                        zoom_max=10,
+                        hover_css=hover_css,
+                        selected_css=selected_css)
+    } else if (plotly == TRUE)
     {
         plot <- ggplotly(plot)
     }
-    if (interactive == TRUE)
-    {
-        plot <- make_interactive(plot, data, x, y, cat)
-    }
+
     plot
 }
 
-rl_same_slope <- function(data, x, y, cat, plotly = FALSE, se = FALSE, interactive = FALSE)
+rl_same_slope <- function(data, x, y, cat, plotly = FALSE, se = FALSE, interactive = FALSE, title = NULL, xlabel = NULL, ylabel = NULL, legendTitle = NULL)
 {
     if (is_tibble(data))
     {
@@ -553,22 +759,63 @@ rl_same_slope <- function(data, x, y, cat, plotly = FALSE, se = FALSE, interacti
         model <- lm(newy ~ newx + newcat, data = data)
         b <- model$coefficients[1]
         m <- model$coefficients[2]
-        plot <- ggplot(data = data, aes(x = newx, y = newy, col = newcat)) + 
-            geom_point() + 
-            geom_segment(aes(x = min(data[newcat == levels(newcat)[1],][,x]),
+        
+        if (!interactive)
+        {
+            plot <- ggplot(data = data, aes(x = newx, y = newy, col = newcat)) + 
+                geom_point() + 
+                geom_segment(aes(x = min(data[newcat == levels(newcat)[1],][,x]),
+                                 xend = max(data[newcat == levels(newcat)[1],][,x]),
+                                 y = min(data[newcat == levels(newcat)[1],][,x])*m+b,
+                                 yend = max(data[newcat == levels(newcat)[1],][,x])*m+b,
+                                 color = levels(newcat)[1]))
+
+            geom_segs <- list()
+            for (i in 1:(length(levels(newcat))-1))
+            {
+                plot <- plot + geom_segment(aes_string(x = min(data[newcat == levels(newcat)[1+i],][,x]),
+                                                xend = max(data[newcat == levels(newcat)[1+i],][,x]),
+                                                y = min(data[newcat == levels(newcat)[1+i],][,x])*m+model$coefficients[2+i]+b,
+                                                yend = max(data[newcat == levels(newcat)[1+i],][,x])*m+model$coefficients[2+i]+b,
+                                                color = shQuote(levels(newcat)[1+i])))
+            }
+        } else
+        {
+            fit <- model$model
+            fit$data_id <- rownames(fit)
+            data$tooltip <- paste0(fit$data_id, "\n", x, " = ", fit[['newx']], "\n", y, " = ", fit[['newy']], "\n", cat, " = ", fit[['newcat']])
+            
+            plotString <- "ggplot(data = data, aes(x = newx, y = newy, col = newcat)) + 
+                             geom_point_interactive(aes(tooltip = tooltip)) +
+                             geom_segment_interactive(aes(x = min(data[newcat == levels(newcat)[1],][,x]),
                              xend = max(data[newcat == levels(newcat)[1],][,x]),
                              y = min(data[newcat == levels(newcat)[1],][,x])*m+b,
                              yend = max(data[newcat == levels(newcat)[1],][,x])*m+b,
-                             color = levels(newcat)[1]))
+                             color = levels(newcat)[1],
+                             tooltip = paste(levels(newcat)[1], '\n ', y, '=', sprintf('%.3f',m), '*', x, '+', sprintf('%.3f',b), sep = ' ')))"
 
-        geom_segs <- list()
-        for (i in 1:(length(levels(newcat))-1))
-        {
-            plot <- plot + geom_segment(aes_string(x = min(data[newcat == levels(newcat)[1+i],][,x]),
-                                            xend = max(data[newcat == levels(newcat)[1+i],][,x]),
-                                            y = min(data[newcat == levels(newcat)[1+i],][,x])*m+model$coefficients[2+i]+b,
-                                            yend = max(data[newcat == levels(newcat)[1+i],][,x])*m+model$coefficients[2+i]+b,
-                                            color = shQuote(levels(newcat)[1+i])))
+            tooltips <- list()
+            for (i in 2:length(levels(newcat)))
+            {
+                tooltips[[i]] <-  paste(levels(newcat)[i], '\n', y, '=', sprintf("%.3f",m), '*', x, '+', sprintf("%.3f",b+model$coefficients[i+1]), sep = ' ')
+            }    
+            segmentString <- ' '
+            for (i in 1:(length(levels(newcat))-1))
+            {
+                segmentString <- paste(segmentString, 'geom_segment_interactive(aes_string(x = min(data[newcat == levels(newcat)[1+', i, '],][,x]),
+                                                       xend = max(data[newcat == levels(newcat)[1+', i, '],][,x]),
+                                                       y = min(data[newcat == levels(newcat)[1+', i, '],][,x])*m+model$coefficients[2+', i, ']+b,
+                                                       yend = max(data[newcat == levels(newcat)[1+', i, '],][,x])*m+model$coefficients[2+', i, ']+b,
+                                                       color = shQuote(levels(newcat)[1+', i, ']),
+                                                       tooltip = tooltips[[', i,']]))')
+                if (i != length(levels(newcat))-1)
+                {
+                    segmentString <- paste(segmentString, '+')
+                }
+            }
+            
+            plot <- paste(plotString, segmentString, sep = '+')
+            plot <- eval(parse(text = plot))
         }
     } else 
     {
@@ -578,18 +825,57 @@ rl_same_slope <- function(data, x, y, cat, plotly = FALSE, se = FALSE, interacti
     {
         plot <- add_se(plot = plot, data = data, newcat = newcat, model = model)
     }
-    if (plotly == TRUE)
+    
+    if (is.null(title))
     {
-        plot <- ggplotly(plot)
+        plot <- plot + ggtitle(paste(x, 'vs.', y))
+    } else
+    {
+        plot <- plot + ggtitle(title)
+    }
+    if (is.null(xlabel))
+    {
+        plot <- plot + xlab(x)
+    } else
+    {
+        plot <- plot + xlab(xlabel)
+    }
+    if (is.null(ylabel))
+    {
+        plot <- plot + ylab(y)
+    } else
+    {
+        plot <- plot + ylab(ylabel)
+    }
+    if (is.null(legendTitle))
+    {
+        plot <- plot + labs(color = cat, fill = cat)
+    } else
+    {
+        plot <- plot + labs(color = legendTitle, fill = legendTitle)
     }
     if (interactive == TRUE)
     {
-        plot <- make_interactive(plot, data, x, y, cat)
+        tooltip_css <- "background-color:white;padding:10px;border-radius:10px 20px 10px 20px;"
+        hover_css="r:4px;cursor:pointer;stroke:black;stroke-width:2px;"
+        selected_css = "fill:#FF3333;stroke:black;"
+        
+        
+        plot <- ggiraph(code=print(plot),
+                        tooltip_extra_css=tooltip_css,
+                        tooltip_opacity=.75,
+                        zoom_max=10,
+                        hover_css=hover_css,
+                        selected_css=selected_css)
+    } else if (plotly == TRUE)
+    {
+        plot <- ggplotly(plot)
     }
+
     plot
 }
 
-rl_same_line <- function(data, x, y, cat, plotly = FALSE, se = FALSE, interactive = FALSE)
+rl_same_line <- function(data, x, y, cat, plotly = FALSE, se = FALSE, interactive = FALSE, title = NULL, xlabel = NULL, ylabel = NULL, legendTitle = NULL)
 {
     if (is_tibble(data))
     {
@@ -611,18 +897,56 @@ rl_same_line <- function(data, x, y, cat, plotly = FALSE, se = FALSE, interactiv
     {
         stop('Please enter valid parameters')
     }
+    if (is.null(title))
+    {
+        plot <- plot + ggtitle(paste(x, 'vs.', y))
+    } else
+    {
+        plot <- plot + ggtitle(title)
+    }
+    if (is.null(xlabel))
+    {
+        plot <- plot + xlab(x)
+    } else
+    {
+        plot <- plot + xlab(xlabel)
+    }
+    if (is.null(ylabel))
+    {
+        plot <- plot + ylab(y)
+    } else
+    {
+        plot <- plot + ylab(ylabel)
+    }
+    if (is.null(legendTitle))
+    {
+        plot <- plot + labs(color = cat, fill = cat)
+    } else
+    {
+        plot <- plot + labs(color = legendTitle, fill = legendTitle)
+    }
     if (se == TRUE)
     {
         plot <- add_se(plot = plot, data = data, newcat = newcat, model = model, one_line = TRUE)
     }
-    if (plotly == TRUE)
+    if (interactive == TRUE)
+    {
+        tooltip_css <- "background-color:white;padding:10px;border-radius:10px 20px 10px 20px;"
+        hover_css="r:4px;cursor:pointer;stroke:black;stroke-width:2px;"
+        selected_css = "fill:#FF3333;stroke:black;"
+        
+        
+        plot <- ggiraph(code=print(plot),
+                        tooltip_extra_css=tooltip_css,
+                        tooltip_opacity=.75,
+                        zoom_max=10,
+                        hover_css=hover_css,
+                        selected_css=selected_css)
+    } else if (plotly == TRUE)
     {
         plot <- ggplotly(plot)
     }
-    if (interactive == TRUE)
-    {
-        plot <- make_interactive(plot, data, x, y, cat)
-    }
+
     plot
 }
 
@@ -646,21 +970,5 @@ add_se <- function(plot, data, model, newcat, one_line = FALSE)
                                        ymax = result$fit + result$se.fit), 
                                    colour = NA, alpha = .35)
     }
-    plot
-}
-
-make_interactive <- function(plot)
-{
-    
-    tooltip_css <- "background-color:white;font-style:italic;padding:10px;border-radius:10px 20px 10px 20px;"
-    hover_css="r:4px;cursor:pointer;stroke:red;stroke-width:2px;"
-    selected_css = "fill:#FF3333;stroke:black;"
-    
-    plot <- ggiraph(code=print(plot),
-               tooltip_extra_css=tooltip_css,
-               tooltip_opacity=.75,
-               zoom_max=10,
-               hover_css=hover_css,
-               selected_css=selected_css)
     plot
 }
