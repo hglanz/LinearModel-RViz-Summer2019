@@ -11,11 +11,17 @@ library(ggiraph)
 #same_intercept is boolean if they want the regression lines to have the same intercept Set to FALSE
 #poly is a integer value to declare how many polynomial variables the use wants. Set to 1, i.e. no polynomial 
 #interactions is a integer value for if the user wants to include interactions in the polynomial model. Note only matters when poly > 1 and inteactions <= poly. Set to 0
-#se creates 95% colored ribbon around line, but what is it?
-#interactive is boolean to make interactive
+#interactive is boolean to make interactive, defaults to false
+#title is a string to change the title of the graph, defaults to x name vs y name
+#xlabel is the label of the x axis, defaults to x name
+#ylabel is the label of the y axis, defaults to y name
+#legendTitle is the title of a legned, defaults to category name
+#level is the percent level to make a CI/PI, defaults to 95%
 
 
-rl <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_intercept = FALSE, poly = 1, interactions = poly, se = FALSE, interactive = FALSE, title = NULL, xlabel = NULL, ylabel = NULL, legendTitle = NULL)
+rl <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_intercept = FALSE, 
+               poly = 1, interactions = poly, ci = FALSE, pi = FALSE, interactive = FALSE, 
+               title = NULL, xlabel = NULL, ylabel = NULL, legendTitle = NULL, level = .95)
 {
     if (is_tibble(data))
     {
@@ -23,22 +29,17 @@ rl <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_interce
     }
     if (poly > 1)
     {
-        plot <- rl_polynomial(data, x, y, cat, plotly, same_slope, same_intercept, poly, interactions, se)
-    } else if (poly == 1)
-    {
-        plot <- rl_linear(data, x, y, cat, plotly, same_slope, same_intercept, se)
+        plot <- rl_polynomial(data, x, y, cat, plotly = plotly, same_slope = same_slope, same_intercept = same_intercept, poly = poly, interactions = interactions, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
     } else
     {
-        stop('Please enter valid parameters')
-    }
-    if (interactive == TRUE)
-    {
-        plot <- make_interactive(plot, data, x, y, cat)
+        plot <- rl_linear(data, x, y, cat, plotly = plotly, same_slope = same_slope, same_intercept = same_intercept, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
     }
     plot
 }
 
-rl_linear <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_intercept = FALSE, se = FALSE, interactive = FALSE, title = NULL, xlabel = NULL, ylabel = NULL, legendTitle = NULL)
+rl_linear <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_intercept = FALSE, 
+                      ci = FALSE, pi = FALSE, interactive = FALSE, title = NULL, xlabel = NULL, 
+                      ylabel = NULL, legendTitle = NULL, level = .95)
 {
     if (is_tibble(data))
     {
@@ -48,29 +49,27 @@ rl_linear <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_
     {
         if (same_intercept == FALSE)
         {
-            plot <- rl_full_model(data, x, y, cat, plotly, se)
+            plot <- rl_full_model(data, x, y, cat, plotly = plotly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
         } else 
         {
-            plot <- rl_same_intercept(data, x, y, cat, plotly, se)
+            plot <- rl_same_intercept(data, x, y, cat, plotly = plotly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
         }
     } else
     {
         if (same_intercept == FALSE)
         {
-            plot <- rl_same_slope(data, x, y, cat, plotly, se)
+            plot <- rl_same_slope(data, x, y, cat, plotly = plotly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
         } else 
         {
-            plot <- rl_same_line(data, x, y, cat, plotly, se)
+            plot <- rl_same_line(data, x, y, cat, plotly = plotly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
         }
-    }
-    if (interactive == TRUE)
-    {
-        plot <- make_interactive(plot, data, x, y, cat)
     }
     plot
 }
 
-rl_polynomial <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_intercept = FALSE, poly = 2, interactions = poly, se = FALSE, interactive = FALSE, title = NULL, xlabel = NULL, ylabel = NULL, legendTitle = NULL)
+rl_polynomial <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_intercept = FALSE, 
+                          poly = 2, interactions = poly, ci = FALSE, pi = FALSE, interactive = FALSE,
+                          title = NULL, xlabel = NULL, ylabel = NULL, legendTitle = NULL, level = .95)
 {    
     if (is_tibble(data))
     {
@@ -80,20 +79,20 @@ rl_polynomial <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, s
     {
         if (same_intercept == FALSE)
         {
-            plot <- rl_poly_full_model(data, x, y, cat, poly, interactions, plotly, se)
+            plot <- rl_poly_full_model(data, x, y, cat, plotly = plolty, poly = poly, interactions = interactions, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
         } else 
         {
-            plot <- rl_poly_same_intercept(data, x, y, cat, poly, interactions, plotly, se)
+            plot <- rl_poly_same_intercept(data, x, y, cat, plotly = plotly, poly = poly, interactions = interactions, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
         }
     } else
     {
         if (same_intercept == FALSE)
         {
-            plot <- rl_poly_same_slope(data, x, y, cat, poly, plotly, se)
+            plot <- rl_poly_same_slope(data, x, y, cat, plotly = plotly, poly = poly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
         } else 
         {
-            plot <- rl_poly_same_line(data, x, y, cat, poly, plotly, se)
-        }
+            plot <- rl_poly_same_line(data, x, y, cat, plotly = plotly, poly = poly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
+       }
     }
     if (interactive == TRUE)
     {
@@ -102,7 +101,16 @@ rl_polynomial <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, s
     plot
 }
 
-rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotly = FALSE, se = FALSE, interactive = FALSE, title = NULL, xlabel = NULL, ylabel = NULL, legendTitle = NULL)
+rl_plotly <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_intercept = FALSE,
+                      poly = 1, interactions = poly, ci = FALSE, pi = FALSE, interactive = FALSE,
+                      title = NULL, xlabel = NULL, ylabel = NULL, legendTitle = NULL, level = .95)
+{
+    rl(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_intercept = FALSE, poly = 1, interactions = poly, ci = FALSE, pi = FALSE, interactive = FALSE, title = NULL, xlabel = NULL, ylabel = NULL, legendTitle = NULL, level = .95)
+}
+
+rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotly = FALSE, ci = FALSE,
+                               pi = FALSE, interactive = FALSE, title = NULL, xlabel = NULL, ylabel = NULL,
+                               legendTitle = NULL, level = .95)
 {
     if (is_tibble(data))
     {
@@ -155,7 +163,8 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
                     catEffects[[i]] <- 0
                 }
                 statFunctions[[i]] <- paste('stat_function(aes(color = levels(newcat)[', 
-                                            i, ']), fun = function(x) intercept + catEffects[[', i, ']] + eval(parse(text = slopeString))', sep = '')
+                                            i, ']), fun = function(x) intercept + catEffects[[',
+                                            i, ']] + eval(parse(text = slopeString))', sep = '')
                 for (j in 1:interactions)
                 {
                     statFunctions[[i]] <- paste(statFunctions[[i]], 
@@ -178,9 +187,13 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
         {
             stop('Please enter valid parameters')
         }
-        if (se == TRUE)
+        if (ci == TRUE)
         {
-            plot <- add_se(plot = plot, data = data, newcat = newcat, model = model)
+            plot <- add_ci(plot, data,  model, newcat, level = level)
+        }
+        if (pi == TRUE)
+        {
+            plot <- add_pi(plot, data,  model, newcat, level = level)
         }
         if (is.null(title))
         {
@@ -221,7 +234,9 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
     plot
 }
 
-rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, plotly = FALSE, se = FALSE, interactive = FALSE, title = NULL, xlabel = NULL, ylabel = NULL, legendTitle = NULL)
+rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, plotly = FALSE, ci = FALSE,
+                                   pi = FALSE, interactive = FALSE, title = NULL, xlabel = NULL, 
+                                   ylabel = NULL, legendTitle = NULL, level = .95)
 {
     if (is_tibble(data))
     {
@@ -289,9 +304,13 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
         {
             stop('Please enter valid parameters')
         }        
-        if (se == TRUE)
+        if (ci == TRUE)
         {
-            plot <- add_se(plot = plot, data = data, newcat = newcat, model = model)
+            plot <- add_ci(plot, data,  model, newcat, level = level)
+        }
+        if (pi == TRUE)
+        {
+            plot <- add_pi(plot, data,  model, newcat, level = level)
         }
         if (is.null(title))
         {
@@ -332,7 +351,9 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
     plot
 }
 
-rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, se = FALSE, interactive = FALSE, title = NULL, xlabel = NULL, ylabel = NULL, legendTitle = NULL)
+rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE, pi = FALSE, 
+                               interactive = FALSE, title = NULL, xlabel = NULL, ylabel = NULL, 
+                               legendTitle = NULL, level = .95)
 {
     if (is_tibble(data))
     {
@@ -380,9 +401,13 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, se = FALSE
     {
         stop('Please enter valid parameters')
     }
-    if (se == TRUE)
+    if (ci == TRUE)
     {
-        plot <- add_se(plot = plot, data = data, newcat = newcat, model = model)
+        plot <- add_ci(plot, data,  model, newcat, level = level)
+    }
+    if (pi == TRUE)
+    {
+        plot <- add_pi(plot, data,  model, newcat, level = level)
     }
     if (is.null(title))
     {
@@ -420,7 +445,9 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, se = FALSE
     plot
 } 
 
-rl_poly_same_line <- function(data, x, y, cat, poly, plotly = FALSE, se = FALSE, interactive = FALSE, title = NULL, xlabel = NULL, ylabel = NULL, legendTitle = NULL)
+rl_poly_same_line <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE, pi = FALSE, 
+                              interactive = FALSE, title = NULL, xlabel = NULL, ylabel = NULL, 
+                              legendTitle = NULL, level = .95)
 {
     if (is_tibble(data))
     {
@@ -450,9 +477,13 @@ rl_poly_same_line <- function(data, x, y, cat, poly, plotly = FALSE, se = FALSE,
     {
         stop('Please enter valid parameters')
     }
-    if (se == TRUE)
+    if (ci == TRUE)
     {
-        plot <- add_se(plot = plot, data = data, newcat = newcat, model = model, one_line = TRUE)
+        plot <- add_ci(plot, data,  model, newcat, level = level, one_line = TRUE)
+    }
+    if (pi == TRUE)
+    {
+        plot <- add_pi(plot, data,  model, newcat, level = level, one_line = TRUE)
     }
     if (is.null(title))
     {
@@ -490,7 +521,8 @@ rl_poly_same_line <- function(data, x, y, cat, poly, plotly = FALSE, se = FALSE,
     plot
 }
 
-rl_full_model <- function(data, x, y, cat, plotly = FALSE, se = FALSE, interactive = FALSE, title = NULL, xlabel = NULL, ylabel = NULL, legendTitle = NULL)
+rl_full_model <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALSE, interactive = FALSE, 
+                          title = NULL, xlabel = NULL, ylabel = NULL, legendTitle = NULL, level = .95)
 {
     if (is_tibble(data))
     {
@@ -593,10 +625,14 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, se = FALSE, interacti
     {
         plot <- plot + labs(color = legendTitle, fill = legendTitle)
     }
-    if (se == TRUE)
+    if (ci == TRUE)
     {
-        plot <- add_se(plot = plot, data = data, newcat = newcat, model = model)
-    } 
+        plot <- add_ci(plot, data,  model, newcat, level = level)
+    }
+    if (pi == TRUE)
+    {
+        plot <- add_pi(plot, data,  model, newcat, level = level)
+    }
     if (interactive == TRUE)
     {
         tooltip_css <- "background-color:white;padding:10px;border-radius:10px 20px 10px 20px;"
@@ -617,7 +653,8 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, se = FALSE, interacti
     plot
 }
 
-rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, se = FALSE, interactive = FALSE, title = NULL, xlabel = NULL, ylabel = NULL, legendTitle = NULL)
+rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALSE, interactive = FALSE,
+                              title = NULL, xlabel = NULL, ylabel = NULL, legendTitle = NULL, level = .95)
 {
     if (is_tibble(data))
     {
@@ -668,17 +705,18 @@ rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, se = FALSE, inter
             tooltips <- list()
             for (i in 2:length(levels(newcat)))
             {
-                tooltips[[i]] <-  paste(levels(newcat)[i], '\n', y, '=', sprintf("%.3f",m+model$coefficients[i+length(levels(newcat))]), '*', x, '+', sprintf("%.3f",b+model$coefficients[i+1]), sep = ' ')
+                tooltips[[i]] <-  paste(levels(newcat)[i], "\n", y, '=', sprintf("%.3f",m+model$coefficients[i+1]), '*', x, '+', sprintf("%.3f",b), sep = ' ')
             }    
             segmentString <- ' '
             for (i in 1:(length(levels(newcat))-1))
             {
-                segmentString <- paste(segmentString, 'geom_segment_interactive(aes_string(tooltip = tooltips[[', i, ']], 
-                                                                                           x = min(data[newcat == levels(newcat)[', i, '+1],][,x]), 
-                                                                                           xend = max(data[newcat == levels(newcat)[', i, '+1],][,x]), 
-                                                                                           y = b+(model$coefficients[', i, '+2]+m)*min(data[newcat == levels(newcat)[', i, '+1],][,x]), 
-                                                                                           yend = b+(model$coefficients[', i, '+2]+m)*max(data[newcat == levels(newcat)[', i, '+1],][,x]), 
-                                                                                          color = shQuote(levels(newcat)[1+', i, '])))')
+                segmentString <- paste(segmentString, 'geom_segment_interactive(aes(x = min(data[newcat == levels(newcat)[', i, '+1],][,x]), 
+                                                                                    xend = max(data[newcat == levels(newcat)[', i, '+1],][,x]), 
+                                                                                    y = b+(model$coefficients[', i, '+2]+m)*min(data[newcat == levels(newcat)[', i, '+1],][,x]), 
+                                                                                    yend = b+(model$coefficients[', i, '+2]+m)*max(data[newcat == levels(newcat)[', i, '+1],][,x]), 
+                                                                                    color = levels(newcat)[1+', i, '],
+                                                                                    tooltip = tooltips[[', i, '+1]]
+                                                                                    ))')
                 if (i != length(levels(newcat))-1)
                 {
                     segmentString <- paste(segmentString, '+')
@@ -720,9 +758,13 @@ rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, se = FALSE, inter
     {
         plot <- plot + labs(color = legendTitle, fill = legendTitle)
     }
-    if (se == TRUE)
+    if (ci == TRUE)
     {
-        plot <- add_se(plot = plot, data = data, newcat = newcat, model = model)
+        plot <- add_ci(plot, data,  model, newcat, level = level)
+    }
+    if (pi == TRUE)
+    {
+        plot <- add_pi(plot, data,  model, newcat, level = level)
     }
     if (interactive == TRUE)
     {
@@ -745,7 +787,8 @@ rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, se = FALSE, inter
     plot
 }
 
-rl_same_slope <- function(data, x, y, cat, plotly = FALSE, se = FALSE, interactive = FALSE, title = NULL, xlabel = NULL, ylabel = NULL, legendTitle = NULL)
+rl_same_slope <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALSE, interactive = FALSE,
+                          title = NULL, xlabel = NULL, ylabel = NULL, legendTitle = NULL, level = .95)
 {
     if (is_tibble(data))
     {
@@ -797,17 +840,17 @@ rl_same_slope <- function(data, x, y, cat, plotly = FALSE, se = FALSE, interacti
             tooltips <- list()
             for (i in 2:length(levels(newcat)))
             {
-                tooltips[[i]] <-  paste(levels(newcat)[i], '\n', y, '=', sprintf("%.3f",m), '*', x, '+', sprintf("%.3f",b+model$coefficients[i+1]), sep = ' ')
+                tooltips[[i]] <-  paste(levels(newcat)[i], "\n", y, '=', sprintf("%.3f",m), '*', x, '+', sprintf("%.3f",b+model$coefficients[i+1]), sep = ' ')
             }    
             segmentString <- ' '
             for (i in 1:(length(levels(newcat))-1))
             {
-                segmentString <- paste(segmentString, 'geom_segment_interactive(aes_string(x = min(data[newcat == levels(newcat)[1+', i, '],][,x]),
+                segmentString <- paste(segmentString, 'geom_segment_interactive(aes(x = min(data[newcat == levels(newcat)[1+', i, '],][,x]),
                                                        xend = max(data[newcat == levels(newcat)[1+', i, '],][,x]),
                                                        y = min(data[newcat == levels(newcat)[1+', i, '],][,x])*m+model$coefficients[2+', i, ']+b,
                                                        yend = max(data[newcat == levels(newcat)[1+', i, '],][,x])*m+model$coefficients[2+', i, ']+b,
-                                                       color = shQuote(levels(newcat)[1+', i, ']),
-                                                       tooltip = tooltips[[', i,']]))')
+                                                       color = levels(newcat)[1+', i, '],
+                                                       tooltip = tooltips[[', i,'+1]]))')
                 if (i != length(levels(newcat))-1)
                 {
                     segmentString <- paste(segmentString, '+')
@@ -821,11 +864,14 @@ rl_same_slope <- function(data, x, y, cat, plotly = FALSE, se = FALSE, interacti
     {
         stop('Please enter valid parameters')
     }
-    if (se == TRUE)
+    if (ci == TRUE)
     {
-        plot <- add_se(plot = plot, data = data, newcat = newcat, model = model)
+        plot <- add_ci(plot, data,  model, newcat, level = level)
     }
-    
+    if (pi == TRUE)
+    {
+        plot <- add_pi(plot, data,  model, newcat, level = level)
+    }
     if (is.null(title))
     {
         plot <- plot + ggtitle(paste(x, 'vs.', y))
@@ -875,7 +921,8 @@ rl_same_slope <- function(data, x, y, cat, plotly = FALSE, se = FALSE, interacti
     plot
 }
 
-rl_same_line <- function(data, x, y, cat, plotly = FALSE, se = FALSE, interactive = FALSE, title = NULL, xlabel = NULL, ylabel = NULL, legendTitle = NULL)
+rl_same_line <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALSE, interactive = FALSE, 
+                         title = NULL, xlabel = NULL, ylabel = NULL, legendTitle = NULL, level = .95)
 {
     if (is_tibble(data))
     {
@@ -887,12 +934,28 @@ rl_same_line <- function(data, x, y, cat, plotly = FALSE, se = FALSE, interactiv
     if (length(newx) == length(newy) && length(newy) == length(newcat))
     {
         model <- lm(newy ~ newx, data = data)
-        plot <- ggplot(data = data, aes(x = newx, y = newy)) + 
-            geom_point(data = data, aes(col = newcat)) + 
-            geom_segment(aes(x = min(newx),
-                             xend = max(newx),
-                             y = min(newx)*model$coefficients[2] + model$coefficients[1], 
-                             yend = max(newx)*model$coefficients[2] + model$coefficients[1]))
+        if (!interactive)
+        {
+            plot <- ggplot(data = data, aes(x = newx, y = newy)) + 
+                geom_point(data = data, aes(col = newcat)) + 
+                geom_segment(aes(x = min(newx),
+                                 xend = max(newx),
+                                 y = min(newx)*model$coefficients[2] + model$coefficients[1], 
+                                 yend = max(newx)*model$coefficients[2] + model$coefficients[1]))
+        } else 
+        {
+            fit <- model$model
+            fit$data_id <- rownames(fit)
+            data$tooltip <- paste0(fit$data_id, "\n", x, " = ", fit[['newx']], "\n", y, " = ", fit[['newy']], "\n", cat, " = ", fit[['newcat']])
+            
+            plot <- ggplot(data = data, aes(x = newx, y = newy)) + 
+                geom_point_interactive(data = data, aes(col = newcat, tooltip = tooltip)) + 
+                geom_segment_interactive(aes(x = min(newx),
+                                             xend = max(newx),
+                                             y = min(newx)*model$coefficients[2] + model$coefficients[1], 
+                                             yend = max(newx)*model$coefficients[2] + model$coefficients[1],
+                                             tooltip = paste(y, '=', x, '*', sprintf("%.3f",model$coefficients[2]), '+', sprintf("%.3f",model$coefficients[1]))))
+        }
     } else
     {
         stop('Please enter valid parameters')
@@ -925,9 +988,13 @@ rl_same_line <- function(data, x, y, cat, plotly = FALSE, se = FALSE, interactiv
     {
         plot <- plot + labs(color = legendTitle, fill = legendTitle)
     }
-    if (se == TRUE)
+    if (ci == TRUE)
     {
-        plot <- add_se(plot = plot, data = data, newcat = newcat, model = model, one_line = TRUE)
+        plot <- add_ci(plot, data,  model, newcat, level = level, one_line = TRUE)
+    }
+    if (pi == TRUE)
+    {
+        plot <- add_pi(plot, data,  model, newcat, level = level, one_line = TRUE)
     }
     if (interactive == TRUE)
     {
@@ -950,25 +1017,38 @@ rl_same_line <- function(data, x, y, cat, plotly = FALSE, se = FALSE, interactiv
     plot
 }
 
-rl_plotly <- function(data, x, y, cat, plotly = TRUE, same_slope = FALSE, same_intercept = FALSE, se = FALSE)
-{
-    rl(data, x, y, cat, plotly = plotly, same_slope = same_slope, same_intercept = same_intercept)
-}
-
-add_se <- function(plot, data, model, newcat, one_line = FALSE)
+add_ci <- function(plot, data, model, newcat, level = .95, one_line = FALSE)
 {
     if (!one_line)
     {
-        result <- predict(model, newdata = data, type = "response", se.fit=TRUE)
-        plot <- plot + geom_ribbon(aes(ymin = result$fit - result$se.fit, 
-                                       ymax = result$fit + result$se.fit, 
-                                       fill = newcat), colour = NA, alpha = .35)
+        result <- predict(model, newdata = data, type = "response", se.fit=TRUE, interval = 'confidence', level = level)
+        plot <- plot + geom_ribbon(aes(ymin = result$fit[,'lwr'], 
+                                       ymax = result$fit[,'upr'], 
+                                       fill = newcat), col = NA, alpha = .35)
     } else
     {
-        result <- predict(model, newdata = data, type = "response", se.fit=TRUE)
-        plot <- plot + geom_ribbon(aes(ymin = result$fit - result$se.fit, 
-                                       ymax = result$fit + result$se.fit), 
-                                   colour = NA, alpha = .35)
+        result <- predict(model, newdata = data, type = "response", se.fit=TRUE, interval = 'confidence', level = level)
+        plot <- plot + geom_ribbon(aes(ymin = result$fit[,'lwr'], 
+                                       ymax = result$fit[,'upr']), 
+                                       col = NA, alpha = .35)
+    }
+    plot
+}
+
+add_pi <- function(plot, data, model, newcat, level = .95, one_line = FALSE)
+{
+    if (!one_line)
+    {
+        result <- predict(model, newdata = data, type = "response", se.fit=TRUE, interval = 'prediction', level = level)
+        plot <- plot + geom_ribbon(aes(ymin = result$fit[,'lwr'], 
+                                       ymax = result$fit[,'upr'], 
+                                       fill = newcat), col = NA, alpha = .35)
+    } else
+    {
+        result <- predict(model, newdata = data, type = "response", se.fit=TRUE, interval = 'prediction', level = level)
+        plot <- plot + geom_ribbon(aes(ymin = result$fit[,'lwr'], 
+                                       ymax = result$fit[,'upr']), 
+                                   col = NA, alpha = .35)
     }
     plot
 }
