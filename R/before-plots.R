@@ -92,7 +92,7 @@ ggplot(data = polydata, aes(x = x, y = y, col = cat)) +
         aes(col = 'A')) + 
     stat_function(fun=function(x) 
         model4$coefficients[1] + model4$coefficients[2]*x + model4$coefficients[3]*x^2 + model4$coefficients[4], 
-        aes(col = 'B'), xlim = c(0,10))
+        aes(col = 'B'))
 
 plot_ly(polydata, x = ~x, y = ~y, color = ~cat, type = 'scatter', showlegend = TRUE) %>%
     add_lines(x = ~x, y = predict(model4))
@@ -109,7 +109,7 @@ ggplot(data = polydata, aes(x = x, y = y, col = cat)) +
     stat_function(fun=function(x) 
         model5$coefficients[1] + model5$coefficients[2]*x + 
             model5$coefficients[3]*x^2 + model5$coefficients[4]*x, 
-        aes(col = 'B')) 
+        aes(col = 'B'))# + interactive_polyline_grob(x = xvec, y = yvec, tooltip = 'BOINKL')
 
 plot_ly(polydata, x = ~x, y = ~y, color = ~cat, type = 'scatter', showlegend = TRUE) %>%
     add_lines(x=~x, y=~fitted(model5), type="scatter", data = polydata)
