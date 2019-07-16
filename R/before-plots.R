@@ -190,3 +190,5 @@ ggiraph(code=print(p),
              zoom_max=10,
              hover_css=hover_css,
              selected_css=selected_css)
+
+interactive_polyline_grob(x = xvec, y = yvec, tooltip = 'I hope this works')
