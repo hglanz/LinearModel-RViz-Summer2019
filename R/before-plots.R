@@ -6,13 +6,13 @@ library(plotly)
 ###Different intercepts, different slopes
 ggplot(data = iris, aes(x = Sepal.Length, y = Sepal.Width, col = Species)) + 
     geom_point() +
-    geom_smooth(method = lm, se = FALSE) #geom_smooth only does full model
+    geom_smooth(method = lm, se = TRUE) #geom_smooth only does full model
 
 model2 <- lm(Sepal.Width ~ Sepal.Length * Species, data = iris)
 ggPredict(model2, se = T)
 
 plot_ly(iris, x = ~Sepal.Length, y = ~Sepal.Width, color = ~Species, type = 'scatter', showlegend = TRUE) %>%
-    add_lines(x = ~Sepal.Length, y = fitted(model2))
+    add_lines(y = fitted(model2))
 
 ###Same slope, different intercepts
 model1 <- lm(Sepal.Width ~ Sepal.Length + Species, data = iris)
@@ -75,7 +75,8 @@ plot_ly(iris, x = ~Sepal.Length, y = ~Sepal.Width, color = ~Species, type = 'sca
     add_lines(x = ~Sepal.Length, y = fitted(model3))
 
 library(readxl)
-polydata <- read_excel("C:/Users/jackl_000/Desktop/polydata.xlsx")
+polydata <- read_excel("polydata.xlsx")
+
 
 ###Quadratic with same slopes diff intercepts
 ggplot(data = polydata, aes(x = x, y = y, col = cat)) +
@@ -191,4 +192,6 @@ ggiraph(code=print(p),
              hover_css=hover_css,
              selected_css=selected_css)
 
+xvec <- polydata$x
+yvec <- polydata$y
 interactive_polyline_grob(x = xvec, y = yvec, tooltip = 'I hope this works')
