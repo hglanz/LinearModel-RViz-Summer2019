@@ -2,7 +2,7 @@ library(tidyverse)
 library(plotly)
 library(ggiraph)
 
-#data is the data frame. tibbles currently don't work
+#data is the data frame. tibbles will work
 #x is string of x variable name
 #y is string of y variable name
 #cat is string of categorical variable name
@@ -79,7 +79,7 @@ rl_polynomial <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, s
     {
         if (same_intercept == FALSE)
         {
-            plot <- rl_poly_full_model(data, x, y, cat, plotly = plolty, poly = poly, interactions = interactions, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
+            plot <- rl_poly_full_model(data, x, y, cat, plotly = plotly, poly = poly, interactions = interactions, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
         } else 
         {
             plot <- rl_poly_same_intercept(data, x, y, cat, plotly = plotly, poly = poly, interactions = interactions, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
@@ -94,10 +94,7 @@ rl_polynomial <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, s
             plot <- rl_poly_same_line(data, x, y, cat, plotly = plotly, poly = poly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
        }
     }
-    if (interactive == TRUE)
-    {
-        plot <- make_interactive(plot, data, x, y, cat)
-    }
+
     plot
 }
 
@@ -597,6 +594,14 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
     {
         stop('Please enter valid parameters')
     }
+    if (ci == TRUE)
+    {
+        plot <- add_ci(plot, data,  model, newcat, level = level)
+    }
+    if (pi == TRUE)
+    {
+        plot <- add_pi(plot, data,  model, newcat, level = level)
+    }
     if (is.null(title))
     {
         plot <- plot + ggtitle(paste(x, 'vs.', y))
@@ -625,14 +630,6 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
     {
         plot <- plot + labs(color = legendTitle, fill = legendTitle)
     }
-    if (ci == TRUE)
-    {
-        plot <- add_ci(plot, data,  model, newcat, level = level)
-    }
-    if (pi == TRUE)
-    {
-        plot <- add_pi(plot, data,  model, newcat, level = level)
-    }
     if (interactive == TRUE)
     {
         tooltip_css <- "background-color:white;padding:10px;border-radius:10px 20px 10px 20px;"
@@ -648,7 +645,7 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
                         selected_css=selected_css)
     } else if (plotly == TRUE)
     {
-        plot <- ggplotly(plot)
+        plot <- ggplotly(plot, names = Species)
     }
     plot
 }
@@ -1021,13 +1018,15 @@ add_ci <- function(plot, data, model, newcat, level = .95, one_line = FALSE)
 {
     if (!one_line)
     {
-        result <- predict(model, newdata = data, type = "response", se.fit=TRUE, interval = 'confidence', level = level)
+        result <- predict(model, newdata = data, type = "response", se.fit=TRUE,
+                          interval = 'confidence', level = level)
         plot <- plot + geom_ribbon(aes(ymin = result$fit[,'lwr'], 
-                                       ymax = result$fit[,'upr'], 
-                                       fill = newcat), col = NA, alpha = .35)
+                                       ymax = result$fit[,'upr']),
+                                       alpha = .35)
     } else
     {
-        result <- predict(model, newdata = data, type = "response", se.fit=TRUE, interval = 'confidence', level = level)
+        result <- predict(model, newdata = data, type = "response", se.fit=TRUE, 
+                          interval = 'confidence', level = level)
         plot <- plot + geom_ribbon(aes(ymin = result$fit[,'lwr'], 
                                        ymax = result$fit[,'upr']), 
                                        col = NA, alpha = .35)
@@ -1039,16 +1038,18 @@ add_pi <- function(plot, data, model, newcat, level = .95, one_line = FALSE)
 {
     if (!one_line)
     {
-        result <- predict(model, newdata = data, type = "response", se.fit=TRUE, interval = 'prediction', level = level)
+        result <- predict(model, newdata = data, type = "response", se.fit=TRUE, 
+                          interval = 'prediction', level = level)
         plot <- plot + geom_ribbon(aes(ymin = result$fit[,'lwr'], 
                                        ymax = result$fit[,'upr'], 
                                        fill = newcat), col = NA, alpha = .35)
     } else
     {
-        result <- predict(model, newdata = data, type = "response", se.fit=TRUE, interval = 'prediction', level = level)
+        result <- predict(model, newdata = data, type = "response", se.fit=TRUE, i
+                          nterval = 'prediction', level = level)
         plot <- plot + geom_ribbon(aes(ymin = result$fit[,'lwr'], 
                                        ymax = result$fit[,'upr']), 
-                                   col = NA, alpha = .35)
+                                       col = NA, alpha = .35)
     }
     plot
 }
