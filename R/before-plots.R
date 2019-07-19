@@ -12,7 +12,7 @@ model2 <- lm(Sepal.Width ~ Sepal.Length * Species, data = iris)
 ggPredict(model2, se = T)
 
 plot_ly(iris, x = ~Sepal.Length, y = ~Sepal.Width, color = ~Species, type = 'scatter', showlegend = TRUE) %>%
-    add_lines(y = fitted(model2))
+    add_lines(y = fitted(model2),  tooltip = paste(~Species, '= Species'))
 
 ###Same slope, different intercepts
 model1 <- lm(Sepal.Width ~ Sepal.Length + Species, data = iris)
