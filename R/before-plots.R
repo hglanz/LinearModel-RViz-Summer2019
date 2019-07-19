@@ -195,3 +195,30 @@ ggiraph(code=print(p),
 xvec <- polydata$x
 yvec <- polydata$y
 interactive_polyline_grob(x = xvec, y = yvec, tooltip = 'I hope this works')
+
+
+xvec <- seq(from = 4, to = 8 , by = ((8-4)/149))
+
+model <- lm(Sepal.Width ~ Sepal.Length  + I(Sepal.Length^2), data = iris)
+
+yvec <- c(seq(2, 4.5, ((4.5-2)/(149/2))), seq(4.5, 2, -((4.5-2)/(149/2))))
+yvec <- model$coefficients[1] + model$coefficients[2]*xvec + model$coefficients[3]*(xvec^2)
+
+plot <- rl_poly_full_model(data, x, y, cat, 2) + 
+    geom_path_interactive(data = data, 
+                          color = 'black',
+                          aes(
+                              x = xvec,
+                              y = yvec, 
+                              tooltip = 'pls work'))
+
+tooltip_css <- "background-color:white;padding:10px;border-radius:10px 20px 10px 20px;"
+hover_css="r:4px;cursor:pointer;stroke:black;stroke-width:2px;"
+selected_css = "fill:#FF3333;stroke:black;"
+plot <- ggiraph(code=print(plot),
+                                        tooltip_extra_css=tooltip_css,
+                                        tooltip_opacity=.75,
+                                        zoom_max=10,
+                                        hover_css=hover_css,
+                                        selected_css=selected_css)
+plot
