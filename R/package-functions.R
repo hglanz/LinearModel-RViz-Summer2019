@@ -548,30 +548,50 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
             plot <- add_pi(plot, data,  model, newcat, level = level)
         }
         
-        plot <- plot + geom_point_interactive(aes(tooltip = tooltip))  +
-            geom_segment_interactive(aes(x = min(data[newcat == levels(newcat)[1],][,x]),
-                                         xend = max(data[newcat == levels(newcat)[1],][,x]),
-                                         y = min(data[newcat == levels(newcat)[1],][,x])*m+b,
-                                         yend = max(data[newcat == levels(newcat)[1],][,x])*m+b,
-                                         color = levels(newcat)[1],
-                                         tooltip = paste(levels(newcat)[1], '\n ', y, '=', sprintf('%.3f',m), 
-                                                         '*', x, '+', sprintf('%.3f',b), sep = ' ')))
-        
-        tooltips <- list()
-        for (i in 2:length(levels(newcat)))
+        if (!plotly)
         {
-            tooltips[[i]] <-  paste(levels(newcat)[i], '\n', y, '=', sprintf("%.3f",m+model$coefficients[i+length(levels(newcat))]), '*', x, '+', sprintf("%.3f",b+model$coefficients[i+1]), sep = ' ')
-        }    
+            plot <- plot + geom_point_interactive(aes(tooltip = tooltip))  +
+                geom_segment_interactive(aes(x = min(data[newcat == levels(newcat)[1],][,x]),
+                                             xend = max(data[newcat == levels(newcat)[1],][,x]),
+                                             y = min(data[newcat == levels(newcat)[1],][,x])*m+b,
+                                             yend = max(data[newcat == levels(newcat)[1],][,x])*m+b,
+                                             color = levels(newcat)[1],
+                                             tooltip = paste(levels(newcat)[1], '\n ', y, '=', sprintf('%.3f',m), 
+                                                             '*', x, '+', sprintf('%.3f',b), sep = ' ')))
         
-        segs <- list()
-        for (i in 1:(length(levels(newcat))-1))
+            tooltips <- list()
+            for (i in 2:length(levels(newcat)))
+            {
+                tooltips[[i]] <-  paste(levels(newcat)[i], '\n', y, '=', sprintf("%.3f",m+model$coefficients[i+length(levels(newcat))]), '*', x, '+', sprintf("%.3f",b+model$coefficients[i+1]), sep = ' ')
+            }    
+
+            for (i in 1:(length(levels(newcat))-1))
+            {
+                plot <- plot + geom_segment_interactive(aes_string(x = min(data[newcat == levels(newcat)[i+1],][,x]),
+                                                                   xend = max(data[newcat == levels(newcat)[i+1],][,x]),
+                                                                   y = min(data[newcat == levels(newcat)[i+1],][,x])*(m+model$coefficients[i+length(levels(newcat))+1])+b+model$coefficients[i+2],
+                                                                   yend = max(data[newcat == levels(newcat)[i+1],][,x])*(m+model$coefficients[i+length(levels(newcat))+1])+b+model$coefficients[i+2],
+                                                                   color = shQuote(levels(newcat)[i+1])),
+                                                        tooltip = tooltips[i+1])
+            }
+            
+        } else
         {
-            plot <- plot + geom_segment_interactive(aes_string(x = min(data[newcat == levels(newcat)[i+1],][,x]),
-                                                               xend = max(data[newcat == levels(newcat)[i+1],][,x]),
-                                                               y = min(data[newcat == levels(newcat)[i+1],][,x])*(m+model$coefficients[i+length(levels(newcat))+1])+b+model$coefficients[i+2],
-                                                               yend = max(data[newcat == levels(newcat)[i+1],][,x])*(m+model$coefficients[i+length(levels(newcat))+1])+b+model$coefficients[i+2],
-                                                               color = shQuote(levels(newcat)[i+1])),
-                                                    tooltip = tooltips[i+1])
+            plot <- plot + geom_point()  +
+                geom_segment(aes(x = min(data[newcat == levels(newcat)[1],][,x]),
+                                 xend = max(data[newcat == levels(newcat)[1],][,x]),
+                                 y = min(data[newcat == levels(newcat)[1],][,x])*m+b,
+                                 yend = max(data[newcat == levels(newcat)[1],][,x])*m+b,
+                                 color = levels(newcat)[1]))
+            
+            for (i in 1:(length(levels(newcat))-1))
+            {
+                plot <- plot + geom_segment(aes_string(x = min(data[newcat == levels(newcat)[i+1],][,x]),
+                                                                   xend = max(data[newcat == levels(newcat)[i+1],][,x]),
+                                                                   y = min(data[newcat == levels(newcat)[i+1],][,x])*(m+model$coefficients[i+length(levels(newcat))+1])+b+model$coefficients[i+2],
+                                                                   yend = max(data[newcat == levels(newcat)[i+1],][,x])*(m+model$coefficients[i+length(levels(newcat))+1])+b+model$coefficients[i+2],
+                                                                   color = shQuote(levels(newcat)[i+1])))   
+            }
         }
         
         plot <- plot + ggtitle(title) + xlab(xlabel) + ylab(ylabel) + labs(color = legendTitle, fill = legendTitle)
@@ -600,7 +620,6 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
         stop('Please enter valid parameters')
     }
 }
-
 
 rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALSE, interactive = FALSE, 
                               title = paste(x, 'vs.', y), xlabel = x, ylabel = y, legendTitle = cat, 
@@ -633,29 +652,49 @@ rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = 
             plot <- add_pi(plot, data,  model, newcat, level = level)
         }
         
-        plot <- plot + geom_point_interactive(aes(tooltip = tooltip)) + 
-            geom_segment_interactive(aes(x = min(data[newcat == levels(newcat)[1],][,x]),
-                                         xend = max(data[newcat == levels(newcat)[1],][,x]),
-                                         y = b+m*min(data[newcat == levels(newcat)[1],][,x]),
-                                         yend = b+m*max(data[newcat == levels(newcat)[1],][,x]),
-                                         color = levels(newcat)[1],
-                                         tooltip = paste(levels(newcat)[1], '\n ', y, '=', sprintf('%.3f',m), '*', x, '+', sprintf('%.3f',b), sep = ' ')))
-        
-        tooltips <- list()
-        for (i in 2:length(levels(newcat)))
+        if (!plotly)
         {
-            tooltips[[i]] <-  paste(levels(newcat)[i], "\n", y, '=', sprintf("%.3f",m+model$coefficients[i+1]), '*', x, '+', sprintf("%.3f",b), sep = ' ')
-        } 
+            plot <- plot + geom_point_interactive(aes(tooltip = tooltip)) + 
+                geom_segment_interactive(aes(x = min(data[newcat == levels(newcat)[1],][,x]),
+                                             xend = max(data[newcat == levels(newcat)[1],][,x]),
+                                             y = b+m*min(data[newcat == levels(newcat)[1],][,x]),
+                                             yend = b+m*max(data[newcat == levels(newcat)[1],][,x]),
+                                             color = levels(newcat)[1],
+                                             tooltip = paste(levels(newcat)[1], '\n ', y, '=', sprintf('%.3f',m), '*', x, '+', sprintf('%.3f',b), sep = ' ')))
+        
+            tooltips <- list()
+            for (i in 2:length(levels(newcat)))
+            {
+                tooltips[[i]] <-  paste(levels(newcat)[i], "\n", y, '=', sprintf("%.3f",m+model$coefficients[i+1]), '*', x, '+', sprintf("%.3f",b), sep = ' ')
+            } 
         
         
-        for (i in 1:(length(levels(newcat))-1))
+            for (i in 1:(length(levels(newcat))-1))
+            {
+                plot <- plot + geom_segment_interactive(aes_string(x = min(data[newcat == levels(newcat)[i+1],][,x]),
+                                                                   xend = max(data[newcat == levels(newcat)[i+1],][,x]),
+                                                                   y = b+(model$coefficients[i+2]+m)*min(data[newcat == levels(newcat)[i+1],][,x]),
+                                                                   yend = b+(model$coefficients[i+2]+m)*max(data[newcat == levels(newcat)[i+1],][,x]),
+                                                                   color = shQuote(levels(newcat)[1+i])),
+                                                        tooltip = tooltips[[i+1]])
+            }
+        } else
         {
-            plot <- plot + geom_segment_interactive(aes_string(x = min(data[newcat == levels(newcat)[i+1],][,x]),
-                                                               xend = max(data[newcat == levels(newcat)[i+1],][,x]),
-                                                               y = b+(model$coefficients[i+2]+m)*min(data[newcat == levels(newcat)[i+1],][,x]),
-                                                               yend = b+(model$coefficients[i+2]+m)*max(data[newcat == levels(newcat)[i+1],][,x]),
-                                                               color = shQuote(levels(newcat)[1+i])),
-                                                    tooltip = tooltips[[i+1]])
+            plot <- plot + geom_point() + 
+                geom_segment(aes(x = min(data[newcat == levels(newcat)[1],][,x]),
+                                             xend = max(data[newcat == levels(newcat)[1],][,x]),
+                                             y = b+m*min(data[newcat == levels(newcat)[1],][,x]),
+                                             yend = b+m*max(data[newcat == levels(newcat)[1],][,x]),
+                                             color = levels(newcat)[1]))
+            
+            for (i in 1:(length(levels(newcat))-1))
+            {
+                plot <- plot + geom_segment(aes_string(x = min(data[newcat == levels(newcat)[i+1],][,x]),
+                                                                   xend = max(data[newcat == levels(newcat)[i+1],][,x]),
+                                                                   y = b+(model$coefficients[i+2]+m)*min(data[newcat == levels(newcat)[i+1],][,x]),
+                                                                   yend = b+(model$coefficients[i+2]+m)*max(data[newcat == levels(newcat)[i+1],][,x]),
+                                                                   color = shQuote(levels(newcat)[1+i])))
+            }
         }
         
         plot <- plot + ggtitle(title) + xlab(xlabel) + ylab(ylabel) + labs(color = legendTitle, fill = legendTitle)
@@ -717,29 +756,51 @@ rl_same_slope <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
             plot <- add_pi(plot, data,  model, newcat, level = level)
         }
         
-        
-        plot <- plot + geom_point_interactive(aes(tooltip = tooltip)) + 
-            geom_segment_interactive(aes(x = min(data[newcat == levels(newcat)[1],][,x]),
-                                         xend = max(data[newcat == levels(newcat)[1],][,x]),
-                                         y = min(data[newcat == levels(newcat)[1],][,x])*m+b,
-                                         yend = max(data[newcat == levels(newcat)[1],][,x])*m+b,
-                                         color = levels(newcat)[1]),
-                                     tooltip = paste(levels(newcat)[1], '\n ', y, '=', sprintf('%.3f',m), '*', x, '+', sprintf('%.3f',b), sep = ' '))
-        tooltips <- list()
-        for (i in 2:length(levels(newcat)))
+        if (!plotly)
         {
-            tooltips[[i]] <-  paste(levels(newcat)[i], "\n", y, '=', sprintf("%.3f",m), '*', x, '+', sprintf("%.3f",b+model$coefficients[i+1]), sep = ' ')
-        }    
+            plot <- plot + geom_point_interactive(aes(tooltip = tooltip)) + 
+                           geom_segment_interactive(aes(x = min(data[newcat == levels(newcat)[1],][,x]),
+                                                        xend = max(data[newcat == levels(newcat)[1],][,x]),
+                                                        y = min(data[newcat == levels(newcat)[1],][,x])*m+b,
+                                                        yend = max(data[newcat == levels(newcat)[1],][,x])*m+b,
+                                                        color = levels(newcat)[1]),
+                                                    tooltip = paste(levels(newcat)[1], '\n ', y, '=', sprintf('%.3f',m), '*', x, '+', sprintf('%.3f',b), sep = ' '))
+            tooltips <- list()
+            for (i in 2:length(levels(newcat)))
+            {
+                tooltips[[i]] <-  paste(levels(newcat)[i], "\n", y, '=', sprintf("%.3f",m), '*', x, '+', sprintf("%.3f",b+model$coefficients[i+1]), sep = ' ')
+            }    
         
-        for (i in 1:(length(levels(newcat))-1))
+            for (i in 1:(length(levels(newcat))-1))
+            {
+                plot <- plot + geom_segment_interactive(aes_string(x = min(data[newcat == levels(newcat)[1+i],][,x]),
+                                                                   xend = max(data[newcat == levels(newcat)[1+i],][,x]),
+                                                                   y = min(data[newcat == levels(newcat)[1+i],][,x])*m+model$coefficients[2+i]+b,
+                                                                   yend = max(data[newcat == levels(newcat)[1+i],][,x])*m+model$coefficients[2+i]+b,
+                                                                   color = shQuote(levels(newcat)[1+i])),
+                                                        tooltip = tooltips[[i+1]])
+            }
+        } else
         {
-            plot <- plot + geom_segment_interactive(aes_string(x = min(data[newcat == levels(newcat)[1+i],][,x]),
-                                                               xend = max(data[newcat == levels(newcat)[1+i],][,x]),
-                                                               y = min(data[newcat == levels(newcat)[1+i],][,x])*m+model$coefficients[2+i]+b,
-                                                               yend = max(data[newcat == levels(newcat)[1+i],][,x])*m+model$coefficients[2+i]+b,
-                                                               color = shQuote(levels(newcat)[1+i])),
-                                                    tooltip = tooltips[[i+1]])
+            {
+                plot <- plot + geom_point() + 
+                    geom_segment(aes(x = min(data[newcat == levels(newcat)[1],][,x]),
+                                                 xend = max(data[newcat == levels(newcat)[1],][,x]),
+                                                 y = min(data[newcat == levels(newcat)[1],][,x])*m+b,
+                                                 yend = max(data[newcat == levels(newcat)[1],][,x])*m+b,
+                                                 color = levels(newcat)[1]))
+                
+                for (i in 1:(length(levels(newcat))-1))
+                {
+                    plot <- plot + geom_segment(aes_string(x = min(data[newcat == levels(newcat)[1+i],][,x]),
+                                                                       xend = max(data[newcat == levels(newcat)[1+i],][,x]),
+                                                                       y = min(data[newcat == levels(newcat)[1+i],][,x])*m+model$coefficients[2+i]+b,
+                                                                       yend = max(data[newcat == levels(newcat)[1+i],][,x])*m+model$coefficients[2+i]+b,
+                                                                       color = shQuote(levels(newcat)[1+i])))
+                }
+            }
         }
+        
         
         plot <- plot + ggtitle(title) + xlab(xlabel) + ylab(ylabel) + labs(color = legendTitle, fill = legendTitle)
         
@@ -801,13 +862,22 @@ rl_same_line <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALSE
             plot <- add_pi(plot, data,  model, newcat, level = level, one_line = TRUE)
         }
         
-        plot <- plot + geom_point_interactive(data = data, aes(col = newcat, tooltip = tooltip)) + 
-            geom_segment_interactive(aes(x = min(newx),
-                                         xend = max(newx),
-                                         y = min(newx)*model$coefficients[2] + model$coefficients[1], 
-                                         yend = max(newx)*model$coefficients[2] + model$coefficients[1],
-                                         tooltip = paste(y, '=', x, '*', sprintf("%.3f",model$coefficients[2]), '+', sprintf("%.3f",model$coefficients[1]))))
-        
+        if (!plotly)
+        {
+            plot <- plot + geom_point_interactive(data = data, aes(col = newcat, tooltip = tooltip)) + 
+                           geom_segment_interactive(aes(x = min(newx),
+                                                        xend = max(newx),
+                                                        y = min(newx)*model$coefficients[2] + model$coefficients[1], 
+                                                        yend = max(newx)*model$coefficients[2] + model$coefficients[1],
+                                                        tooltip = paste(y, '=', x, '*', sprintf("%.3f",model$coefficients[2]), '+', sprintf("%.3f",model$coefficients[1]))))
+        } else {
+            plot <- plot + geom_point(data = data, aes(col = newcat)) + 
+                           geom_segment(aes(x = min(newx),
+                                            xend = max(newx),
+                                            y = min(newx)*model$coefficients[2] + model$coefficients[1], 
+                                            yend = max(newx)*model$coefficients[2] + model$coefficients[1]))
+            
+        }
         plot <- plot + ggtitle(title) + xlab(xlabel) + ylab(ylabel) + labs(color = legendTitle, fill = legendTitle)
         
         if (interactive == TRUE)
@@ -846,14 +916,14 @@ add_ci <- function(plot, data, model, newcat, level = .95, one_line = FALSE)
                           interval = 'confidence', level = level)
         plot <- plot + geom_ribbon(aes(ymin = result$fit[,'lwr'], 
                                        ymax = result$fit[,'upr']),
-                                       alpha = .35)
+                                   alpha = .35)
     } else
     {
         result <- predict(model, newdata = data, type = "response", se.fit=TRUE, 
                           interval = 'confidence', level = level)
         plot <- plot + geom_ribbon(aes(ymin = result$fit[,'lwr'], 
                                        ymax = result$fit[,'upr']), 
-                                       col = NA, alpha = .35)
+                                   col = NA, alpha = .35)
     }
     plot
 }
@@ -865,15 +935,15 @@ add_pi <- function(plot, data, model, newcat, level = .95, one_line = FALSE)
         result <- predict(model, newdata = data, type = "response", se.fit=TRUE, 
                           interval = 'prediction', level = level)
         plot <- plot + geom_ribbon(aes(ymin = result$fit[,'lwr'], 
-                                       ymax = result$fit[,'upr'], 
-                                       fill = newcat), col = NA, alpha = .35)
+                                       ymax = result$fit[,'upr']), 
+                                   alpha = .35)
     } else
     {
         result <- predict(model, newdata = data, type = "response", se.fit=TRUE,
                           interval = 'prediction', level = level)
         plot <- plot + geom_ribbon(aes(ymin = result$fit[,'lwr'], 
                                        ymax = result$fit[,'upr']), 
-                                       col = NA, alpha = .35)
+                                   col = NA, alpha = .35)
     }
     plot
 }
