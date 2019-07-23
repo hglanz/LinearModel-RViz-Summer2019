@@ -186,11 +186,11 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
         }
         if (ci == TRUE)
         {
-            plot <- add_ci(plot, data,  model, newcat, level = level)
+            plot <- add_ci(plot, data,  model, level = level)
         }
         if (pi == TRUE)
         {
-            plot <- add_pi(plot, data,  model, newcat, level = level)
+            plot <- add_pi(plot, data,  model, level = level)
         }
         if (is.null(title))
         {
@@ -303,11 +303,11 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
         }        
         if (ci == TRUE)
         {
-            plot <- add_ci(plot, data,  model, newcat, level = level)
+            plot <- add_ci(plot, data,  model, level = level)
         }
         if (pi == TRUE)
         {
-            plot <- add_pi(plot, data,  model, newcat, level = level)
+            plot <- add_pi(plot, data,  model, level = level)
         }
         if (is.null(title))
         {
@@ -400,11 +400,11 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE
     }
     if (ci == TRUE)
     {
-        plot <- add_ci(plot, data,  model, newcat, level = level)
+        plot <- add_ci(plot, data,  model, level = level)
     }
     if (pi == TRUE)
     {
-        plot <- add_pi(plot, data,  model, newcat, level = level)
+        plot <- add_pi(plot, data,  model, level = level)
     }
     if (is.null(title))
     {
@@ -476,11 +476,11 @@ rl_poly_same_line <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE,
     }
     if (ci == TRUE)
     {
-        plot <- add_ci(plot, data,  model, newcat, level = level, one_line = TRUE)
+        plot <- add_ci(plot, data,  model, level = level, one_line = TRUE)
     }
     if (pi == TRUE)
     {
-        plot <- add_pi(plot, data,  model, newcat, level = level, one_line = TRUE)
+        plot <- add_pi(plot, data,  model, level = level, one_line = TRUE)
     }
     if (is.null(title))
     {
@@ -541,11 +541,11 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
         
         if (ci == TRUE)
         {
-            plot <- add_ci(plot, data,  model, newcat, level = level)
+            plot <- add_ci(plot, data,  model, level = level)
         }
         if (pi == TRUE)
         {
-            plot <- add_pi(plot, data,  model, newcat, level = level)
+            plot <- add_pi(plot, data,  model, level = level)
         }
         
         if (!plotly)
@@ -645,11 +645,11 @@ rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = 
         
         if (ci == TRUE)
         {
-            plot <- add_ci(plot, data,  model, newcat, level = level)
+            plot <- add_ci(plot, data,  model, level = level)
         }
         if (pi == TRUE)
         {
-            plot <- add_pi(plot, data,  model, newcat, level = level)
+            plot <- add_pi(plot, data,  model, level = level)
         }
         
         if (!plotly)
@@ -749,11 +749,11 @@ rl_same_slope <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
         
         if (ci == TRUE)
         {
-            plot <- add_ci(plot, data,  model, newcat, level = level)
+            plot <- add_ci(plot, data,  model, level = level)
         }
         if (pi == TRUE)
         {
-            plot <- add_pi(plot, data,  model, newcat, level = level)
+            plot <- add_pi(plot, data,  model, level = level)
         }
         
         if (!plotly)
@@ -855,11 +855,11 @@ rl_same_line <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALSE
         
         if (ci == TRUE)
         {
-            plot <- add_ci(plot, data,  model, newcat, level = level, one_line = TRUE)
+            plot <- add_ci(plot, data,  model, level = level, one_line = TRUE)
         }
         if (pi == TRUE)
         {
-            plot <- add_pi(plot, data,  model, newcat, level = level, one_line = TRUE)
+            plot <- add_pi(plot, data,  model, level = level, one_line = TRUE)
         }
         
         if (!plotly)
@@ -908,7 +908,7 @@ rl_same_line <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALSE
 
 
 
-add_ci <- function(plot, data, model, newcat, level = .95, one_line = FALSE)
+add_ci <- function(plot, data, model, level = .95, one_line = FALSE)
 {
     if (!one_line)
     {
@@ -928,7 +928,7 @@ add_ci <- function(plot, data, model, newcat, level = .95, one_line = FALSE)
     plot
 }
 
-add_pi <- function(plot, data, model, newcat, level = .95, one_line = FALSE)
+add_pi <- function(plot, data, model, level = .95, one_line = FALSE)
 {
     if (!one_line)
     {
