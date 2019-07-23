@@ -192,23 +192,18 @@ ggiraph(code=print(p),
              hover_css=hover_css,
              selected_css=selected_css)
 
-xvec <- polydata$x
-yvec <- polydata$y
-interactive_polyline_grob(x = xvec, y = yvec, tooltip = 'I hope this works')
 
-
-xvec <- seq(from = 4, to = 8 , by = ((8-4)/149))
+xvec <- seq(from = min(iris$Sepal.Length), 
+            to = max(iris$Sepal.Length), 
+            by = ((max(iris$Sepal.Length)-min(iris$Sepal.Length))/999))
 
 model <- lm(Sepal.Width ~ Sepal.Length  + I(Sepal.Length^2), data = iris)
 
-yvec <- c(seq(2, 4.5, ((4.5-2)/(149/2))), seq(4.5, 2, -((4.5-2)/(149/2))))
 yvec <- model$coefficients[1] + model$coefficients[2]*xvec + model$coefficients[3]*(xvec^2)
 
 plot <- rl_poly_full_model(data, x, y, cat, 2) + 
-    geom_path_interactive(data = data, 
-                          color = 'black',
-                          aes(
-                              x = xvec,
+    geom_path_interactive(color = 'black',
+                          aes(x = xvec,
                               y = yvec, 
                               tooltip = 'pls work'))
 
@@ -221,4 +216,36 @@ plot <- ggiraph(code=print(plot),
                                         zoom_max=10,
                                         hover_css=hover_css,
                                         selected_css=selected_css)
+plot
+
+
+xvec <- seq(from = min(polydata$x),
+            to = max(polydata$x),
+            by = ((max(polydata$x)-min(polydata$x))/1001))
+model <- lm(y ~ x + I(x^2), data = polydata)
+yvec <- model$coefficients[1] + model$coefficients[2]*xvec+model$coefficients[3]*xvec*xvec
+model6 <- lm(y ~ x + I(x^2) + x:cat + I(x^2):cat + cat, data = polydata)
+
+plot <- ggplot() +
+    geom_point(data = polydata, aes(x = x, y = y, col = cat)) +
+    stat_function(fun=function(x) 
+        model6$coefficients[1] + model6$coefficients[2]*x + 
+            model6$coefficients[3]*x^2, 
+        aes(col = 'A')) + 
+    stat_function(fun=function(x) 
+        model6$coefficients[1] + model$coefficients[4] + model6$coefficients[2]*x + 
+            I(x^2)*model6$coefficients[6]+model6$coefficients[3]*x^2 + model6$coefficients[5]*x, 
+        aes(col = 'B'))  +
+    geom_path_interactive(color = 'black',
+                          aes(x = xvec, y = yvec, tooltip = 'work'))
+
+tooltip_css <- "background-color:white;padding:10px;border-radius:10px 20px 10px 20px;"
+hover_css="r:4px;cursor:pointer;stroke:black;stroke-width:2px;"
+selected_css = "fill:#FF3333;stroke:black;"
+plot <- ggiraph(code=print(plot),
+                tooltip_extra_css=tooltip_css,
+                tooltip_opacity=.75,
+                zoom_max=10,
+                hover_css=hover_css,
+                selected_css=selected_css)
 plot
