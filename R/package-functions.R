@@ -140,11 +140,11 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
             
             if (ci == TRUE)
             {
-                plot <- add_ci(plot, data,  model, x, newcat, level = level)
+                plot <- add_ci_poly(plot, data, x, newcat, model, level = level)
             }
             if (pi == TRUE)
             {
-                plot <- add_pi(plot, data,  model, x, newcat, level = level)
+                plot <- add_pi_poly(plot, data, x, newcat, model, level = level)
             }
             
             if (!plotly)
@@ -382,11 +382,11 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
             
             if (ci == TRUE)
             {
-                plot <- add_ci(plot, data, x, newcat, model, level = level)
+                plot <- add_ci_poly(plot, data, x, newcat, model, level = level)
             }
             if (pi == TRUE)
             {
-                plot <- add_pi(plot, data, x, newcat, model, level = level)
+                plot <- add_pi_poly(plot, data, x, newcat, model, level = level)
             }
             
             if (!plotly)
@@ -558,7 +558,7 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
     plot
 }
 
-rl_poly_same_slope <- function(data, x, y, cat, poly, interactions = poly, plotly = FALSE, ci = FALSE,
+rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE,
                                pi = FALSE, interactive = FALSE, 
                                title = paste(x, 'vs.', y), xlabel = x, ylabel = y, legendTitle = cat, 
                                level = .95)
@@ -574,20 +574,20 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, interactions = poly, plotl
     {
         plot <- ggplot()
         
-        if (ci == TRUE)
-        {
-            plot <- add_ci(plot, data, x, newcat, model, level = level)
-        }
-        if (pi == TRUE)
-        {
-            plot <- add_pi(plot, data, x, newcat, model, level = level)
-        }
-        
         model <- lm(newy ~ poly(newx, degrees = poly, raw = TRUE) + newcat, data = data)
         b <- model$coefficients[1]
         fit <- model$model
         fit$data_id <- rownames(fit)
         data$tooltip <- paste0(fit$data_id, "\n", x, " = ", fit[['I(newx^1)']], "\n", y, " = ", fit[['newy']], "\n", cat, " = ", fit[['newcat']])
+        
+        if (ci == TRUE)
+        {
+            plot <- add_ci_poly(plot, data, x, newcat, model, level = level)
+        }
+        if (pi == TRUE)
+        {
+            plot <- add_pi_poly(plot, data, x, newcat, model, level = level)
+        }
         
         if (!plotly)
         {
@@ -703,37 +703,38 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, interactions = poly, plotl
                 plot <- plot + eval(parse(text = statFunctions[i]))
             }
         }
+        
+        
+        plot <- plot + ggtitle(title) + xlab(xlabel) + ylab(ylabel) + labs(color = legendTitle, fill = legendTitle)
+        
+        if (interactive == TRUE)
+        {
+            tooltip_css <- "background-color:white;padding:10px;border-radius:10px 20px 10px 20px;"
+            hover_css="r:4px;cursor:pointer;stroke:black;stroke-width:2px;"
+            selected_css = "fill:#FF3333;stroke:black;"
+            
+            
+            plot <- ggiraph(code=print(plot),
+                            tooltip_extra_css=tooltip_css,
+                            tooltip_opacity=.75,
+                            zoom_max=10,
+                            hover_css=hover_css,
+                            selected_css=selected_css)
+            
+        } else if (plotly == TRUE)
+        {
+            plot <- ggplotly(plot, names = Species)
+        }
+        
     } else
     {
         stop('Please enter valid parameters')
     }
     
-    plot <- plot + ggtitle(title) + xlab(xlabel) + ylab(ylabel) + labs(color = legendTitle, fill = legendTitle)
-    
-    if (interactive == TRUE)
-    {
-        
-        
-        tooltip_css <- "background-color:white;padding:10px;border-radius:10px 20px 10px 20px;"
-        hover_css="r:4px;cursor:pointer;stroke:black;stroke-width:2px;"
-        selected_css = "fill:#FF3333;stroke:black;"
-        
-        
-        plot <- ggiraph(code=print(plot),
-                        tooltip_extra_css=tooltip_css,
-                        tooltip_opacity=.75,
-                        zoom_max=10,
-                        hover_css=hover_css,
-                        selected_css=selected_css)
-    } else if (plotly == TRUE)
-    {
-        plot <- ggplotly(plot, names = Species)
-    }
-    
     plot
 }
 
-rl_poly_same_line <- function(data, x, y, cat, poly, interactions = poly, plotly = FALSE, ci = FALSE,
+rl_poly_same_line <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE,
                               pi = FALSE, interactive = FALSE, 
                               title = paste(x, 'vs.', y), xlabel = x, ylabel = y, legendTitle = cat, 
                               level = .95)
@@ -751,11 +752,11 @@ rl_poly_same_line <- function(data, x, y, cat, poly, interactions = poly, plotly
         
         if (ci == TRUE)
         {
-            plot <- add_ci(plot, data, x, newcat, model, level = level, one_line = TRUE)
+            plot <- add_ci_poly(plot, data, x, newcat, model, level = level, one_line = TRUE)
         }
         if (pi == TRUE)
         {
-            plot <- add_pi(plot, data, x, newcat, model, level = level, one_line = TRUE)
+            plot <- add_pi_poly(plot, data, x, newcat, model, level = level, one_line = TRUE)
         }
         
         model <- lm(newy ~ poly(newx, degrees = poly, raw = TRUE), data = data)
@@ -860,11 +861,39 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
         
         if (ci == TRUE)
         {
-            plot <- add_ci(plot, data,  model, x, newcat, level = level)
+            for (i in 1:(length(levels(newcat))))
+            {
+                xmin <- min(data[newcat == levels(newcat)[i],][,x])
+                xmax <- max(data[newcat == levels(newcat)[i],][,x])
+                xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
+                newdata <- cbind.data.frame(newx = xval, newcat = levels(newcat)[i])
+                
+                result <- predict(model, newdata, interval = 'confidence', level = level, 
+                                  type = "response", se.fit = TRUE)
+                
+                plot <- plot + geom_ribbon(aes_string(x = xval,
+                                                      ymin = result$fit[,'lwr'], 
+                                                      ymax = result$fit[,'upr']),
+                                           alpha = .35)
+            }
         }
         if (pi == TRUE)
         {
-            plot <- add_pi(plot, data,  model, x, newcat, level = level)
+            for (i in 1:(length(levels(newcat))))
+            {
+                xmin <- min(data[newcat == levels(newcat)[i],][,x])
+                xmax <- max(data[newcat == levels(newcat)[i],][,x])
+                xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
+                newdata <- cbind.data.frame(newx = xval, newcat = levels(newcat)[i])
+                
+                result <- predict(model, newdata, interval = 'prediction', level = level, 
+                                  type = "response", se.fit = TRUE)
+                
+                plot <- plot + geom_ribbon(aes_string(x = xval,
+                                                      ymin = result$fit[,'lwr'], 
+                                                      ymax = result$fit[,'upr']),
+                                           alpha = .35)
+            }
         }
         
         if (!plotly)
@@ -965,11 +994,39 @@ rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = 
         
         if (ci == TRUE)
         {
-            plot <- add_ci(plot, data,  model, x, newcat, level = level)
+            for (i in 1:(length(levels(newcat))))
+            {
+                xmin <- min(data[newcat == levels(newcat)[i],][,x])
+                xmax <- max(data[newcat == levels(newcat)[i],][,x])
+                xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
+                newdata <- cbind.data.frame(newx = xval, newcat = levels(newcat)[i])
+                
+                result <- predict(model, newdata, interval = 'confidence', level = level, 
+                                  type = "response", se.fit = TRUE)
+                
+                plot <- plot + geom_ribbon(aes_string(x = xval,
+                                                      ymin = result$fit[,'lwr'], 
+                                                      ymax = result$fit[,'upr']),
+                                           alpha = .35)
+            }
         }
         if (pi == TRUE)
         {
-            plot <- add_pi(plot, data,  model, x, newcat, level = level)
+            for (i in 1:(length(levels(newcat))))
+            {
+                xmin <- min(data[newcat == levels(newcat)[i],][,x])
+                xmax <- max(data[newcat == levels(newcat)[i],][,x])
+                xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
+                newdata <- cbind.data.frame(newx = xval, newcat = levels(newcat)[i])
+                
+                result <- predict(model, newdata, interval = 'prediction', level = level, 
+                                  type = "response", se.fit = TRUE)
+                
+                plot <- plot + geom_ribbon(aes_string(x = xval,
+                                                      ymin = result$fit[,'lwr'], 
+                                                      ymax = result$fit[,'upr']),
+                                           alpha = .35)
+            }
         }
         
         if (!plotly)
@@ -1070,11 +1127,39 @@ rl_same_slope <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
         
         if (ci == TRUE)
         {
-            plot <- add_ci(plot, data,  model, x, newcat, level = level)
+            for (i in 1:(length(levels(newcat))))
+            {
+                xmin <- min(data[newcat == levels(newcat)[i],][,x])
+                xmax <- max(data[newcat == levels(newcat)[i],][,x])
+                xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
+                newdata <- cbind.data.frame(newx = xval, newcat = levels(newcat)[i])
+                
+                result <- predict(model, newdata, interval = 'confidence', level = level, 
+                                  type = "response", se.fit = TRUE)
+                
+                plot <- plot + geom_ribbon(aes_string(x = xval,
+                                                      ymin = result$fit[,'lwr'], 
+                                                      ymax = result$fit[,'upr']),
+                                           alpha = .35)
+            }
         }
         if (pi == TRUE)
         {
-            plot <- add_pi(plot, data,  model, x, newcat, level = level)
+            for (i in 1:(length(levels(newcat))))
+            {
+                xmin <- min(data[newcat == levels(newcat)[i],][,x])
+                xmax <- max(data[newcat == levels(newcat)[i],][,x])
+                xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
+                newdata <- cbind.data.frame(newx = xval, newcat = levels(newcat)[i])
+                
+                result <- predict(model, newdata, interval = 'prediction', level = level, 
+                                  type = "response", se.fit = TRUE)
+                
+                plot <- plot + geom_ribbon(aes_string(x = xval,
+                                                      ymin = result$fit[,'lwr'], 
+                                                      ymax = result$fit[,'upr']),
+                                           alpha = .35)
+            }
         }
         
         if (!plotly)
@@ -1177,11 +1262,33 @@ rl_same_line <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALSE
         
         if (ci == TRUE)
         {
-            plot <- add_ci(plot, data,  model, x, newcat, level = level)
+            xmin <- min(data[,x])
+            xmax <- max(data[,x])
+            xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
+            newdata <- cbind.data.frame(newx = xval, newcat = levels(newcat)[i])
+                
+            result <- predict(model, newdata, interval = 'confidence', level = level, 
+                              type = "response", se.fit = TRUE)
+            
+            plot <- plot + geom_ribbon(aes_string(x = xval,
+                                                  ymin = result$fit[,'lwr'], 
+                                                  ymax = result$fit[,'upr']),
+                                       alpha = .35)
         }
         if (pi == TRUE)
         {
-            plot <- add_pi(plot, data,  model, x, newcat, level = level)
+            xmin <- min(data[,x])
+            xmax <- max(data[,x])
+            xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
+            newdata <- cbind.data.frame(newx = xval, newcat = levels(newcat)[i])
+            
+            result <- predict(model, newdata, interval = 'prediction', level = level, 
+                              type = "response", se.fit = TRUE)
+            
+            plot <- plot + geom_ribbon(aes_string(x = xval,
+                                                  ymin = result$fit[,'lwr'], 
+                                                  ymax = result$fit[,'upr']),
+                                       alpha = .35)
         }
         
         if (!plotly)
@@ -1194,7 +1301,7 @@ rl_same_line <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALSE
                                                         yend = max(newx)*model$coefficients[2] + model$coefficients[1],
                                                         tooltip = paste(y, '=', x, '*', sprintf("%.3f",model$coefficients[2]), '+', sprintf("%.3f",model$coefficients[1]))))
         } else {
-            plot <- plot + geom_point(data = data, aes(col = newcat)) + 
+            plot <- plot + geom_point(data = data, aes(x = newx, y = newy, col = newcat)) + 
                            geom_segment(aes(x = min(newx),
                                             xend = max(newx),
                                             y = min(newx)*model$coefficients[2] + model$coefficients[1], 
@@ -1216,6 +1323,7 @@ rl_same_line <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALSE
                             zoom_max=10,
                             hover_css=hover_css,
                             selected_css=selected_css)
+            
         } else if (plotly == TRUE)
         {
             plot <- ggplotly(plot)
@@ -1231,7 +1339,7 @@ rl_same_line <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALSE
 
 
 
-add_ci <- function(plot, data, model, x, newcat, level = .95, one_line = FALSE)
+add_ci_poly <- function(plot, data, x, newcat, model, level = .95, one_line = FALSE)
 {
     if (!one_line)
     {
@@ -1244,9 +1352,13 @@ add_ci <- function(plot, data, model, x, newcat, level = .95, one_line = FALSE)
             
             result <- predict(model, newdata, interval = 'confidence', level = level, 
                               type = "response", se.fit = TRUE)
+            
+            ymin <- result$fit[,'lwr']
+            ymax <- result$fit[,'upr']
+            
             plot <- plot + geom_ribbon(aes_string(x = xval,
-                                           ymin = result$fit[,'lwr'], 
-                                           ymax = result$fit[,'upr']),
+                                                  ymin = ymin, 
+                                                  ymax = ymax),
                                        alpha = .35)
         }
     } else
@@ -1258,15 +1370,19 @@ add_ci <- function(plot, data, model, x, newcat, level = .95, one_line = FALSE)
         
         result <- predict(model, newdata, interval = 'confidence', level = level,
                           type = "response", se.fit = TRUE)
+        
+        ymin <- result$fit[,'lwr']
+        ymax <- result$fit[,'upr']
+        
         plot <- plot + geom_ribbon(aes(x = xval,
-                                       ymin = result$fit[,'lwr'], 
-                                       ymax = result$fit[,'upr']), 
+                                       ymin = ymin,
+                                       ymax = ymax),
                                    col = NA, alpha = .35)
     }
     plot
 }
 
-add_pi <- function(plot, data, model, x, newcat, level = .95, one_line = FALSE)
+add_pi_poly <- function(plot, data, x, newcat, model, level = .95, one_line = FALSE)
 {
     if (!one_line)
     {
@@ -1275,13 +1391,17 @@ add_pi <- function(plot, data, model, x, newcat, level = .95, one_line = FALSE)
             xmin <- min(data[newcat == levels(newcat)[i],][,x])
             xmax <- max(data[newcat == levels(newcat)[i],][,x])
             xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
-            newdata <- cbind.data.frame(newx = xval, newcat = levels(newcat)[i])
+            newdata <- data.frame(newx = xval, newcat = levels(newcat)[i])
             
             result <- predict(model, newdata, interval = 'prediction', level = level, 
                               type = "response", se.fit = TRUE)
+            
+            ymin <- result$fit[,'lwr']
+            ymax <- result$fit[,'upr']
+            
             plot <- plot + geom_ribbon(aes_string(x = xval,
-                                                  ymin = result$fit[,'lwr'], 
-                                                  ymax = result$fit[,'upr']),
+                                                  ymin = ymin, 
+                                                  ymax = ymax),
                                        alpha = .35)
         }
     } else
@@ -1293,9 +1413,13 @@ add_pi <- function(plot, data, model, x, newcat, level = .95, one_line = FALSE)
         
         result <- predict(model, newdata, interval = 'prediction', level = level,
                           type = "response", se.fit = TRUE)
+        
+        ymin <- result$fit[,'lwr']
+        ymax <- result$fit[,'upr']
+        
         plot <- plot + geom_ribbon(aes(x = xval,
-                                       ymin = result$fit[,'lwr'], 
-                                       ymax = result$fit[,'upr']), 
+                                       ymin = ymin,
+                                       ymax = ymax),
                                    col = NA, alpha = .35)
     }
     plot
