@@ -29,10 +29,10 @@ rl <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_interce
     }
     if (poly > 1)
     {
-        plot <- rl_polynomial(data, x, y, cat, plotly = plotly, same_slope = same_slope, same_intercept = same_intercept, poly = poly, interactions = interactions, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
+        plot <- rl_polynomial(data, {{x}}, y, cat, plotly = plotly, same_slope = same_slope, same_intercept = same_intercept, poly = poly, interactions = interactions, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
     } else
     {
-        plot <- rl_linear(data, x, y, cat, plotly = plotly, same_slope = same_slope, same_intercept = same_intercept, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
+        plot <- rl_linear(data, {{x}}, y, cat, plotly = plotly, same_slope = same_slope, same_intercept = same_intercept, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
     }
     plot
 }
@@ -49,7 +49,7 @@ rl_linear <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_
     {
         if (same_intercept == FALSE)
         {
-            plot <- rl_full_model(data, x, y, cat, plotly = plotly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
+            plot <- rl_full_model(data, {{x}}, y, cat, plotly = plotly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
         } else 
         {
             plot <- rl_same_intercept(data, x, y, cat, plotly = plotly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
@@ -134,7 +134,10 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
             b <- model$coefficients[1]
             fit <- model$model
             fit$data_id <- rownames(fit)
-            data$tooltip <- paste0(fit$data_id, "\n", x, " = ", fit[['I(newx^1)']], "\n", y, " = ", fit[['newy']], "\n", cat, " = ", fit[['newcat']])
+            data$tooltip <- paste0(fit$data_id, "\n", 
+                                   x, " = ", fit[['I(newx^1)']], "\n", 
+                                   y, " = ", fit[['newy']], "\n", 
+                                   cat, " = ", fit[['newcat']])
             
             plot <- ggplot()
             
@@ -578,7 +581,10 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE
         b <- model$coefficients[1]
         fit <- model$model
         fit$data_id <- rownames(fit)
-        data$tooltip <- paste0(fit$data_id, "\n", x, " = ", fit[['I(newx^1)']], "\n", y, " = ", fit[['newy']], "\n", cat, " = ", fit[['newcat']])
+        data$tooltip <- paste0(fit$data_id, "\n", 
+                               x, " = ", fit[,2][,1], "\n", 
+                               y, " = ", fit[['newy']], "\n", 
+                               cat, " = ", fit[['newcat']])
         
         if (ci == TRUE)
         {
