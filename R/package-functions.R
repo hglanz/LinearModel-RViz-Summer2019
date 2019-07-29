@@ -1,5 +1,6 @@
 library(tidyverse)
 library(plotly)
+library(rlang)
 library(ggiraph)
 
 #data is the data frame. tibbles will work
@@ -29,10 +30,10 @@ rl <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_interce
     }
     if (poly > 1)
     {
-        plot <- rl_polynomial(data, {{x}}, y, cat, plotly = plotly, same_slope = same_slope, same_intercept = same_intercept, poly = poly, interactions = interactions, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
+        plot <- rl_polynomial(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, same_slope = same_slope, same_intercept = same_intercept, poly = poly, interactions = interactions, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
     } else
     {
-        plot <- rl_linear(data, {{x}}, y, cat, plotly = plotly, same_slope = same_slope, same_intercept = same_intercept, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
+        plot <- rl_linear(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, same_slope = same_slope, same_intercept = same_intercept, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
     }
     plot
 }
@@ -49,19 +50,19 @@ rl_linear <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_
     {
         if (same_intercept == FALSE)
         {
-            plot <- rl_full_model(data, {{x}}, y, cat, plotly = plotly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
+            plot <- rl_full_model(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
         } else 
         {
-            plot <- rl_same_intercept(data, x, y, cat, plotly = plotly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
+            plot <- rl_same_intercept(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
         }
     } else
     {
         if (same_intercept == FALSE)
         {
-            plot <- rl_same_slope(data, x, y, cat, plotly = plotly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
+            plot <- rl_same_slope(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
         } else 
         {
-            plot <- rl_same_line(data, x, y, cat, plotly = plotly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
+            plot <- rl_same_line(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
         }
     }
     plot
@@ -79,19 +80,19 @@ rl_polynomial <- function(data, x, y, cat, poly, interactions = poly, plotly = F
     {
         if (same_intercept == FALSE)
         {
-            plot <- rl_poly_full_model(data, x, y, cat, plotly = plotly, poly = poly, interactions = interactions, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
+            plot <- rl_poly_full_model(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, poly = poly, interactions = interactions, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
         } else 
         {
-            plot <- rl_poly_same_intercept(data, x, y, cat, plotly = plotly, poly = poly, interactions = interactions, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
+            plot <- rl_poly_same_intercept(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, poly = poly, interactions = interactions, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
         }
     } else
     {
         if (same_intercept == FALSE)
         {
-            plot <- rl_poly_same_slope(data, x, y, cat, plotly = plotly, poly = poly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
+            plot <- rl_poly_same_slope(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, poly = poly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
         } else 
         {
-            plot <- rl_poly_same_line(data, x, y, cat, plotly = plotly, poly = poly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
+            plot <- rl_poly_same_line(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, poly = poly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
        }
     }
 
@@ -102,7 +103,7 @@ rl_plotly <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_
                       poly = 1, interactions = poly, ci = FALSE, pi = FALSE, interactive = FALSE,
                       title = paste(x, 'vs.', y), xlabel = x, ylabel = y, legendTitle = cat, level = .95)
 {
-    rl(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_intercept = FALSE, poly = 1, interactions = poly, ci = FALSE, pi = FALSE, interactive = FALSE, title = NULL, xlabel = NULL, ylabel = NULL, legendTitle = NULL, level = .95)
+    rl(data, {{x}}, {{y}}, {{cat}}, plotly = FALSE, same_slope = FALSE, same_intercept = FALSE, poly = 1, interactions = poly, ci = FALSE, pi = FALSE, interactive = FALSE, title = NULL, xlabel = NULL, ylabel = NULL, legendTitle = NULL, level = .95)
 }
 
 rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotly = FALSE, ci = FALSE,
@@ -114,9 +115,9 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
     {
         data <- as.data.frame(data)
     }
-    newx <- data[,x]
-    newy <- data[,y]
-    newcat <- as.factor(as.character(data[,cat]))
+    newx <- data %>% pull({{x}})
+    newy <- data%>% pull({{y}})
+    newcat <- as.factor(as.character(data %>% pull({{cat}})))
     if (interactions > 0)
     {
         if (length(newx) == length(newy) && length(newy) == length(newcat))
@@ -143,11 +144,11 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
             
             if (ci == TRUE)
             {
-                plot <- add_ci_poly(plot, data, x, newcat, model, level = level)
+                plot <- add_ci_poly(plot, data, {{x}}, newcat, model, level = level)
             }
             if (pi == TRUE)
             {
-                plot <- add_pi_poly(plot, data, x, newcat, model, level = level)
+                plot <- add_pi_poly(plot, data, {{x}}, newcat, model, level = level)
             }
             
             if (!plotly)
@@ -155,10 +156,10 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
                 xvecs <- list()
                 yvecs <- list()
                 
-                xvecs[[length(levels(newcat))]] <- seq(from = min(data[newcat == levels(newcat)[length(levels(newcat))],][,x]),
-                                                       to = max(data[newcat == levels(newcat)[length(levels(newcat))],][,x]),
-                                                       by = ((max(data[newcat == levels(newcat)[length(levels(newcat))],][,x])-
-                                                                  min(data[newcat == levels(newcat)[length(levels(newcat))],][,x]))/1001))
+                xvecs[[length(levels(newcat))]] <- seq(from = min(data[newcat == levels(newcat)[length(levels(newcat))],]%>% pull({{x}})),
+                                                       to = max(data[newcat == levels(newcat)[length(levels(newcat))],]%>% pull({{x}})),
+                                                       by = ((max(data[newcat == levels(newcat)[length(levels(newcat))],]%>% pull({{x}}))-
+                                                                  min(data[newcat == levels(newcat)[length(levels(newcat))],]%>% pull({{x}})))/1001))
                 
                 slopeString <- ''
                 for (i in 1:poly)
@@ -236,10 +237,10 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
                 
                 for (i in 1:(length(levels(newcat))-1))
                 {
-                    xvecs[[i]] <- seq(from = min(data[newcat == levels(newcat)[i],][,x]),
-                                      to = max(data[newcat == levels(newcat)[i],][,x]),
-                                      by = (max(data[newcat == levels(newcat)[i],][,x])-
-                                                min(data[newcat == levels(newcat)[i],][,x]))/1001)
+                    xvecs[[i]] <- seq(from = min(data[newcat == levels(newcat)[i],]%>% pull({{x}})),
+                                      to = max(data[newcat == levels(newcat)[i],]%>% pull({{x}})),
+                                      by = (max(data[newcat == levels(newcat)[i],]%>% pull({{x}}))-
+                                                min(data[newcat == levels(newcat)[i],]%>% pull({{x}})))/1001)
                     
                     interactionsString <- ''
                     for (j in 1:interactions)
@@ -281,8 +282,8 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
                     geom_point(data = data, aes(x = newx, y = newy, col = newcat)) +
                     stat_function(fun = function(x) b + catEff + eval(parse(text = slopeString)),
                                   aes(col = levels(newcat)[length(levels(newcat))]),
-                                  xlim = c(min(data[data[,cat] == levels(newcat)[length(levels(newcat))],][,x]),
-                                           max(data[data[,cat] == levels(newcat)[length(levels(newcat))],][,x])))
+                                  xlim = c(min(data[data %>% pull({{cat}}) == levels(newcat)[length(levels(newcat))],]%>% pull({{x}})),
+                                           max(data[data %>% pull({{cat}}) == levels(newcat)[length(levels(newcat))],]%>% pull({{x}}))))
                 
                 statFunctions <- list()
                 catEffects <- list()
@@ -306,9 +307,9 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
                                                     j, ")']*x^", j, sep = '')
                     }
                     statFunctions[[i]] <- paste(statFunctions[[i]], 
-                                                ', xlim = c(min(data[data[,cat] == levels(newcat)[', i,
-                                                '],][,x]),max(data[data[,cat] == levels(newcat)[', i, 
-                                                '],][,x])))', sep = '')
+                                                ', xlim = c(min(data[data %>% pull({{cat}}) == levels(newcat)[', i,
+                                                '],]%>% pull({{x}})),max(data[data %>% pull({{cat}}) == levels(newcat)[', i, 
+                                                '],]%>% pull({{x}}))))', sep = '')
                 }
                 
                 for (i in 1:(length(levels(newcat))-1))
@@ -359,9 +360,9 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
     {
         data <- as.data.frame(data)
     }
-    newx <- data[,x]
-    newy <- data[,y]
-    newcat <- as.factor(as.character(data[,cat]))
+    newx <- data %>% pull({{x}})
+    newy <- data %>% pull({{y}})
+    newcat <- as.factor(as.character(data %>% pull({{cat}})))
     if (interactions > 0)
     {
         if (length(newx) == length(newy) && length(newy) == length(newcat))
@@ -385,11 +386,11 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
             
             if (ci == TRUE)
             {
-                plot <- add_ci_poly(plot, data, x, newcat, model, level = level)
+                plot <- add_ci_poly(plot, data, {{x}}, newcat, model, level = level)
             }
             if (pi == TRUE)
             {
-                plot <- add_pi_poly(plot, data, x, newcat, model, level = level)
+                plot <- add_pi_poly(plot, data, {{x}}, newcat, model, level = level)
             }
             
             if (!plotly)
@@ -397,10 +398,10 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
                 xvecs <- list()
                 yvecs <- list()
                 
-                xvecs[[length(levels(newcat))]] <- seq(from = min(data[newcat == levels(newcat)[length(levels(newcat))],][,x]),
-                                                       to = max(data[newcat == levels(newcat)[length(levels(newcat))],][,x]),
-                                                       by = ((max(data[newcat == levels(newcat)[length(levels(newcat))],][,x])-
-                                                                  min(data[newcat == levels(newcat)[length(levels(newcat))],][,x]))/1001))
+                xvecs[[length(levels(newcat))]] <- seq(from = min(data[newcat == levels(newcat)[length(levels(newcat))],]%>% pull({{x}})),
+                                                       to = max(data[newcat == levels(newcat)[length(levels(newcat))],]%>% pull({{x}})),
+                                                       by = ((max(data[newcat == levels(newcat)[length(levels(newcat))],]%>% pull({{x}}))-
+                                                                  min(data[newcat == levels(newcat)[length(levels(newcat))],]%>% pull({{x}})))/1001))
                 
                 slopeString <- ''
                 for (i in 1:poly)
@@ -469,10 +470,10 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
                 
                 for (i in 1:(length(levels(newcat))-1))
                 {
-                    xvecs[[i]] <- seq(from = min(data[newcat == levels(newcat)[i],][,x]),
-                                      to = max(data[newcat == levels(newcat)[i],][,x]),
-                                      by = (max(data[newcat == levels(newcat)[i],][,x])-
-                                                min(data[newcat == levels(newcat)[i],][,x]))/1001)
+                    xvecs[[i]] <- seq(from = min(data[newcat == levels(newcat)[i],]%>% pull({{x}})),
+                                      to = max(data[newcat == levels(newcat)[i],]%>% pull({{x}})),
+                                      by = (max(data[newcat == levels(newcat)[i],]%>% pull({{x}}))-
+                                                min(data[newcat == levels(newcat)[i],]%>% pull({{x}})))/1001)
                     
                     interactionsString <- ''
                     for (j in 1:interactions)
@@ -502,8 +503,8 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
                     geom_point() +
                     stat_function(fun = function(x) b + eval(parse(text = slopeString)),
                                   aes(col = levels(newcat)[length(levels(newcat))]),
-                                  xlim = c(min(data[data[,cat] == levels(newcat)[length(levels(newcat))],][,x]),
-                                           max(data[data[,cat] == levels(newcat)[length(levels(newcat))],][,x])))
+                                  xlim = c(min(data[data %>% pull({{cat}}) == levels(newcat)[length(levels(newcat))],]%>% pull({{x}})),
+                                           max(data[data %>% pull({{cat}}) == levels(newcat)[length(levels(newcat))],]%>% pull({{x}}))))
                 
                 statFunctions <- list()
                 for (i in 1:(length(levels(newcat))-1))
@@ -518,9 +519,9 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
                                                     j, ")']*x^", j, sep = '')
                     }
                     statFunctions[[i]] <- paste(statFunctions[[i]], 
-                                                ', xlim = c(min(data[data[,cat] == levels(newcat)[', i,
-                                                '],][,x]),max(data[data[,cat] == levels(newcat)[', i, 
-                                                '],][,x])))', sep = '')            
+                                                ', xlim = c(min(data[data %>% pull({{cat}}) == levels(newcat)[', i,
+                                                '],]%>% pull({{x}})),max(data[data %>% pull({{cat}}) == levels(newcat)[', i, 
+                                                '],]%>% pull({{x}}))))', sep = '')            
                 }
                 
                 for (i in 1:(length(levels(newcat))-1))
@@ -570,9 +571,9 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE
     {
         data <- as.data.frame(data)
     }
-    newx <- data[,x]
-    newy <- data[,y]
-    newcat <- as.factor(as.character(data[,cat]))
+    newx <- data %>% pull({{x}})
+    newy <- data %>% pull({{y}})
+    newcat <- as.factor(as.character(data %>% pull({{cat}})))
     if (length(newx) == length(newy) && length(newy) == length(newcat))
     {
         plot <- ggplot()
@@ -588,11 +589,11 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE
         
         if (ci == TRUE)
         {
-            plot <- add_ci_poly(plot, data, x, newcat, model, level = level)
+            plot <- add_ci_poly(plot, data, {{x}}, newcat, model, level = level)
         }
         if (pi == TRUE)
         {
-            plot <- add_pi_poly(plot, data, x, newcat, model, level = level)
+            plot <- add_pi_poly(plot, data, {{x}}, newcat, model, level = level)
         }
         
         if (!plotly)
@@ -600,10 +601,10 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE
             xvecs <- list()
             yvecs <- list()
             
-            xvecs[[length(levels(newcat))]] <- seq(from = min(data[newcat == levels(newcat)[length(levels(newcat))],][,x]),
-                                                   to = max(data[newcat == levels(newcat)[length(levels(newcat))],][,x]),
-                                                   by = ((max(data[newcat == levels(newcat)[length(levels(newcat))],][,x])-
-                                                              min(data[newcat == levels(newcat)[length(levels(newcat))],][,x]))/1001))
+            xvecs[[length(levels(newcat))]] <- seq(from = min(data[newcat == levels(newcat)[length(levels(newcat))],]%>% pull({{x}})),
+                                                   to = max(data[newcat == levels(newcat)[length(levels(newcat))],]%>% pull({{x}})),
+                                                   by = ((max(data[newcat == levels(newcat)[length(levels(newcat))],]%>% pull({{x}}))-
+                                                              min(data[newcat == levels(newcat)[length(levels(newcat))],]%>% pull({{x}})))/1001))
             
             slopeString <- ''
             for (i in 1:poly)
@@ -656,10 +657,10 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE
             
             for (i in 1:(length(levels(newcat))-1))
             {
-                xvecs[[i]] <- seq(from = min(data[newcat == levels(newcat)[i],][,x]),
-                                  to = max(data[newcat == levels(newcat)[i],][,x]),
-                                  by = (max(data[newcat == levels(newcat)[i],][,x])-
-                                            min(data[newcat == levels(newcat)[i],][,x]))/1001)
+                xvecs[[i]] <- seq(from = min(data[newcat == levels(newcat)[i],]%>% pull({{x}})),
+                                  to = max(data[newcat == levels(newcat)[i],]%>% pull({{x}})),
+                                  by = (max(data[newcat == levels(newcat)[i],]%>% pull({{x}}))-
+                                            min(data[newcat == levels(newcat)[i],]%>% pull({{x}})))/1001)
                 
                 if (i == 1)
                 {
@@ -691,17 +692,17 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE
             plot <- geom_point(data = data, aes(x = newx, y = newy, col = newcat)) +
                 stat_function(fun = function(x) b + eval(parse(text = slopeString)),
                               aes(col = levels(newcat)[1]),
-                              xlim = c(min(data[data[,cat] == levels(newcat)[1],][,x]),
-                                       max(data[data[,cat] == levels(newcat)[1],][,x])))
+                              xlim = c(min(data[data %>% pull({{cat}}) == levels(newcat)[1],]%>% pull({{x}})),
+                                       max(data[data %>% pull({{cat}}) == levels(newcat)[1],]%>% pull({{x}}))))
             
             statFunctions <- list()
             for (i in 1:(length(levels(newcat))-1))
             {
                 statFunctions[i] <- paste("stat_function(fun = function(x) b + eval(parse(text = slopeString)) + model$coefficients[", i, "+1+", poly, "], aes(col = (levels(newcat)[", i, "+1]))")
                 statFunctions[i] <- paste(statFunctions[i], 
-                                          ', xlim = c(min(data[data[,cat] == levels(newcat)[1+', i,
-                                          '],][,x]),max(data[data[,cat] == levels(newcat)[1+', i, 
-                                          '],][,x])))', sep = '')
+                                          ', xlim = c(min(data[data %>% pull({{cat}}) == levels(newcat)[1+', i,
+                                          '],]%>% pull({{x}})),max(data[data %>% pull({{cat}}) == levels(newcat)[1+', i, 
+                                          '],]%>% pull({{x}}))))', sep = '')
             }
             
             for (i in 1:(length(levels(newcat))-1))
@@ -749,20 +750,20 @@ rl_poly_same_line <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE,
     {
         data <- as.data.frame(data)
     }
-    newx <- data[,x]
-    newy <- data[,y]
-    newcat <- as.factor(as.character(data[,cat]))
+    newx <- data %>% pull({{x}})
+    newy <- data %>% pull({{y}})
+    newcat <- as.factor(as.character(data %>% pull({{cat}})))
     if (length(newx) == length(newy) && length(newy) == length(newcat))
     {
         plot <- ggplot()
         
         if (ci == TRUE)
         {
-            plot <- add_ci_poly(plot, data, x, newcat, model, level = level, one_line = TRUE)
+            plot <- add_ci_poly(plot, data, {{x}}, newcat, model, level = level, one_line = TRUE)
         }
         if (pi == TRUE)
         {
-            plot <- add_pi_poly(plot, data, x, newcat, model, level = level, one_line = TRUE)
+            plot <- add_pi_poly(plot, data, {{x}}, newcat, model, level = level, one_line = TRUE)
         }
         
         model <- lm(newy ~ poly(newx, degrees = poly, raw = TRUE), data = data)
@@ -851,9 +852,9 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
     {
         data <- as.data.frame(data)
     }
-    newx <- data[,x]
-    newy <- data[,y]
-    newcat <- as.factor(as.character(data[,cat]))
+    newx <- data %>% pull({{x}})
+    newy <- data %>% pull({{y}})
+    newcat <- as.factor(as.character(data %>% pull({{cat}})))
     if (length(newx) == length(newy) && length(newy) == length(newcat))
     {
         model <- lm(newy ~ newx * newcat, data = data)
@@ -869,8 +870,8 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
         {
             for (i in 1:(length(levels(newcat))))
             {
-                xmin <- min(data[newcat == levels(newcat)[i],][,x])
-                xmax <- max(data[newcat == levels(newcat)[i],][,x])
+                xmin <- min(data[newcat == levels(newcat)[i],] %>% pull({{x}}))
+                xmax <- max(data[newcat == levels(newcat)[i],] %>% pull({{x}}))
                 xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
                 newdata <- cbind.data.frame(newx = xval, newcat = levels(newcat)[i])
                 
@@ -887,8 +888,8 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
         {
             for (i in 1:(length(levels(newcat))))
             {
-                xmin <- min(data[newcat == levels(newcat)[i],][,x])
-                xmax <- max(data[newcat == levels(newcat)[i],][,x])
+                xmin <- min(data[newcat == levels(newcat)[i],]%>% pull({{x}}))
+                xmax <- max(data[newcat == levels(newcat)[i],]%>% pull({{x}}))
                 xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
                 newdata <- cbind.data.frame(newx = xval, newcat = levels(newcat)[i])
                 
@@ -906,10 +907,10 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
         {
             plot <- plot + geom_point_interactive(data = data, 
                                                   aes(x = newx, y = newy, col = newcat, tooltip = tooltip))  +
-                geom_segment_interactive(aes(x = min(data[newcat == levels(newcat)[1],][,x]),
-                                             xend = max(data[newcat == levels(newcat)[1],][,x]),
-                                             y = min(data[newcat == levels(newcat)[1],][,x])*m+b,
-                                             yend = max(data[newcat == levels(newcat)[1],][,x])*m+b,
+                geom_segment_interactive(aes(x = min(data[newcat == levels(newcat)[1],]%>% pull({{x}})),
+                                             xend = max(data[newcat == levels(newcat)[1],]%>% pull({{x}})),
+                                             y = min(data[newcat == levels(newcat)[1],]%>% pull({{x}}))*m+b,
+                                             yend = max(data[newcat == levels(newcat)[1],]%>% pull({{x}}))*m+b,
                                              color = levels(newcat)[1],
                                              tooltip = paste(levels(newcat)[1], '\n ', y, '=', sprintf('%.3f',m), 
                                                              '*', x, '+', sprintf('%.3f',b), sep = ' ')))
@@ -922,10 +923,10 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
 
             for (i in 1:(length(levels(newcat))-1))
             {
-                plot <- plot + geom_segment_interactive(aes_string(x = min(data[newcat == levels(newcat)[i+1],][,x]),
-                                                                   xend = max(data[newcat == levels(newcat)[i+1],][,x]),
-                                                                   y = min(data[newcat == levels(newcat)[i+1],][,x])*(m+model$coefficients[i+length(levels(newcat))+1])+b+model$coefficients[i+2],
-                                                                   yend = max(data[newcat == levels(newcat)[i+1],][,x])*(m+model$coefficients[i+length(levels(newcat))+1])+b+model$coefficients[i+2],
+                plot <- plot + geom_segment_interactive(aes_string(x = min(data[newcat == levels(newcat)[i+1],]%>% pull({{x}})),
+                                                                   xend = max(data[newcat == levels(newcat)[i+1],]%>% pull({{x}})),
+                                                                   y = min(data[newcat == levels(newcat)[i+1],]%>% pull({{x}}))*(m+model$coefficients[i+length(levels(newcat))+1])+b+model$coefficients[i+2],
+                                                                   yend = max(data[newcat == levels(newcat)[i+1],]%>% pull({{x}}))*(m+model$coefficients[i+length(levels(newcat))+1])+b+model$coefficients[i+2],
                                                                    color = shQuote(levels(newcat)[i+1])),
                                                         tooltip = tooltips[i+1])
             }
@@ -933,18 +934,18 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
         } else
         {
             plot <- plot + geom_point()  +
-                geom_segment(aes(x = min(data[newcat == levels(newcat)[1],][,x]),
-                                 xend = max(data[newcat == levels(newcat)[1],][,x]),
-                                 y = min(data[newcat == levels(newcat)[1],][,x])*m+b,
-                                 yend = max(data[newcat == levels(newcat)[1],][,x])*m+b,
+                geom_segment(aes(x = min(data[newcat == levels(newcat)[1],]%>% pull({{x}})),
+                                 xend = max(data[newcat == levels(newcat)[1],]%>% pull({{x}})),
+                                 y = min(data[newcat == levels(newcat)[1],]%>% pull({{x}}))*m+b,
+                                 yend = max(data[newcat == levels(newcat)[1],]%>% pull({{x}}))*m+b,
                                  color = levels(newcat)[1]))
             
             for (i in 1:(length(levels(newcat))-1))
             {
-                plot <- plot + geom_segment(aes_string(x = min(data[newcat == levels(newcat)[i+1],][,x]),
-                                                                   xend = max(data[newcat == levels(newcat)[i+1],][,x]),
-                                                                   y = min(data[newcat == levels(newcat)[i+1],][,x])*(m+model$coefficients[i+length(levels(newcat))+1])+b+model$coefficients[i+2],
-                                                                   yend = max(data[newcat == levels(newcat)[i+1],][,x])*(m+model$coefficients[i+length(levels(newcat))+1])+b+model$coefficients[i+2],
+                plot <- plot + geom_segment(aes_string(x = min(data[newcat == levels(newcat)[i+1],]%>% pull({{x}})),
+                                                                   xend = max(data[newcat == levels(newcat)[i+1],]%>% pull({{x}})),
+                                                                   y = min(data[newcat == levels(newcat)[i+1],]%>% pull({{x}}))*(m+model$coefficients[i+length(levels(newcat))+1])+b+model$coefficients[i+2],
+                                                                   yend = max(data[newcat == levels(newcat)[i+1],]%>% pull({{x}}))*(m+model$coefficients[i+length(levels(newcat))+1])+b+model$coefficients[i+2],
                                                                    color = shQuote(levels(newcat)[i+1])))   
             }
         }
@@ -984,9 +985,9 @@ rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = 
     {
         data <- as.data.frame(data)
     }
-    newx <- data[,x]
-    newy <- data[,y]
-    newcat <- as.factor(as.character(data[,cat]))
+    newx <- data %>% pull({{x}})
+    newy <- data %>% pull({{y}})
+    newcat <- as.factor(as.character(data %>% pull({{cat}})))
     if (length(newx) == length(newy) && length(newy) == length(newcat))
     {
         model <- lm(newy ~ newx + newx:newcat, data = data)
@@ -1002,8 +1003,8 @@ rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = 
         {
             for (i in 1:(length(levels(newcat))))
             {
-                xmin <- min(data[newcat == levels(newcat)[i],][,x])
-                xmax <- max(data[newcat == levels(newcat)[i],][,x])
+                xmin <- min(data[newcat == levels(newcat)[i],]%>% pull({{x}}))
+                xmax <- max(data[newcat == levels(newcat)[i],]%>% pull({{x}}))
                 xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
                 newdata <- cbind.data.frame(newx = xval, newcat = levels(newcat)[i])
                 
@@ -1020,8 +1021,8 @@ rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = 
         {
             for (i in 1:(length(levels(newcat))))
             {
-                xmin <- min(data[newcat == levels(newcat)[i],][,x])
-                xmax <- max(data[newcat == levels(newcat)[i],][,x])
+                xmin <- min(data[newcat == levels(newcat)[i],]%>% pull({{x}}))
+                xmax <- max(data[newcat == levels(newcat)[i],]%>% pull({{x}}))
                 xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
                 newdata <- cbind.data.frame(newx = xval, newcat = levels(newcat)[i])
                 
@@ -1039,10 +1040,10 @@ rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = 
         {
             plot <- plot + geom_point_interactive(data = data, 
                                                   aes(x = newx, y = newy, col = newcat, tooltip = tooltip)) + 
-                geom_segment_interactive(aes(x = min(data[newcat == levels(newcat)[1],][,x]),
-                                             xend = max(data[newcat == levels(newcat)[1],][,x]),
-                                             y = b+m*min(data[newcat == levels(newcat)[1],][,x]),
-                                             yend = b+m*max(data[newcat == levels(newcat)[1],][,x]),
+                geom_segment_interactive(aes(x = min(data[newcat == levels(newcat)[1],]%>% pull({{x}})),
+                                             xend = max(data[newcat == levels(newcat)[1],]%>% pull({{x}})),
+                                             y = b+m*min(data[newcat == levels(newcat)[1],]%>% pull({{x}})),
+                                             yend = b+m*max(data[newcat == levels(newcat)[1],]%>% pull({{x}})),
                                              color = levels(newcat)[1],
                                              tooltip = paste(levels(newcat)[1], '\n ', y, '=', sprintf('%.3f',m), '*', x, '+', sprintf('%.3f',b), sep = ' ')))
         
@@ -1055,28 +1056,28 @@ rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = 
         
             for (i in 1:(length(levels(newcat))-1))
             {
-                plot <- plot + geom_segment_interactive(aes_string(x = min(data[newcat == levels(newcat)[i+1],][,x]),
-                                                                   xend = max(data[newcat == levels(newcat)[i+1],][,x]),
-                                                                   y = b+(model$coefficients[i+2]+m)*min(data[newcat == levels(newcat)[i+1],][,x]),
-                                                                   yend = b+(model$coefficients[i+2]+m)*max(data[newcat == levels(newcat)[i+1],][,x]),
+                plot <- plot + geom_segment_interactive(aes_string(x = min(data[newcat == levels(newcat)[i+1],]%>% pull({{x}})),
+                                                                   xend = max(data[newcat == levels(newcat)[i+1],]%>% pull({{x}})),
+                                                                   y = b+(model$coefficients[i+2]+m)*min(data[newcat == levels(newcat)[i+1],]%>% pull({{x}})),
+                                                                   yend = b+(model$coefficients[i+2]+m)*max(data[newcat == levels(newcat)[i+1],]%>% pull({{x}})),
                                                                    color = shQuote(levels(newcat)[1+i])),
                                                         tooltip = tooltips[[i+1]])
             }
         } else
         {
             plot <- plot + geom_point() + 
-                geom_segment(aes(x = min(data[newcat == levels(newcat)[1],][,x]),
-                                             xend = max(data[newcat == levels(newcat)[1],][,x]),
-                                             y = b+m*min(data[newcat == levels(newcat)[1],][,x]),
-                                             yend = b+m*max(data[newcat == levels(newcat)[1],][,x]),
+                geom_segment(aes(x = min(data[newcat == levels(newcat)[1],]%>% pull({{x}})),
+                                             xend = max(data[newcat == levels(newcat)[1],]%>% pull({{x}})),
+                                             y = b+m*min(data[newcat == levels(newcat)[1],]%>% pull({{x}})),
+                                             yend = b+m*max(data[newcat == levels(newcat)[1],]%>% pull({{x}})),
                                              color = levels(newcat)[1]))
             
             for (i in 1:(length(levels(newcat))-1))
             {
-                plot <- plot + geom_segment(aes_string(x = min(data[newcat == levels(newcat)[i+1],][,x]),
-                                                                   xend = max(data[newcat == levels(newcat)[i+1],][,x]),
-                                                                   y = b+(model$coefficients[i+2]+m)*min(data[newcat == levels(newcat)[i+1],][,x]),
-                                                                   yend = b+(model$coefficients[i+2]+m)*max(data[newcat == levels(newcat)[i+1],][,x]),
+                plot <- plot + geom_segment(aes_string(x = min(data[newcat == levels(newcat)[i+1],]%>% pull({{x}})),
+                                                                   xend = max(data[newcat == levels(newcat)[i+1],]%>% pull({{x}})),
+                                                                   y = b+(model$coefficients[i+2]+m)*min(data[newcat == levels(newcat)[i+1],]%>% pull({{x}})),
+                                                                   yend = b+(model$coefficients[i+2]+m)*max(data[newcat == levels(newcat)[i+1],]%>% pull({{x}})),
                                                                    color = shQuote(levels(newcat)[1+i])))
             }
         }
@@ -1116,9 +1117,9 @@ rl_same_slope <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
     {
         data <- as.data.frame(data)
     }
-    newx <- data[,x]
-    newy <- data[,y]
-    newcat <- as.factor(as.character(data[,cat]))
+    newx <- data %>% pull({{x}})
+    newy <- data %>% pull({{y}})
+    newcat <- as.factor(as.character(data %>% pull({{cat}})))
     
     if (length(newx) == length(newy) && length(newy) == length(newcat))
     {
@@ -1135,8 +1136,8 @@ rl_same_slope <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
         {
             for (i in 1:(length(levels(newcat))))
             {
-                xmin <- min(data[newcat == levels(newcat)[i],][,x])
-                xmax <- max(data[newcat == levels(newcat)[i],][,x])
+                xmin <- min(data[newcat == levels(newcat)[i],]%>% pull({{x}}))
+                xmax <- max(data[newcat == levels(newcat)[i],]%>% pull({{x}}))
                 xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
                 newdata <- cbind.data.frame(newx = xval, newcat = levels(newcat)[i])
                 
@@ -1153,8 +1154,8 @@ rl_same_slope <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
         {
             for (i in 1:(length(levels(newcat))))
             {
-                xmin <- min(data[newcat == levels(newcat)[i],][,x])
-                xmax <- max(data[newcat == levels(newcat)[i],][,x])
+                xmin <- min(data[newcat == levels(newcat)[i],]%>% pull({{x}}))
+                xmax <- max(data[newcat == levels(newcat)[i],]%>% pull({{x}}))
                 xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
                 newdata <- cbind.data.frame(newx = xval, newcat = levels(newcat)[i])
                 
@@ -1172,10 +1173,10 @@ rl_same_slope <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
         {
             plot <- plot + geom_point_interactive(data = data, 
                                                   aes(x = newx, y = newy, col = newcat, tooltip = tooltip)) + 
-                           geom_segment_interactive(aes(x = min(data[newcat == levels(newcat)[1],][,x]),
-                                                        xend = max(data[newcat == levels(newcat)[1],][,x]),
-                                                        y = min(data[newcat == levels(newcat)[1],][,x])*m+b,
-                                                        yend = max(data[newcat == levels(newcat)[1],][,x])*m+b,
+                           geom_segment_interactive(aes(x = min(data[newcat == levels(newcat)[1],]%>% pull({{x}})),
+                                                        xend = max(data[newcat == levels(newcat)[1],]%>% pull({{x}})),
+                                                        y = min(data[newcat == levels(newcat)[1],]%>% pull({{x}}))*m+b,
+                                                        yend = max(data[newcat == levels(newcat)[1],]%>% pull({{x}}))*m+b,
                                                         color = levels(newcat)[1]),
                                                     tooltip = paste(levels(newcat)[1], '\n ', y, '=', sprintf('%.3f',m), '*', x, '+', sprintf('%.3f',b), sep = ' '))
             tooltips <- list()
@@ -1186,10 +1187,10 @@ rl_same_slope <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
         
             for (i in 1:(length(levels(newcat))-1))
             {
-                plot <- plot + geom_segment_interactive(aes_string(x = min(data[newcat == levels(newcat)[1+i],][,x]),
-                                                                   xend = max(data[newcat == levels(newcat)[1+i],][,x]),
-                                                                   y = min(data[newcat == levels(newcat)[1+i],][,x])*m+model$coefficients[2+i]+b,
-                                                                   yend = max(data[newcat == levels(newcat)[1+i],][,x])*m+model$coefficients[2+i]+b,
+                plot <- plot + geom_segment_interactive(aes_string(x = min(data[newcat == levels(newcat)[1+i],]%>% pull({{x}})),
+                                                                   xend = max(data[newcat == levels(newcat)[1+i],]%>% pull({{x}})),
+                                                                   y = min(data[newcat == levels(newcat)[1+i],]%>% pull({{x}}))*m+model$coefficients[2+i]+b,
+                                                                   yend = max(data[newcat == levels(newcat)[1+i],]%>% pull({{x}}))*m+model$coefficients[2+i]+b,
                                                                    color = shQuote(levels(newcat)[1+i])),
                                                         tooltip = tooltips[[i+1]])
             }
@@ -1197,18 +1198,18 @@ rl_same_slope <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
         {
             {
                 plot <- plot + geom_point() + 
-                    geom_segment(aes(x = min(data[newcat == levels(newcat)[1],][,x]),
-                                                 xend = max(data[newcat == levels(newcat)[1],][,x]),
-                                                 y = min(data[newcat == levels(newcat)[1],][,x])*m+b,
-                                                 yend = max(data[newcat == levels(newcat)[1],][,x])*m+b,
+                    geom_segment(aes(x = min(data[newcat == levels(newcat)[1],]%>% pull({{x}})),
+                                                 xend = max(data[newcat == levels(newcat)[1],]%>% pull({{x}})),
+                                                 y = min(data[newcat == levels(newcat)[1],]%>% pull({{x}}))*m+b,
+                                                 yend = max(data[newcat == levels(newcat)[1],]%>% pull({{x}}))*m+b,
                                                  color = levels(newcat)[1]))
                 
                 for (i in 1:(length(levels(newcat))-1))
                 {
-                    plot <- plot + geom_segment(aes_string(x = min(data[newcat == levels(newcat)[1+i],][,x]),
-                                                                       xend = max(data[newcat == levels(newcat)[1+i],][,x]),
-                                                                       y = min(data[newcat == levels(newcat)[1+i],][,x])*m+model$coefficients[2+i]+b,
-                                                                       yend = max(data[newcat == levels(newcat)[1+i],][,x])*m+model$coefficients[2+i]+b,
+                    plot <- plot + geom_segment(aes_string(x = min(data[newcat == levels(newcat)[1+i],]%>% pull({{x}})),
+                                                                       xend = max(data[newcat == levels(newcat)[1+i],]%>% pull({{x}})),
+                                                                       y = min(data[newcat == levels(newcat)[1+i],]%>% pull({{x}}))*m+model$coefficients[2+i]+b,
+                                                                       yend = max(data[newcat == levels(newcat)[1+i],]%>% pull({{x}}))*m+model$coefficients[2+i]+b,
                                                                        color = shQuote(levels(newcat)[1+i])))
                 }
             }
@@ -1252,9 +1253,9 @@ rl_same_line <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALSE
     {
         data <- as.data.frame(data)
     }
-    newx <- data[,x]
-    newy <- data[,y]
-    newcat <- as.factor(as.character(data[,cat]))
+    newx <- data %>% pull({{x}})
+    newy <- data %>% pull({{y}})
+    newcat <- as.factor(as.character(data %>% pull({{cat}})))
     if (length(newx) == length(newy) && length(newy) == length(newcat))
     {
         model <- lm(newy ~ newx, data = data)
@@ -1268,8 +1269,8 @@ rl_same_line <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALSE
         
         if (ci == TRUE)
         {
-            xmin <- min(data[,x])
-            xmax <- max(data[,x])
+            xmin <- min(data %>% pull({{x}}))
+            xmax <- max(data %>% pull({{x}}))
             xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
             newdata <- cbind.data.frame(newx = xval, newcat = levels(newcat)[i])
                 
@@ -1283,8 +1284,8 @@ rl_same_line <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALSE
         }
         if (pi == TRUE)
         {
-            xmin <- min(data[,x])
-            xmax <- max(data[,x])
+            xmin <- min(data %>% pull({{x}}))
+            xmax <- max(data %>% pull({{x}}))
             xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
             newdata <- cbind.data.frame(newx = xval, newcat = levels(newcat)[i])
             
@@ -1351,8 +1352,8 @@ add_ci_poly <- function(plot, data, x, newcat, model, level = .95, one_line = FA
     {
         for (i in 1:(length(levels(newcat))))
         {
-            xmin <- min(data[newcat == levels(newcat)[i],][,x])
-            xmax <- max(data[newcat == levels(newcat)[i],][,x])
+            xmin <- min(data[newcat == levels(newcat)[i],]%>% pull({{x}}))
+            xmax <- max(data[newcat == levels(newcat)[i],]%>% pull({{x}}))
             xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
             newdata <- data.frame(newx = xval, newcat = levels(newcat)[i])
             
@@ -1369,8 +1370,8 @@ add_ci_poly <- function(plot, data, x, newcat, model, level = .95, one_line = FA
         }
     } else
     {
-        xmin <- min(data[,x])
-        xmax <- max(data[,x])
+        xmin <- min(data %>% pull({{x}}))
+        xmax <- max(data %>% pull({{x}}))
         xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
         newdata <- cbind.data.frame(newx = xval)
         
@@ -1394,8 +1395,8 @@ add_pi_poly <- function(plot, data, x, newcat, model, level = .95, one_line = FA
     {
         for (i in 1:(length(levels(newcat))))
         {
-            xmin <- min(data[newcat == levels(newcat)[i],][,x])
-            xmax <- max(data[newcat == levels(newcat)[i],][,x])
+            xmin <- min(data[newcat == levels(newcat)[i],] %>% pull({{x}}))
+            xmax <- max(data[newcat == levels(newcat)[i],] %>% pull({{x}}))
             xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
             newdata <- data.frame(newx = xval, newcat = levels(newcat)[i])
             
@@ -1412,8 +1413,8 @@ add_pi_poly <- function(plot, data, x, newcat, model, level = .95, one_line = FA
         }
     } else
     {
-        xmin <- min(data[,x])
-        xmax <- max(data[,x])
+        xmin <- min(data %>% pull({{x}}))
+        xmax <- max(data %>% pull({{x}}))
         xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
         newdata <- cbind.data.frame(newx = xval)
         
