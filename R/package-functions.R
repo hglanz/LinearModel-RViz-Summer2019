@@ -22,11 +22,27 @@ library(ggiraph)
 
 rl <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_intercept = FALSE, 
                poly = 1, interactions = poly, ci = FALSE, pi = FALSE, interactive = FALSE, 
-               title = paste(x, 'vs.', y), xlabel = x, ylabel = y, legendTitle = cat, level = .95)
+               title = NULL, xlabel = NULL, ylabel = NULL, legendTitle = NULL, level = .95)
 {
     if (is_tibble(data))
     {
         data <- as.data.frame(data)
+    }
+    if (is.null(title))
+    {
+        title <- paste(as_label(enquo(x)), 'vs.', as_label(enquo(y)))
+    }
+    if (is.null(xlabel))
+    {    
+        xlabel <- as_label(enquo(x))
+    }
+    if (is.null(ylabel))
+    {
+        ylabel <- as_label(enquo(y))
+    }
+    if (is.null(legendTitle))
+    {
+        legendTitle <- as_label(enquo(cat))
     }
     if (poly > 1)
     {
@@ -39,12 +55,28 @@ rl <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_interce
 }
 
 rl_linear <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_intercept = FALSE, 
-                      ci = FALSE, pi = FALSE, interactive = FALSE, title = paste(x, 'vs.', y), 
-                      xlabel = x, ylabel = y, legendTitle = cat, level = .95)
+                      ci = FALSE, pi = FALSE, interactive = FALSE, title = NULL, xlabel = NULL, 
+                      ylabel = NULL, legendTitle = NULL, level = .95)
 {
     if (is_tibble(data))
     {
         data <- as.data.frame(data)
+    }
+    if (is.null(title))
+    {
+        title <- paste(as_label(enquo(x)), 'vs.', as_label(enquo(y)))
+    }
+    if (is.null(xlabel))
+    {    
+        xlabel <- as_label(enquo(x))
+    }
+    if (is.null(ylabel))
+    {
+        ylabel <- as_label(enquo(y))
+    }
+    if (is.null(legendTitle))
+    {
+        legendTitle <- as_label(enquo(cat))
     }
     if (same_slope == FALSE)
     {
@@ -75,6 +107,22 @@ rl_polynomial <- function(data, x, y, cat, poly, interactions = poly, plotly = F
     if (is_tibble(data))
     {
         data <- as.data.frame(data)
+    }
+    if (is.null(title))
+    {
+        title <- paste(as_label(enquo(x)), 'vs.', as_label(enquo(y)))
+    }
+    if (is.null(xlabel))
+    {    
+        xlabel <- as_label(enquo(x))
+    }
+    if (is.null(ylabel))
+    {
+        ylabel <- as_label(enquo(y))
+    }
+    if (is.null(legendTitle))
+    {
+        legendTitle <- as_label(enquo(cat))
     }
     if (same_slope == FALSE)
     {
@@ -118,6 +166,9 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
     newx <- data %>% pull({{x}})
     newy <- data%>% pull({{y}})
     newcat <- as.factor(as.character(data %>% pull({{cat}})))
+    x <- as_label(enquo(x))
+    y <- as_label(enquo(y))
+    cat <- as_label(enquo(cat))
     if (interactions > 0)
     {
         if (length(newx) == length(newy) && length(newy) == length(newcat))
@@ -363,6 +414,9 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
     newx <- data %>% pull({{x}})
     newy <- data %>% pull({{y}})
     newcat <- as.factor(as.character(data %>% pull({{cat}})))
+    x <- as_label(enquo(x))
+    y <- as_label(enquo(y))
+    cat <- as_label(enquo(cat))
     if (interactions > 0)
     {
         if (length(newx) == length(newy) && length(newy) == length(newcat))
@@ -574,6 +628,9 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE
     newx <- data %>% pull({{x}})
     newy <- data %>% pull({{y}})
     newcat <- as.factor(as.character(data %>% pull({{cat}})))
+    x <- as_label(enquo(x))
+    y <- as_label(enquo(y))
+    cat <- as_label(enquo(cat))
     if (length(newx) == length(newy) && length(newy) == length(newcat))
     {
         plot <- ggplot()
@@ -753,6 +810,9 @@ rl_poly_same_line <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE,
     newx <- data %>% pull({{x}})
     newy <- data %>% pull({{y}})
     newcat <- as.factor(as.character(data %>% pull({{cat}})))
+    x <- as_label(enquo(x))
+    y <- as_label(enquo(y))
+    cat <- as_label(enquo(cat))
     if (length(newx) == length(newy) && length(newy) == length(newcat))
     {
         plot <- ggplot()
@@ -855,9 +915,13 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
     newx <- data %>% pull({{x}})
     newy <- data %>% pull({{y}})
     newcat <- as.factor(as.character(data %>% pull({{cat}})))
+    x <- as_label(enquo(x))
+    y <- as_label(enquo(y))
+    cat <- as_label(enquo(cat))
     if (length(newx) == length(newy) && length(newy) == length(newcat))
     {
         model <- lm(newy ~ newx * newcat, data = data)
+        print(model)
         b <- model$coefficients[1]
         m <- model$coefficients[2]
         fit <- model$model
@@ -988,6 +1052,9 @@ rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = 
     newx <- data %>% pull({{x}})
     newy <- data %>% pull({{y}})
     newcat <- as.factor(as.character(data %>% pull({{cat}})))
+    x <- as_label(enquo(x))
+    y <- as_label(enquo(y))
+    cat <- as_label(enquo(cat))
     if (length(newx) == length(newy) && length(newy) == length(newcat))
     {
         model <- lm(newy ~ newx + newx:newcat, data = data)
@@ -1120,6 +1187,9 @@ rl_same_slope <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
     newx <- data %>% pull({{x}})
     newy <- data %>% pull({{y}})
     newcat <- as.factor(as.character(data %>% pull({{cat}})))
+    x <- as_label(enquo(x))
+    y <- as_label(enquo(y))
+    cat <- as_label(enquo(cat))
     
     if (length(newx) == length(newy) && length(newy) == length(newcat))
     {
@@ -1256,6 +1326,9 @@ rl_same_line <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALSE
     newx <- data %>% pull({{x}})
     newy <- data %>% pull({{y}})
     newcat <- as.factor(as.character(data %>% pull({{cat}})))
+    x <- as_label(enquo(x))
+    y <- as_label(enquo(y))
+    cat <- as_label(enquo(cat))
     if (length(newx) == length(newy) && length(newy) == length(newcat))
     {
         model <- lm(newy ~ newx, data = data)
