@@ -1,0 +1,13 @@
+Package: ggLinearModel
+Type: Package
+Title: Linear Model Visualizations
+Version: 0.1.0
+Author: Jack Langston
+Maintainer: Jack Langston <jrlangst@calpoly.edu>
+Description: This package creates visualizations of various types of linear models using plotly, ggplot, and ggiraph. ggLinearModel can create visualizations of models with polynomial effects, varying number of interactions, equal slopes, and equal intercepts, as well as making the points and lines interactive.
+License: CC0
+Encoding: UTF-8
+LazyData: true
+Depends: tidyverse, plotly, rlang, ggiraph
+NeedsCompilation: no
+Packaged: 2019-08-08 23:10:36 UTC; jackl
