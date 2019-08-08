@@ -191,6 +191,18 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
                                    y, " = ", fit[['newy']], "\n", 
                                    cat, " = ", fit[['newcat']])
             
+            for (i in 1:(length(model$coefficients)-(poly+length(levels(newcat)))))
+            {
+                if (is.na(model$coefficients[i+poly+length(levels(newcat))])) 
+                {
+                    if (i/(length(levels(newcat))) != round(i/(length(levels(newcat)))))
+                    {
+                        model$coefficients[i+poly+length(levels(newcat))] <- 0
+                        print('Some aspects of this model may be incorrect')
+                    }
+                }
+            }
+            
             plot <- ggplot()
             
             if (ci == TRUE)
@@ -436,6 +448,18 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
             fit$data_id <- rownames(fit)
             data$tooltip <- paste0(fit$data_id, "\n", x, " = ", fit[['I(newx^1)']], "\n", y, " = ", fit[['newy']], "\n", cat, " = ", fit[['newcat']])
             
+            for (i in 1:(length(model$coefficients)-(poly+length(levels(newcat)))))
+            {
+                if (is.na(model$coefficients[i+poly+length(levels(newcat))])) 
+                {
+                    if (i/(length(levels(newcat))) != round(i/(length(levels(newcat)))))
+                    {
+                        model$coefficients[i+poly+length(levels(newcat))] <- 0
+                        print('Some aspects of this model may be incorrect')
+                    }
+                }
+            }
+            
             plot <- ggplot()
             
             if (ci == TRUE)
@@ -644,6 +668,18 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE
                                y, " = ", fit[['newy']], "\n", 
                                cat, " = ", fit[['newcat']])
         
+        for (i in 1:(length(model$coefficients)-(poly+length(levels(newcat)))))
+        {
+            if (is.na(model$coefficients[i+poly+length(levels(newcat))])) 
+            {
+                if (i/(length(levels(newcat))) != round(i/(length(levels(newcat)))))
+                {
+                    model$coefficients[i+poly+length(levels(newcat))] <- 0
+                    print('Some aspects of this model may be incorrect')
+                }
+            }
+        }
+        
         if (ci == TRUE)
         {
             plot <- add_ci_poly(plot, data, {{x}}, newcat, model, level = level)
@@ -817,6 +853,8 @@ rl_poly_same_line <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE,
     {
         plot <- ggplot()
         
+        model <- lm(newy ~ poly(newx, degrees = poly, raw = TRUE), data = data)
+        
         if (ci == TRUE)
         {
             plot <- add_ci_poly(plot, data, {{x}}, newcat, model, level = level, one_line = TRUE)
@@ -826,13 +864,24 @@ rl_poly_same_line <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE,
             plot <- add_pi_poly(plot, data, {{x}}, newcat, model, level = level, one_line = TRUE)
         }
         
-        model <- lm(newy ~ poly(newx, degrees = poly, raw = TRUE), data = data)
         b <- model$coefficients[1]
         fit <- model$model
         fit$data_id <- rownames(fit)
         data$tooltip <- paste0(fit$data_id, "\n", 
                                x, " = ", fit[,2][,1], "\n", 
                                y, " = ", fit[['newy']])
+        
+        for (i in 1:(length(model$coefficients)-(poly+length(levels(newcat)))))
+        {
+            if (is.na(model$coefficients[i+poly+length(levels(newcat))])) 
+            {
+                if (i/(length(levels(newcat))) != round(i/(length(levels(newcat)))))
+                {
+                    model$coefficients[i+poly+length(levels(newcat))] <- 0
+                    print('Some aspects of this model may be incorrect')
+                }
+            }
+        }
         
         if (!plotly)
         {
@@ -921,7 +970,6 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
     if (length(newx) == length(newy) && length(newy) == length(newcat))
     {
         model <- lm(newy ~ newx * newcat, data = data)
-        print(model)
         b <- model$coefficients[1]
         m <- model$coefficients[2]
         fit <- model$model
@@ -929,6 +977,18 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
         data$tooltip <- paste0(fit$data_id, "\n", x, " = ", fit[['newx']], "\n", y, " = ", fit[['newy']], "\n", cat, " = ", fit[['newcat']])
         
         plot <- ggplot()
+        
+        for (i in 1:(length(model$coefficients)-(poly+length(levels(newcat)))))
+        {
+            if (is.na(model$coefficients[i+poly+length(levels(newcat))])) 
+            {
+                if (i/(length(levels(newcat))) != round(i/(length(levels(newcat)))))
+                {
+                    model$coefficients[i+poly+length(levels(newcat))] <- 0
+                    print('Some aspects of this model may be incorrect')
+                }
+            }
+        }
         
         if (ci == TRUE)
         {
@@ -1066,6 +1126,18 @@ rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = 
         
         plot <- ggplot()
         
+        for (i in 1:(length(model$coefficients)-(poly+length(levels(newcat)))))
+        {
+            if (is.na(model$coefficients[i+poly+length(levels(newcat))])) 
+            {
+                if (i/(length(levels(newcat))) != round(i/(length(levels(newcat)))))
+                {
+                    model$coefficients[i+poly+length(levels(newcat))] <- 0
+                    print('Some aspects of this model may be incorrect')
+                }
+            }
+        }
+        
         if (ci == TRUE)
         {
             for (i in 1:(length(levels(newcat))))
@@ -1201,6 +1273,18 @@ rl_same_slope <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
         data$tooltip <- paste0(fit$data_id, "\n", x, " = ", fit[['newx']], "\n", y, " = ", fit[['newy']], "\n", cat, " = ", fit[['newcat']])
         
         plot <- ggplot()
+        
+        for (i in 1:(length(model$coefficients)-(poly+length(levels(newcat)))))
+        {
+            if (is.na(model$coefficients[i+poly+length(levels(newcat))])) 
+            {
+                if (i/(length(levels(newcat))) != round(i/(length(levels(newcat)))))
+                {
+                    model$coefficients[i+poly+length(levels(newcat))] <- 0
+                    print('Some aspects of this model may be incorrect')
+                }
+            }
+        }
         
         if (ci == TRUE)
         {
@@ -1340,12 +1424,24 @@ rl_same_line <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALSE
         
         plot <- ggplot()
         
+        for (i in 1:(length(model$coefficients)-(poly+length(levels(newcat)))))
+        {
+            if (is.na(model$coefficients[i+poly+length(levels(newcat))])) 
+            {
+                if (i/(length(levels(newcat))) != round(i/(length(levels(newcat)))))
+                {
+                    model$coefficients[i+poly+length(levels(newcat))] <- 0
+                    print('Some aspects of this model may be incorrect')
+                }
+            }
+        }
+        
         if (ci == TRUE)
         {
             xmin <- min(data %>% pull({{x}}))
             xmax <- max(data %>% pull({{x}}))
             xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
-            newdata <- cbind.data.frame(newx = xval, newcat = levels(newcat)[i])
+            newdata <- cbind.data.frame(newx = xval)
                 
             result <- predict(model, newdata, interval = 'confidence', level = level, 
                               type = "response", se.fit = TRUE)
@@ -1360,7 +1456,7 @@ rl_same_line <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALSE
             xmin <- min(data %>% pull({{x}}))
             xmax <- max(data %>% pull({{x}}))
             xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
-            newdata <- cbind.data.frame(newx = xval, newcat = levels(newcat)[i])
+            newdata <- cbind.data.frame(newx = xval)
             
             result <- predict(model, newdata, interval = 'prediction', level = level, 
                               type = "response", se.fit = TRUE)
