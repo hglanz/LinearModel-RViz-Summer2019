@@ -8,8 +8,7 @@ Description: This package creates visualizations of various types of linear mode
 License: CC0
 Encoding: UTF-8
 LazyData: true
-Depends:
-    tidyverse, 
-    plotly, 
-    rlang, 
-    ggiraph
+Depends: tidyverse, plotly, rlang, ggiraph
+RoxygenNote: 6.1.1
+Suggests: knitr, rmarkdown
+VignetteBuilder: knitr

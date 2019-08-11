@@ -1,29 +1,31 @@
-#' rl
+#' ggLinearModel
+#'
+#' \pkg{ggLinearModel()} creates a ggplot (or plotly) object. It is designed to create visualizations of various types of linear models. Inserting a datatable, x variable, y variable, and categorical variable will produce a graph with a different least squares line for each level in the categorical variable. You can modify the graph by changing the values for various parameters.
 #'
 #' @param data a R data frame. tibbles will work
 #' @param x variable name of the x (predicting) variable, must be a column name in the data table
 #' @param y variable name of the y (response) variable, must be a column name in the data table
-#' @param cat variable name of the categorical variable, must be a column name in the data table
+#' @param cat variable name of the categorical variable, must be a column name in the data table. Set to NULL
 #' @param plotly boolean if they want the graph in plotly. TRUE returns plotly graph, FALSE returns ggplot. Set to FALSE
 #' @param same_slope boolean if they want the regression lines to have the same slope. Set to FALSE
 #' @param same_intercept boolean if they want the regression lines to have the same intercept Set to FALSE
 #' @param poly  a integer value to declare how many polynomial variables the use wants. Set to 1, i.e. no polynomial
 #' @param interactions a integer value for if the user wants to include interactions in the polynomial model. Note: only matters when poly > 1 and interactions <= poly. Set to 0
-#' @param ci boolean to add a confidence interval to the graph, defaults to FALSE
-#' @param pi boolean to add a prediction interval to the graph, defaults to FALSE
-#' @param interactive boolean to make interactive, defaults to FALSE
-#' @param title a string to change the title of the graph, defaults to x name vs y name
-#' @param xlabel a string for the label of the x axis, defaults to the x variable name
-#' @param ylabel a string for the label of the y axis, defaults to the y variable name
-#' @param legendTitle a string for the label of the legend, defaults to the categorical variable name
-#' @param level a number between 0-1 for the interval percentage of the confidence and prediction intervals, defaults to .95
+#' @param ci boolean to add a confidence interval to the graph. Set to FALSE
+#' @param pi boolean to add a prediction interval to the graph. Set to FALSE
+#' @param interactive boolean to make interactive. Set to FALSE
+#' @param title a string to change the title of the graph. Set to x name vs y name
+#' @param xlabel a string for the label of the x axis. Set to the x variable name
+#' @param ylabel a string for the label of the y axis. Set to the y variable name
+#' @param legendTitle a string for the label of the legend. Set to the categorical variable name
+#' @param level a number between 0-1 for the interval percentage of the confidence and prediction intervals. Set to .95
 #'
 #' @return a ggplot or plotly object
 #' @export
 #'
 #' @examples
-#' rl(iris, Sepal.Length, Sepal.Width, Species)
-rl <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_intercept = FALSE,
+#' ggLinearModel(iris, Sepal.Length, Sepal.Width, Species)
+ggLinearModel <- function(data, x, y, cat = NULL, plotly = FALSE, same_slope = FALSE, same_intercept = FALSE,
                poly = 1, interactions = poly, ci = FALSE, pi = FALSE, interactive = FALSE,
                title = NULL, xlabel = NULL, ylabel = NULL, legendTitle = NULL, level = .95)
 {
@@ -60,6 +62,8 @@ rl <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_interce
 
 #' rl linear
 #'
+#' \code{rl_linear(data, x, y, cat, ...)} creates a ggplot (or plotly) object. It is designed to create visualizations of various types of linear models. Inserting a datatable, x variable, y variable, and categorical variable will produce a graph with a different least squares line for each level in the categorical variable. You can modify the graph by changing the values for various parameters.
+#'
 #' @param data a R data frame. tibbles will work
 #' @param x variable name of the x (predicting) variable, must be a column name in the data table
 #' @param y variable name of the y (response) variable, must be a column name in the data table
@@ -67,20 +71,20 @@ rl <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_interce
 #' @param plotly boolean if they want the graph in plotly. TRUE returns plotly graph, FALSE returns ggplot. Set to FALSE
 #' @param same_slope boolean if they want the regression lines to have the same slope. Set to FALSE
 #' @param same_intercept boolean if they want the regression lines to have the same intercept Set to FALSE
-#' @param ci boolean to add a confidence interval to the graph, defaults to FALSE
-#' @param pi boolean to add a prediction interval to the graph, defaults to FALSE
-#' @param interactive boolean to make interactive, defaults to FALSE
-#' @param title a string to change the title of the graph, defaults to x name vs y name
-#' @param xlabel a string for the label of the x axis, defaults to the x variable name
-#' @param ylabel a string for the label of the y axis, defaults to the y variable name
-#' @param legendTitle a string for the label of the legend, defaults to the categorical variable name
-#' @param level a number between 0-1 for the interval percentage of the confidence and prediction intervals, defaults to .95
+#' @param ci boolean to add a confidence interval to the graph. Set to FALSE
+#' @param pi boolean to add a prediction interval to the graph. Set to FALSE
+#' @param interactive boolean to make interactive. Set to FALSE
+#' @param title a string to change the title of the graph. Set to x name vs y name
+#' @param xlabel a string for the label of the x axis. Set to the x variable name
+#' @param ylabel a string for the label of the y axis. Set to the y variable name
+#' @param legendTitle a string for the label of the legend. Set to the categorical variable name
+#' @param level a number between 0-1 for the interval percentage of the confidence and prediction intervals. Set to .95
 #'
 #' @return a ggplot or plotly object
 #' @export
 #'
 #' @examples
-#' rl(iris, Sepal.Length, Sepal.Width, Species)
+#' ggLinearModel(iris, Sepal.Length, Sepal.Width, Species)
 rl_linear <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_intercept = FALSE,
                       ci = FALSE, pi = FALSE, interactive = FALSE, title = NULL, xlabel = NULL,
                       ylabel = NULL, legendTitle = NULL, level = .95)
@@ -129,6 +133,8 @@ rl_linear <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_
 
 #' rl polynomial
 #'
+#' \code{rl_polynomial(data, x, y, cat, poly ...)} creates a ggplot (or plotly) object. It is designed to create visualizations of various types of linear models with polynomial predictors. Inserting a datatable, x variable, y variable, and categorical variable will produce a graph with a different least squares line for each level in the categorical variable. You can modify the graph by changing the values for various parameters.
+#'
 #' @param data a R data frame. tibbles will work
 #' @param x variable name of the x (predicting) variable, must be a column name in the data table
 #' @param y variable name of the y (response) variable, must be a column name in the data table
@@ -151,10 +157,11 @@ rl_linear <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_
 #' @export
 #'
 #' @examples
-#' rl(iris, Sepal.Length, Sepal.Width, Species, poly = 2)
+#' ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, poly = 2)
 rl_polynomial <- function(data, x, y, cat, poly, interactions = poly, plotly = FALSE, same_slope = FALSE,
                           same_intercept = FALSE, ci = FALSE, pi = FALSE, interactive = FALSE,
-                          title = paste(x, 'vs.', y), xlabel = x, ylabel = y, legendTitle = cat, level = .95)
+                          title = NULL, xlabel = NULL,
+                          ylabel = NULL, legendTitle = NULL, level = .95)
 {
     if (is_tibble(data))
     {
@@ -199,38 +206,86 @@ rl_polynomial <- function(data, x, y, cat, poly, interactions = poly, plotly = F
     plot
 }
 
-rl_plotly <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_intercept = FALSE,
+#' rl plotly
+#'
+#' @param data a R data frame. tibbles will work
+#' @param x variable name of the x (predicting) variable, must be a column name in the data table
+#' @param y variable name of the y (response) variable, must be a column name in the data table
+#' @param cat variable name of the categorical variable, must be a column name in the data table
+#' @param same_slope boolean if they want the regression lines to have the same slope. Set to FALSE
+#' @param same_intercept boolean if they want the regression lines to have the same intercept Set to FALSE
+#' @param poly  a integer value to declare how many polynomial variables the use wants. Set to 1, i.e. no polynomial
+#' @param interactions a integer value for if the user wants to include interactions in the polynomial model. Note: only matters when poly > 1 and interactions <= poly. Set to 0
+#' @param ci boolean to add a confidence interval to the graph. Set to FALSE
+#' @param pi boolean to add a prediction interval to the graph. Set to FALSE
+#' @param interactive boolean to make interactive. Set to FALSE
+#' @param title a string to change the title of the graph. Set to x name vs y name
+#' @param xlabel a string for the label of the x axis. Set to the x variable name
+#' @param ylabel a string for the label of the y axis. Set to the y variable name
+#' @param legendTitle a string for the label of the legend. Set to the categorical variable name
+#' @param level a number between 0-1 for the interval percentage of the confidence and prediction intervals. Set to .95
+#'
+#' @return a plotly object
+#' @export
+#'
+#' @examples
+#' rl_plotly(iris, Sepal.Length, Sepal.Width, Species)
+rl_plotly <- function(data, x, y, cat, same_slope = FALSE, same_intercept = FALSE,
                       poly = 1, interactions = poly, ci = FALSE, pi = FALSE, interactive = FALSE,
-                      title = paste(x, 'vs.', y), xlabel = x, ylabel = y, legendTitle = cat, level = .95)
+                      title = NULL, xlabel = NULL,
+                      ylabel = NULL, legendTitle = NULL, level = .95)
 {
-    rl(data, {{x}}, {{y}}, {{cat}}, plotly = FALSE, same_slope = FALSE, same_intercept = FALSE, poly = 1, interactions = poly, ci = FALSE, pi = FALSE, interactive = FALSE, title = NULL, xlabel = NULL, ylabel = NULL, legendTitle = NULL, level = .95)
+    if (is_tibble(data))
+    {
+        data <- as.data.frame(data)
+    }
+    if (is.null(title))
+    {
+        title <- paste(as_label(enquo(x)), 'vs.', as_label(enquo(y)))
+    }
+    if (is.null(xlabel))
+    {
+        xlabel <- as_label(enquo(x))
+    }
+    if (is.null(ylabel))
+    {
+        ylabel <- as_label(enquo(y))
+    }
+    if (is.null(legendTitle))
+    {
+        legendTitle <- as_label(enquo(cat))
+    }
+
+    ggLinearModel(data, {{x}}, {{y}}, {{cat}}, plotly = TRUE, same_slope = same_slope, same_intercept = same_intercept,
+       poly = poly, interactions = interactions, ci = ci, pi = pi, interactive = interactive, title = title,
+       xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
 }
 
 #' rl polynomial full model
+#'
+#' \code{rl_poly_full_model(data, x, y, cat, poly ...)} creates a ggplot (or plotly) object. It is designed to create visualizations of various types of linear models with polynomial predictors. Inserting a datatable, x variable, y variable, and categorical variable will produce a graph with a different least squares line for each level in the categorical variable. You can modify the graph by changing the values for various parameters.
 #'
 #' @param data a R data frame. tibbles will work
 #' @param x variable name of the x (predicting) variable, must be a column name in the data table
 #' @param y variable name of the y (response) variable, must be a column name in the data table
 #' @param cat variable name of the categorical variable, must be a column name in the data table
 #' @param plotly boolean if they want the graph in plotly. TRUE returns plotly graph, FALSE returns ggplot. Set to FALSE
-#' @param same_slope boolean if they want the regression lines to have the same slope. Set to FALSE
-#' @param same_intercept boolean if they want the regression lines to have the same intercept Set to FALSE
 #' @param poly  a integer value to declare how many polynomial variables the use wants. Set to 1, i.e. no polynomial
 #' @param interactions a integer value for if the user wants to include interactions in the polynomial model. Note: only matters when poly > 1 and interactions <= poly. Set to 0
-#' @param ci boolean to add a confidence interval to the graph, defaults to FALSE
-#' @param pi boolean to add a prediction interval to the graph, defaults to FALSE
-#' @param interactive boolean to make interactive, defaults to FALSE
-#' @param title a string to change the title of the graph, defaults to x name vs y name
-#' @param xlabel a string for the label of the x axis, defaults to the x variable name
-#' @param ylabel a string for the label of the y axis, defaults to the y variable name
-#' @param legendTitle a string for the label of the legend, defaults to the categorical variable name
-#' @param level a number between 0-1 for the interval percentage of the confidence and prediction intervals, defaults to .95
+#' @param ci boolean to add a confidence interval to the graph. Set to FALSE
+#' @param pi boolean to add a prediction interval to the graph. Set to FALSE
+#' @param interactive boolean to make interactive. Set to FALSE
+#' @param title a string to change the title of the graph. Set to x name vs y name
+#' @param xlabel a string for the label of the x axis. Set to the x variable name
+#' @param ylabel a string for the label of the y axis. Set to the y variable name
+#' @param legendTitle a string for the label of the legend. Set to the categorical variable name
+#' @param level a number between 0-1 for the interval percentage of the confidence and prediction intervals. Set to .95
 #'
 #' @return a ggplot or plotly object
 #' @export
 #'
 #' @examples
-#' rl(iris, Sepal.Length, Sepal.Width, Species, poly = 2)
+#' rl_poly_full_model(iris, Sepal.Length, Sepal.Width, Species, poly = 2)
 rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotly = FALSE, ci = FALSE,
                                pi = FALSE, interactive = FALSE,
                                title = paste(x, 'vs.', y), xlabel = x, ylabel = y, legendTitle = cat,
@@ -498,7 +553,9 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
     }
     plot
 }
-#' Title
+#' rl polynomial same intercept
+#'
+#' \code{rl_poly_same_intercept(data, x, y, cat, poly ...)} creates a ggplot (or plotly) object. It is designed to create visualizations of linear models with polynomial predictors and all LSRL having the same intercept. Inserting a datatable, x variable, y variable, and categorical variable will produce a graph with a different least squares line for each level in the categorical variable. You can modify the graph by changing the values for various parameters.
 #'
 #' @param data a R data frame. tibbles will work
 #' @param x variable name of the x (predicting) variable, must be a column name in the data table
@@ -507,21 +564,20 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
 #' @param plotly boolean if they want the graph in plotly. TRUE returns plotly graph, FALSE returns ggplot. Set to FALSE
 #' @param poly  a integer value to declare how many polynomial variables the use wants. Set to 1, i.e. no polynomial
 #' @param interactions a integer value for if the user wants to include interactions in the polynomial model. Note: only matters when poly > 1 and interactions <= poly. Set to 0
-#' @param ci boolean to add a confidence interval to the graph, defaults to FALSE
-#' @param pi boolean to add a prediction interval to the graph, defaults to FALSE
-#' @param interactive boolean to make interactive, defaults to FALSE
-#' @param title a string to change the title of the graph, defaults to x name vs y name
-#' @param xlabel a string for the label of the x axis, defaults to the x variable name
-#' @param ylabel a string for the label of the y axis, defaults to the y variable name
-#' @param legendTitle a string for the label of the legend, defaults to the categorical variable name
-#' @param level a number between 0-1 for the interval percentage of the confidence and prediction intervals, defaults to .95
+#' @param ci boolean to add a confidence interval to the graph. Set to FALSE
+#' @param pi boolean to add a prediction interval to the graph. Set to FALSE
+#' @param interactive boolean to make interactive. Set to FALSE
+#' @param title a string to change the title of the graph. Set to x name vs y name
+#' @param xlabel a string for the label of the x axis. Set to the x variable name
+#' @param ylabel a string for the label of the y axis. Set to the y variable name
+#' @param legendTitle a string for the label of the legend. Set to the categorical variable name
+#' @param level a number between 0-1 for the interval percentage of the confidence and prediction intervals. Set to .95
 #'
 #' @return a ggplot or plotly object
 #' @export
 #'
 #' @examples
 #' rl_poly_same_intercept(iris, Sepal.Length, Sepal.Width, Species, poly = 2)
-#'
 rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, plotly = FALSE, ci = FALSE,
                                    pi = FALSE, interactive = FALSE,
                                    title = paste(x, 'vs.', y), xlabel = x, ylabel = y, legendTitle = cat,
@@ -560,9 +616,9 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
             {
                 if (is.na(model$coefficients[i]))
                 {
-                    if (i >= (poly+length(levels(newcat))))
+                    if (i >= poly)
                     {
-                        j <- i - poly - length(levels(newcat))
+                        j <- i - poly -1
                         if (j/(length(levels(newcat))) != round(j/(length(levels(newcat)))))
                         {
                             model$coefficients[i] <- 0
@@ -757,23 +813,24 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
     plot
 }
 
-#' Title
+#' rl polynomial same slope
+#'
+#'\code{rl_poly_same_slope(data, x, y, cat, poly ...)} creates a ggplot (or plotly) object. It is designed to create visualizations of linear models with polynomial predictors and all LSRL having the same slope Inserting a datatable, x variable, y variable, and categorical variable will produce a graph with a different least squares line for each level in the categorical variable. You can modify the graph by changing the values for various parameters.
 #'
 #' @param data a R data frame. tibbles will work
 #' @param x variable name of the x (predicting) variable, must be a column name in the data table
 #' @param y variable name of the y (response) variable, must be a column name in the data table
 #' @param cat variable name of the categorical variable, must be a column name in the data table
 #' @param plotly boolean if they want the graph in plotly. TRUE returns plotly graph, FALSE returns ggplot. Set to FALSE
-#' @param same_intercept boolean if they want the regression lines to have the same intercept Set to FALSE
 #' @param poly  a integer value to declare how many polynomial variables the use wants. Set to 1, i.e. no polynomial
-#' @param ci boolean to add a confidence interval to the graph, defaults to FALSE
-#' @param pi boolean to add a prediction interval to the graph, defaults to FALSE
-#' @param interactive boolean to make interactive, defaults to FALSE
-#' @param title a string to change the title of the graph, defaults to x name vs y name
-#' @param xlabel a string for the label of the x axis, defaults to the x variable name
-#' @param ylabel a string for the label of the y axis, defaults to the y variable name
-#' @param legendTitle a string for the label of the legend, defaults to the categorical variable name
-#' @param level a number between 0-1 for the interval percentage of the confidence and prediction intervals, defaults to .95
+#' @param ci boolean to add a confidence interval to the graph. Set to FALSE
+#' @param pi boolean to add a prediction interval to the graph. Set to FALSE
+#' @param interactive boolean to make interactive. Set to FALSE
+#' @param title a string to change the title of the graph. Set to x name vs y name
+#' @param xlabel a string for the label of the x axis. Set to the x variable name
+#' @param ylabel a string for the label of the y axis. Set to the y variable name
+#' @param legendTitle a string for the label of the legend. Set to the categorical variable name
+#' @param level a number between 0-1 for the interval percentage of the confidence and prediction intervals. Set to .95
 #'
 #' @return a ggplot or plotly object
 #' @export
@@ -873,7 +930,10 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE
                     tooltips[[i]] <- paste(tooltips[[i]],
                                            sprintf('%.3f', b), sep = ' ')
                 }
-                for (j in 1:poly)
+                tooltips[[i]] <- paste(tooltips[[i]], ' + ',
+                                       sprintf("%.3f", model$coefficients[2]),
+                                       '*', x, sep = '')
+                for (j in 2:poly)
                 {
                     tooltips[[i]] <- paste(tooltips[[i]], ' + ',
                                            sprintf("%.3f", model$coefficients[1+j]),
@@ -983,7 +1043,9 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE
     plot
 }
 
-#' Title
+#' rl polynomial same line
+#'
+#' \code{rl_poly_same_intercept(data, x, y, cat, poly ...)} creates a ggplot (or plotly) object. It is designed to create visualizations of linear models with polynomial predictors and just one LSRL. Inserting a datatable, x variable, y variable, and categorical variable will produce a graph with 1 LSRL. You can modify the graph by changing the values for various parameters.
 #'
 #' @param data a R data frame. tibbles will work
 #' @param x variable name of the x (predicting) variable, must be a column name in the data table
@@ -991,15 +1053,14 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE
 #' @param cat variable name of the categorical variable, must be a column name in the data table
 #' @param plotly boolean if they want the graph in plotly. TRUE returns plotly graph, FALSE returns ggplot. Set to FALSE
 #' @param poly a integer value to declare how many polynomial variables the use wants. Set to 1, i.e. no polynomial
-#' @param interactions a integer value for if the user wants to include interactions in the polynomial model. Note: only matters when poly > 1 and interactions <= poly. Set to 0
-#' @param ci boolean to add a confidence interval to the graph, defaults to FALSE
-#' @param pi boolean to add a prediction interval to the graph, defaults to FALSE
-#' @param interactive boolean to make interactive, defaults to FALSE
-#' @param title a string to change the title of the graph, defaults to x name vs y name
-#' @param xlabel a string for the label of the x axis, defaults to the x variable name
-#' @param ylabel a string for the label of the y axis, defaults to the y variable name
-#' @param legendTitle a string for the label of the legend, defaults to the categorical variable name
-#' @param level a number between 0-1 for the interval percentage of the confidence and prediction intervals, defaults to .95
+#' @param ci boolean to add a confidence interval to the graph. Set to FALSE
+#' @param pi boolean to add a prediction interval to the graph. Set to FALSE
+#' @param interactive boolean to make interactive. Set to FALSE
+#' @param title a string to change the title of the graph. Set to x name vs y name
+#' @param xlabel a string for the label of the x axis. Set to the x variable name
+#' @param ylabel a string for the label of the y axis. Set to the y variable name
+#' @param legendTitle a string for the label of the legend. Set to the categorical variable name
+#' @param level a number between 0-1 for the interval percentage of the confidence and prediction intervals. Set to .95
 #'
 #' @return a ggplot or plotly object
 #' @export
@@ -1136,29 +1197,29 @@ rl_poly_same_line <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE,
     plot
 }
 
-#' Title
+#' rl full model
+#'
+#' \code{rl_full_model(data, x, y, cat, ...)} creates a ggplot (or plotly) object. It is designed to create visualizations of linear models. Inserting a datatable, x variable, y variable, and categorical variable will produce a graph with a different least squares line for each level in the categorical variable. You can modify the graph by changing the values for various parameters.
 #'
 #' @param data a R data frame. tibbles will work
 #' @param x variable name of the x (predicting) variable, must be a column name in the data table
 #' @param y variable name of the y (response) variable, must be a column name in the data table
 #' @param cat variable name of the categorical variable, must be a column name in the data table
 #' @param plotly boolean if they want the graph in plotly. TRUE returns plotly graph, FALSE returns ggplot. Set to FALSE
-#' @param same_slope boolean if they want the regression lines to have the same slope. Set to FALSE
-#' @param same_intercept boolean if they want the regression lines to have the same intercept Set to FALSE
-#' @param ci boolean to add a confidence interval to the graph, defaults to FALSE
-#' @param pi boolean to add a prediction interval to the graph, defaults to FALSE
-#' @param interactive boolean to make interactive, defaults to FALSE
-#' @param title a string to change the title of the graph, defaults to x name vs y name
-#' @param xlabel a string for the label of the x axis, defaults to the x variable name
-#' @param ylabel a string for the label of the y axis, defaults to the y variable name
-#' @param legendTitle a string for the label of the legend, defaults to the categorical variable name
-#' @param level a number between 0-1 for the interval percentage of the confidence and prediction intervals, defaults to .95
+#' @param ci boolean to add a confidence interval to the graph. Set to FALSE
+#' @param pi boolean to add a prediction interval to the graph. Set to FALSE
+#' @param interactive boolean to make interactive. Set to FALSE
+#' @param title a string to change the title of the graph. Set to x name vs y name
+#' @param xlabel a string for the label of the x axis. Set to the x variable name
+#' @param ylabel a string for the label of the y axis. Set to the y variable name
+#' @param legendTitle a string for the label of the legend. Set to the categorical variable name
+#' @param level a number between 0-1 for the interval percentage of the confidence and prediction intervals. Set to .95
 #'
 #' @return a ggplot or plotly object
 #' @export
 #'
 #' @examples
-#' rl(iris, Sepal.Length, Sepal.Width, Species)
+#' ggLinearModel(iris, Sepal.Length, Sepal.Width, Species)
 rl_full_model <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALSE, interactive = FALSE,
                           title = paste(x, 'vs.', y), xlabel = x, ylabel = y, legendTitle = cat, level = .95)
 {
@@ -1207,7 +1268,7 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
                 plot <- plot + geom_ribbon(aes_string(x = xval,
                                                       ymin = result$fit[,'lwr'],
                                                       ymax = result$fit[,'upr']),
-                                           alpha = .35)
+                                           alpha = .2)
             }
         }
         if (pi == TRUE)
@@ -1225,7 +1286,7 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
                 plot <- plot + geom_ribbon(aes_string(x = xval,
                                                       ymin = result$fit[,'lwr'],
                                                       ymax = result$fit[,'upr']),
-                                           alpha = .35)
+                                           alpha = .2)
             }
         }
 
@@ -1259,7 +1320,8 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
 
         } else
         {
-            plot <- plot + geom_point()  +
+            plot <- plot + geom_point(data = data,
+                                      aes(x = newx, y = newy, col = newcat))  +
                 geom_segment(aes(x = min(data[newcat == levels(newcat)[1],]%>% pull({{x}})),
                                  xend = max(data[newcat == levels(newcat)[1],]%>% pull({{x}})),
                                  y = min(data[newcat == levels(newcat)[1],]%>% pull({{x}}))*m+b,
@@ -1303,22 +1365,23 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
     }
 }
 
-#' Title
+#' rl same intercept
+#'
+#' \code{rl_same_intercept(data, x, y, cat, ...)} creates a ggplot (or plotly) object. It is designed to create visualizations of linear models where all LSRL have the same intercept. Inserting a datatable, x variable, y variable, and categorical variable will produce a graph with a different least squares line for each level in the categorical variable. You can modify the graph by changing the values for various parameters.
 #'
 #' @param data a R data frame. tibbles will work
 #' @param x variable name of the x (predicting) variable, must be a column name in the data table
 #' @param y variable name of the y (response) variable, must be a column name in the data table
 #' @param cat variable name of the categorical variable, must be a column name in the data table
 #' @param plotly boolean if they want the graph in plotly. TRUE returns plotly graph, FALSE returns ggplot. Set to FALSE
-#' @param same_slope boolean if they want the regression lines to have the same slope. Set to FALSE
-#' @param ci boolean to add a confidence interval to the graph, defaults to FALSE
-#' @param pi boolean to add a prediction interval to the graph, defaults to FALSE
-#' @param interactive boolean to make interactive, defaults to FALSE
-#' @param title a string to change the title of the graph, defaults to x name vs y name
-#' @param xlabel a string for the label of the x axis, defaults to the x variable name
-#' @param ylabel a string for the label of the y axis, defaults to the y variable name
-#' @param legendTitle a string for the label of the legend, defaults to the categorical variable name
-#' @param level a number between 0-1 for the interval percentage of the confidence and prediction intervals, defaults to .95
+#' @param ci boolean to add a confidence interval to the graph. Set to FALSE
+#' @param pi boolean to add a prediction interval to the graph. Set to FALSE
+#' @param interactive boolean to make interactive. Set to FALSE
+#' @param title a string to change the title of the graph. Set to x name vs y name
+#' @param xlabel a string for the label of the x axis. Set to the x variable name
+#' @param ylabel a string for the label of the y axis. Set to the y variable name
+#' @param legendTitle a string for the label of the legend. Set to the categorical variable name
+#' @param level a number between 0-1 for the interval percentage of the confidence and prediction intervals. Set to .95
 #'
 #' @return a ggplot or plotly object
 #' @export
@@ -1375,7 +1438,7 @@ rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = 
                 plot <- plot + geom_ribbon(aes_string(x = xval,
                                                       ymin = result$fit[,'lwr'],
                                                       ymax = result$fit[,'upr']),
-                                           alpha = .35)
+                                           alpha = .2)
             }
         }
         if (pi == TRUE)
@@ -1393,7 +1456,7 @@ rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = 
                 plot <- plot + geom_ribbon(aes_string(x = xval,
                                                       ymin = result$fit[,'lwr'],
                                                       ymax = result$fit[,'upr']),
-                                           alpha = .35)
+                                           alpha = .2)
             }
         }
 
@@ -1426,7 +1489,8 @@ rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = 
             }
         } else
         {
-            plot <- plot + geom_point() +
+            plot <- plot + geom_point(data = data,
+                                      aes(x = newx, y = newy, col = newcat)) +
                 geom_segment(aes(x = min(data[newcat == levels(newcat)[1],]%>% pull({{x}})),
                                  xend = max(data[newcat == levels(newcat)[1],]%>% pull({{x}})),
                                  y = b+m*min(data[newcat == levels(newcat)[1],]%>% pull({{x}})),
@@ -1471,22 +1535,23 @@ rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = 
     }
 }
 
-#' Title
+#' rl same slope
+#'
+#' \code{rl_same_slope(data, x, y, cat, ...)} creates a ggplot (or plotly) object. It is designed to create visualizations of linear models where all LSRL have the same slope Inserting a datatable, x variable, y variable, and categorical variable will produce a graph with a different least squares line for each level in the categorical variable. You can modify the graph by changing the values for various parameters.
 #'
 #' @param data a R data frame. tibbles will work
 #' @param x variable name of the x (predicting) variable, must be a column name in the data table
 #' @param y variable name of the y (response) variable, must be a column name in the data table
 #' @param cat variable name of the categorical variable, must be a column name in the data table
 #' @param plotly boolean if they want the graph in plotly. TRUE returns plotly graph, FALSE returns ggplot. Set to FALSE
-#' @param same_slope boolean if they want the regression lines to have the same slope. Set to FALSE
-#' @param ci boolean to add a confidence interval to the graph, defaults to FALSE
-#' @param pi boolean to add a prediction interval to the graph, defaults to FALSE
-#' @param interactive boolean to make interactive, defaults to FALSE
-#' @param title a string to change the title of the graph, defaults to x name vs y name
-#' @param xlabel a string for the label of the x axis, defaults to the x variable name
-#' @param ylabel a string for the label of the y axis, defaults to the y variable name
-#' @param legendTitle a string for the label of the legend, defaults to the categorical variable name
-#' @param level a number between 0-1 for the interval percentage of the confidence and prediction intervals, defaults to .95
+#' @param ci boolean to add a confidence interval to the graph. Set to FALSE
+#' @param pi boolean to add a prediction interval to the graph. Set to FALSE
+#' @param interactive boolean to make interactive. Set to FALSE
+#' @param title a string to change the title of the graph. Set to x name vs y name
+#' @param xlabel a string for the label of the x axis. Set to the x variable name
+#' @param ylabel a string for the label of the y axis. Set to the y variable name
+#' @param legendTitle a string for the label of the legend. Set to the categorical variable name
+#' @param level a number between 0-1 for the interval percentage of the confidence and prediction intervals. Set to .95
 #'
 #' @return a ggplot or plotly object
 #' @export
@@ -1541,7 +1606,7 @@ rl_same_slope <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
                 plot <- plot + geom_ribbon(aes_string(x = xval,
                                                       ymin = result$fit[,'lwr'],
                                                       ymax = result$fit[,'upr']),
-                                           alpha = .35)
+                                           alpha = .2)
             }
         }
         if (pi == TRUE)
@@ -1559,7 +1624,7 @@ rl_same_slope <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
                 plot <- plot + geom_ribbon(aes_string(x = xval,
                                                       ymin = result$fit[,'lwr'],
                                                       ymax = result$fit[,'upr']),
-                                           alpha = .35)
+                                           alpha = .2)
             }
         }
 
@@ -1591,7 +1656,8 @@ rl_same_slope <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
         } else
         {
             {
-                plot <- plot + geom_point() +
+                plot <- plot + geom_point(data = data,
+                                          aes(x = newx, y = newy, col = newcat)) +
                     geom_segment(aes(x = min(data[newcat == levels(newcat)[1],]%>% pull({{x}})),
                                      xend = max(data[newcat == levels(newcat)[1],]%>% pull({{x}})),
                                      y = min(data[newcat == levels(newcat)[1],]%>% pull({{x}}))*m+b,
@@ -1640,21 +1706,23 @@ rl_same_slope <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
     plot
 }
 
-#' Title
+#' rl same line
+#'
+#' \code{rl_same_line(data, x, y, cat, ...)} creates a ggplot (or plotly) object. It is designed to create visualizations of linear models with one LSRL. Inserting a datatable, x variable, y variable, and categorical variable will produce a graph with 1 LSRL. You can modify the graph by changing the values for various parameters.
 #'
 #' @param data a R data frame. tibbles will work
 #' @param x variable name of the x (predicting) variable, must be a column name in the data table
 #' @param y variable name of the y (response) variable, must be a column name in the data table
 #' @param cat variable name of the categorical variable, must be a column name in the data table
 #' @param plotly boolean if they want the graph in plotly. TRUE returns plotly graph, FALSE returns ggplot. Set to FALSE
-#' @param ci boolean to add a confidence interval to the graph, defaults to FALSE
-#' @param pi boolean to add a prediction interval to the graph, defaults to FALSE
-#' @param interactive boolean to make interactive, defaults to FALSE
-#' @param title a string to change the title of the graph, defaults to x name vs y name
-#' @param xlabel a string for the label of the x axis, defaults to the x variable name
-#' @param ylabel a string for the label of the y axis, defaults to the y variable name
-#' @param legendTitle a string for the label of the legend, defaults to the categorical variable name
-#' @param level a number between 0-1 for the interval percentage of the confidence and prediction intervals, defaults to .95
+#' @param ci boolean to add a confidence interval to the graph. Set to FALSE
+#' @param pi boolean to add a prediction interval to the graph. Set to FALSE
+#' @param interactive boolean to make interactive. Set to FALSE
+#' @param title a string to change the title of the graph. Set to x name vs y name
+#' @param xlabel a string for the label of the x axis. Set to the x variable name
+#' @param ylabel a string for the label of the y axis. Set to the y variable name
+#' @param legendTitle a string for the label of the legend. Set to the categorical variable name
+#' @param level a number between 0-1 for the interval percentage of the confidence and prediction intervals. Set to .95
 #'
 #' @return a ggplot or plotly object
 #' @export
@@ -1685,6 +1753,8 @@ rl_same_line <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALSE
 
         plot <- ggplot()
 
+        print(model)
+
         for (i in 1:(length(model$coefficients)))
         {
             if (is.na(model$coefficients[i]))
@@ -1708,7 +1778,7 @@ rl_same_line <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALSE
             plot <- plot + geom_ribbon(aes_string(x = xval,
                                                   ymin = result$fit[,'lwr'],
                                                   ymax = result$fit[,'upr']),
-                                       alpha = .35)
+                                       alpha = .2)
         }
         if (pi == TRUE)
         {
@@ -1723,7 +1793,7 @@ rl_same_line <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALSE
             plot <- plot + geom_ribbon(aes_string(x = xval,
                                                   ymin = result$fit[,'lwr'],
                                                   ymax = result$fit[,'upr']),
-                                       alpha = .35)
+                                       alpha = .2)
         }
 
         if (!plotly)
@@ -1773,8 +1843,9 @@ rl_same_line <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALSE
 }
 
 
-
-#' Title
+#' Add a confidence interval
+#'
+#' Add confidence interval to ggplot with specific interval width
 #'
 #' @param plot a ggplot
 #' @param data data table
@@ -1782,7 +1853,7 @@ rl_same_line <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALSE
 #' @param newcat categorical variable vector
 #' @param model created lm model
 #' @param level level of the interval
-#' @param one_line if using rl_poly_same_line
+#' @param one_line boolean. Set to TRUE if using rl_poly_same_line, otherwise FALSE
 #'
 #' @return a ggplot
 add_ci_poly <- function(plot, data, x, newcat, model, level = .95, one_line = FALSE)
@@ -1805,7 +1876,7 @@ add_ci_poly <- function(plot, data, x, newcat, model, level = .95, one_line = FA
             plot <- plot + geom_ribbon(aes_string(x = xval,
                                                   ymin = ymin,
                                                   ymax = ymax),
-                                       alpha = .35)
+                                       alpha = .2)
         }
     } else
     {
@@ -1823,12 +1894,14 @@ add_ci_poly <- function(plot, data, x, newcat, model, level = .95, one_line = FA
         plot <- plot + geom_ribbon(aes(x = xval,
                                        ymin = ymin,
                                        ymax = ymax),
-                                   col = NA, alpha = .35)
+                                   col = NA, alpha = .2)
     }
     plot
 }
 
-#' Title
+#' Add a prediction interval
+#'
+#' Add prediction interval to ggplot with specific interval width
 #'
 #' @param plot a ggplot
 #' @param data data table
@@ -1836,7 +1909,7 @@ add_ci_poly <- function(plot, data, x, newcat, model, level = .95, one_line = FA
 #' @param newcat categorical variable vector
 #' @param model created lm model
 #' @param level level of the interval
-#' @param one_line if using rl_poly_same_line
+#' @param one_line boolean. Set to TRUE if using rl_poly_same_line, otherwise FALSE
 #'
 #' @return a ggplot
 add_pi_poly <- function(plot, data, x, newcat, model, level = .95, one_line = FALSE)
@@ -1859,7 +1932,7 @@ add_pi_poly <- function(plot, data, x, newcat, model, level = .95, one_line = FA
             plot <- plot + geom_ribbon(aes_string(x = xval,
                                                   ymin = ymin,
                                                   ymax = ymax),
-                                       alpha = .35)
+                                       alpha = .2)
         }
     } else
     {
@@ -1877,7 +1950,7 @@ add_pi_poly <- function(plot, data, x, newcat, model, level = .95, one_line = FA
         plot <- plot + geom_ribbon(aes(x = xval,
                                        ymin = ymin,
                                        ymax = ymax),
-                                   col = NA, alpha = .35)
+                                   col = NA, alpha = .2)
     }
     plot
 }
