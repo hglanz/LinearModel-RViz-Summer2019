@@ -7,9 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ggLinearModel • ggLinearModel</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous">
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><meta property="og:title" content="ggLinearModel">
 <meta property="og:description" content="">
 <meta name="twitter:card" content="summary">
@@ -39,7 +38,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fa fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -59,7 +58,6 @@
 <!--/.navbar -->
 
       
-
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
@@ -75,6 +73,10 @@
 
     
     
+<pre><code>## Warning: package 'tidyverse' was built under R version 3.6.1</code></pre>
+<pre><code>## Warning: package 'plotly' was built under R version 3.6.1</code></pre>
+<pre><code>## Warning: package 'rlang' was built under R version 3.6.1</code></pre>
+<pre><code>## Warning: package 'ggiraph' was built under R version 3.6.1</code></pre>
 <div id="gglinearmodel" class="section level1">
 <h1 class="hasAnchor">
 <a href="#gglinearmodel" class="anchor"></a>ggLinearModel</h1>
@@ -96,91 +98,96 @@
 <h3 class="hasAnchor">
 <a href="#the-full-model" class="anchor"></a>The full model</h3>
 <p>This model is the easiest to code in <code>ggplot()</code>, the most important part is the <code>geom_smooth(method = lm, ...)</code> which insures that graph adds the least squares regression lines for each category. Using <code><a href="../reference/ggLinearModel.html">ggLinearModel()</a></code> we just input our data table, x variable, y variable, and categorical variable to create the same graph in much less code.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> iris, <span class="kw">aes</span>(<span class="dt">x =</span> Sepal.Length, <span class="dt">y =</span> Sepal.Width, <span class="dt">col =</span> Species)) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb1-2"><a href="#cb1-2"></a><span class="st">    </span><span class="kw">geom_point</span>() <span class="op">+</span></span>
-<span id="cb1-3"><a href="#cb1-3"></a><span class="st">    </span><span class="kw">geom_smooth</span>(<span class="dt">method =</span> lm, <span class="dt">se =</span> <span class="ot">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="kw">ggplot</span>(<span class="dt">data =</span> iris, <span class="kw">aes</span>(<span class="dt">x =</span> Sepal.Length, <span class="dt">y =</span> Sepal.Width, <span class="dt">col =</span> Species)) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb5-2" title="2"><span class="st">    </span><span class="kw">geom_point</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb5-3" title="3"><span class="st">    </span><span class="kw">geom_smooth</span>(<span class="dt">method =</span> lm, <span class="dt">se =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
 <p><img src="ggLinearModel_files/figure-html/unnamed-chunk-1-1.png" width="700"></p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="co">#ggLinearModel(iris, Sepal.Length, Sepal.Width, Species)</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1"><span class="kw"><a href="../reference/ggLinearModel.html">ggLinearModel</a></span>(iris, Sepal.Length, Sepal.Width, Species)</a></code></pre></div>
+<p><img src="ggLinearModel_files/figure-html/unnamed-chunk-1-2.png" width="700"></p>
 </div>
 <div id="same-slope-model" class="section level3">
 <h3 class="hasAnchor">
 <a href="#same-slope-model" class="anchor"></a>Same slope model</h3>
 <p>Now let’s assume that you want to create a visualization that shows the regression estimates as lines with the same slope, ergo, when there no interaction effect involved. In <code>ggplot()</code> we have no easy way to do this. We must first create model, and instead of one <code>geom_smooth()</code> we must add a new <code>geom_abline()</code> for each level in the dataset, with each <code>geom_abline()</code> having different inputs for the intercept parameter. This is going to get messy quickly with lots of levels in your categorical variable. Using <code><a href="../reference/ggLinearModel.html">ggLinearModel(..., same_slope = TRUE)</a></code> will get the same process done in much less code, and prevents you from making any mistakes when creating each individual <code>geom_abline()</code></p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>model &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span>(Sepal.Width <span class="op">~</span><span class="st"> </span>Sepal.Length <span class="op">+</span><span class="st"> </span>Species, <span class="dt">data =</span> iris)</span>
-<span id="cb3-2"><a href="#cb3-2"></a>m &lt;-<span class="st"> </span>model<span class="op">$</span>coefficients[<span class="dv">2</span>] <span class="co">#slope of model</span></span>
-<span id="cb3-3"><a href="#cb3-3"></a>b &lt;-<span class="st"> </span>model<span class="op">$</span>coefficients[<span class="dv">1</span>] <span class="co">#setosa intercept</span></span>
-<span id="cb3-4"><a href="#cb3-4"></a><span class="kw">ggplot</span>() <span class="op">+</span><span class="st"> </span></span>
-<span id="cb3-5"><a href="#cb3-5"></a><span class="st">    </span><span class="kw">geom_point</span>(<span class="dt">data =</span> iris, <span class="kw">aes</span>(<span class="dt">x =</span> Sepal.Length, <span class="dt">y =</span> Sepal.Width, <span class="dt">col =</span> Species)) <span class="op">+</span></span>
-<span id="cb3-6"><a href="#cb3-6"></a><span class="st">    </span><span class="kw">geom_abline</span>(<span class="kw">aes</span>(<span class="dt">slope =</span> m,</span>
-<span id="cb3-7"><a href="#cb3-7"></a>                <span class="dt">intercept =</span> b, </span>
-<span id="cb3-8"><a href="#cb3-8"></a>                <span class="dt">color =</span> <span class="st">'setosa'</span>)) <span class="op">+</span></span>
-<span id="cb3-9"><a href="#cb3-9"></a><span class="st">    </span><span class="kw">geom_abline</span>(<span class="kw">aes</span>(<span class="dt">slope =</span> m, </span>
-<span id="cb3-10"><a href="#cb3-10"></a>                <span class="dt">intercept =</span> b <span class="op">+</span><span class="st"> </span>model<span class="op">$</span>coefficients[<span class="dv">3</span>], </span>
-<span id="cb3-11"><a href="#cb3-11"></a>                <span class="dt">color =</span> <span class="st">'versicolor'</span>)) <span class="op">+</span></span>
-<span id="cb3-12"><a href="#cb3-12"></a><span class="st">    </span><span class="kw">geom_abline</span>(<span class="kw">aes</span>(<span class="dt">slope =</span> m, </span>
-<span id="cb3-13"><a href="#cb3-13"></a>                <span class="dt">intercept =</span> b <span class="op">+</span><span class="st"> </span>model<span class="op">$</span>coefficients[<span class="dv">4</span>], </span>
-<span id="cb3-14"><a href="#cb3-14"></a>                <span class="dt">color =</span> <span class="st">'virginica'</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1">model &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/lm">lm</a></span>(Sepal.Width <span class="op">~</span><span class="st"> </span>Sepal.Length <span class="op">+</span><span class="st"> </span>Species, <span class="dt">data =</span> iris)</a>
+<a class="sourceLine" id="cb7-2" title="2">m &lt;-<span class="st"> </span>model<span class="op">$</span>coefficients[<span class="dv">2</span>] <span class="co">#slope of model</span></a>
+<a class="sourceLine" id="cb7-3" title="3">b &lt;-<span class="st"> </span>model<span class="op">$</span>coefficients[<span class="dv">1</span>] <span class="co">#setosa intercept</span></a>
+<a class="sourceLine" id="cb7-4" title="4"><span class="kw">ggplot</span>() <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb7-5" title="5"><span class="st">    </span><span class="kw">geom_point</span>(<span class="dt">data =</span> iris, <span class="kw">aes</span>(<span class="dt">x =</span> Sepal.Length, <span class="dt">y =</span> Sepal.Width, <span class="dt">col =</span> Species)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb7-6" title="6"><span class="st">    </span><span class="kw">geom_abline</span>(<span class="kw">aes</span>(<span class="dt">slope =</span> m,</a>
+<a class="sourceLine" id="cb7-7" title="7">                <span class="dt">intercept =</span> b, </a>
+<a class="sourceLine" id="cb7-8" title="8">                <span class="dt">color =</span> <span class="st">'setosa'</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb7-9" title="9"><span class="st">    </span><span class="kw">geom_abline</span>(<span class="kw">aes</span>(<span class="dt">slope =</span> m, </a>
+<a class="sourceLine" id="cb7-10" title="10">                <span class="dt">intercept =</span> b <span class="op">+</span><span class="st"> </span>model<span class="op">$</span>coefficients[<span class="dv">3</span>], </a>
+<a class="sourceLine" id="cb7-11" title="11">                <span class="dt">color =</span> <span class="st">'versicolor'</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb7-12" title="12"><span class="st">    </span><span class="kw">geom_abline</span>(<span class="kw">aes</span>(<span class="dt">slope =</span> m, </a>
+<a class="sourceLine" id="cb7-13" title="13">                <span class="dt">intercept =</span> b <span class="op">+</span><span class="st"> </span>model<span class="op">$</span>coefficients[<span class="dv">4</span>], </a>
+<a class="sourceLine" id="cb7-14" title="14">                <span class="dt">color =</span> <span class="st">'virginica'</span>))</a></code></pre></div>
 <p><img src="ggLinearModel_files/figure-html/unnamed-chunk-2-1.png" width="700"></p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="co">#ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, same_slope = TRUE)</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1"><span class="kw"><a href="../reference/ggLinearModel.html">ggLinearModel</a></span>(iris, Sepal.Length, Sepal.Width, Species, <span class="dt">same_slope =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
+<p><img src="ggLinearModel_files/figure-html/unnamed-chunk-2-2.png" width="700"></p>
 </div>
 <div id="same-intercept-model" class="section level3">
 <h3 class="hasAnchor">
 <a href="#same-intercept-model" class="anchor"></a>Same intercept model</h3>
 <p>Creating a graph which showcases the data sharing a intercept, but differing slopes, as seen in model with an interaction effect, but not a categorical effect, is complex in <code>ggplot()</code>, but easy in <code><a href="../reference/ggLinearModel.html">ggLinearModel()</a></code> by just adding the <code>same_intercept = TRUE</code> parameter.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>model &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span>(Sepal.Width <span class="op">~</span><span class="st"> </span>Sepal.Length <span class="op">+</span><span class="st"> </span>Sepal.Length<span class="op">:</span>Species, <span class="dt">data =</span> iris)</span>
-<span id="cb5-2"><a href="#cb5-2"></a>b &lt;-<span class="st"> </span>model<span class="op">$</span>coefficients[<span class="dv">1</span>] <span class="co">#intercept of model</span></span>
-<span id="cb5-3"><a href="#cb5-3"></a>m &lt;-<span class="st"> </span>model<span class="op">$</span>coefficients[<span class="dv">2</span>] <span class="co">#slope</span></span>
-<span id="cb5-4"><a href="#cb5-4"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> iris, <span class="kw">aes</span>(<span class="dt">x =</span> Sepal.Length, <span class="dt">y =</span> Sepal.Width, <span class="dt">col =</span> Species)) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb5-5"><a href="#cb5-5"></a><span class="st">    </span><span class="kw">geom_point</span>() <span class="op">+</span></span>
-<span id="cb5-6"><a href="#cb5-6"></a><span class="st">    </span><span class="kw">geom_abline</span>(<span class="kw">aes</span>(<span class="dt">intercept =</span> b,</span>
-<span id="cb5-7"><a href="#cb5-7"></a>                    <span class="dt">slope =</span> m,</span>
-<span id="cb5-8"><a href="#cb5-8"></a>                    <span class="dt">color =</span> <span class="st">'setosa'</span>)) <span class="op">+</span></span>
-<span id="cb5-9"><a href="#cb5-9"></a><span class="st">    </span><span class="kw">geom_abline</span>(<span class="kw">aes</span>(<span class="dt">slope =</span> m <span class="op">+</span><span class="st"> </span>model<span class="op">$</span>coefficients[<span class="dv">3</span>], </span>
-<span id="cb5-10"><a href="#cb5-10"></a>                    <span class="dt">intercept =</span> b,</span>
-<span id="cb5-11"><a href="#cb5-11"></a>                    <span class="dt">color =</span> <span class="st">'versicolor'</span>)) <span class="op">+</span></span>
-<span id="cb5-12"><a href="#cb5-12"></a><span class="st">    </span><span class="kw">geom_abline</span>(<span class="kw">aes</span>(<span class="dt">slope =</span> m <span class="op">+</span><span class="st"> </span>model<span class="op">$</span>coefficients[<span class="dv">4</span>], </span>
-<span id="cb5-13"><a href="#cb5-13"></a>                    <span class="dt">intercept =</span> b,</span>
-<span id="cb5-14"><a href="#cb5-14"></a>                    <span class="dt">col =</span> <span class="st">'virginica'</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1">model &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/lm">lm</a></span>(Sepal.Width <span class="op">~</span><span class="st"> </span>Sepal.Length <span class="op">+</span><span class="st"> </span>Sepal.Length<span class="op">:</span>Species, <span class="dt">data =</span> iris)</a>
+<a class="sourceLine" id="cb9-2" title="2">b &lt;-<span class="st"> </span>model<span class="op">$</span>coefficients[<span class="dv">1</span>] <span class="co">#intercept of model</span></a>
+<a class="sourceLine" id="cb9-3" title="3">m &lt;-<span class="st"> </span>model<span class="op">$</span>coefficients[<span class="dv">2</span>] <span class="co">#slope</span></a>
+<a class="sourceLine" id="cb9-4" title="4"><span class="kw">ggplot</span>(<span class="dt">data =</span> iris, <span class="kw">aes</span>(<span class="dt">x =</span> Sepal.Length, <span class="dt">y =</span> Sepal.Width, <span class="dt">col =</span> Species)) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb9-5" title="5"><span class="st">    </span><span class="kw">geom_point</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb9-6" title="6"><span class="st">    </span><span class="kw">geom_abline</span>(<span class="kw">aes</span>(<span class="dt">intercept =</span> b,</a>
+<a class="sourceLine" id="cb9-7" title="7">                    <span class="dt">slope =</span> m,</a>
+<a class="sourceLine" id="cb9-8" title="8">                    <span class="dt">color =</span> <span class="st">'setosa'</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb9-9" title="9"><span class="st">    </span><span class="kw">geom_abline</span>(<span class="kw">aes</span>(<span class="dt">slope =</span> m <span class="op">+</span><span class="st"> </span>model<span class="op">$</span>coefficients[<span class="dv">3</span>], </a>
+<a class="sourceLine" id="cb9-10" title="10">                    <span class="dt">intercept =</span> b,</a>
+<a class="sourceLine" id="cb9-11" title="11">                    <span class="dt">color =</span> <span class="st">'versicolor'</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb9-12" title="12"><span class="st">    </span><span class="kw">geom_abline</span>(<span class="kw">aes</span>(<span class="dt">slope =</span> m <span class="op">+</span><span class="st"> </span>model<span class="op">$</span>coefficients[<span class="dv">4</span>], </a>
+<a class="sourceLine" id="cb9-13" title="13">                    <span class="dt">intercept =</span> b,</a>
+<a class="sourceLine" id="cb9-14" title="14">                    <span class="dt">col =</span> <span class="st">'virginica'</span>))</a></code></pre></div>
 <p><img src="ggLinearModel_files/figure-html/unnamed-chunk-3-1.png" width="700"></p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="co">#ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, same_intercept = TRUE)</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1"><span class="kw"><a href="../reference/ggLinearModel.html">ggLinearModel</a></span>(iris, Sepal.Length, Sepal.Width, Species, <span class="dt">same_intercept =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
+<p><img src="ggLinearModel_files/figure-html/unnamed-chunk-3-2.png" width="700"></p>
 </div>
 <div id="polynomial-model" class="section level3">
 <h3 class="hasAnchor">
 <a href="#polynomial-model" class="anchor"></a>Polynomial model</h3>
 <p>Using <code><a href="../reference/ggLinearModel.html">ggLinearModel()</a></code> you can make models with any number of polynomial predictors, and with any number of interactions.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>mpg<span class="op">$</span>year &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/character.html">as.character</a></span>(mpg<span class="op">$</span>year))</span>
-<span id="cb7-2"><a href="#cb7-2"></a>model &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span>(hwy <span class="op">~</span><span class="st"> </span>displ <span class="op">+</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(displ<span class="op">^</span><span class="dv">2</span>) <span class="op">+</span><span class="st"> </span>displ<span class="op">:</span>year <span class="op">+</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(displ<span class="op">^</span><span class="dv">2</span>)<span class="op">:</span>year, <span class="dt">data =</span> mpg)</span>
-<span id="cb7-3"><a href="#cb7-3"></a></span>
-<span id="cb7-4"><a href="#cb7-4"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> mpg, <span class="kw">aes</span>(<span class="dt">x =</span> displ, <span class="dt">y =</span> hwy, <span class="dt">col =</span> year)) <span class="op">+</span></span>
-<span id="cb7-5"><a href="#cb7-5"></a><span class="st">    </span><span class="kw">geom_point</span>() <span class="op">+</span></span>
-<span id="cb7-6"><a href="#cb7-6"></a><span class="st">    </span><span class="kw">stat_function</span>(<span class="dt">fun=</span><span class="cf">function</span>(x) </span>
-<span id="cb7-7"><a href="#cb7-7"></a>        model<span class="op">$</span>coefficients[<span class="dv">1</span>] <span class="op">+</span><span class="st"> </span>model<span class="op">$</span>coefficients[<span class="dv">2</span>]<span class="op">*</span>x <span class="op">+</span><span class="st"> </span></span>
-<span id="cb7-8"><a href="#cb7-8"></a><span class="st">            </span>model<span class="op">$</span>coefficients[<span class="dv">3</span>]<span class="op">*</span>x<span class="op">^</span><span class="dv">2</span>, </span>
-<span id="cb7-9"><a href="#cb7-9"></a>        <span class="kw">aes</span>(<span class="dt">col =</span> <span class="st">'1999'</span>)) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb7-10"><a href="#cb7-10"></a><span class="st">    </span><span class="kw">stat_function</span>(<span class="dt">fun=</span><span class="cf">function</span>(x) </span>
-<span id="cb7-11"><a href="#cb7-11"></a>        model<span class="op">$</span>coefficients[<span class="dv">1</span>] <span class="op">+</span><span class="st"> </span>model<span class="op">$</span>coefficients[<span class="dv">2</span>]<span class="op">*</span>x <span class="op">+</span><span class="st"> </span></span>
-<span id="cb7-12"><a href="#cb7-12"></a><span class="st">            </span><span class="kw"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(x<span class="op">^</span><span class="dv">2</span>)<span class="op">*</span>model<span class="op">$</span>coefficients[<span class="dv">5</span>]<span class="op">+</span>model<span class="op">$</span>coefficients[<span class="dv">3</span>]<span class="op">*</span>x<span class="op">^</span><span class="dv">2</span> <span class="op">+</span><span class="st"> </span>model<span class="op">$</span>coefficients[<span class="dv">4</span>]<span class="op">*</span>x, </span>
-<span id="cb7-13"><a href="#cb7-13"></a>        <span class="kw">aes</span>(<span class="dt">col =</span> <span class="st">'2008'</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1">mpg<span class="op">$</span>year &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">as.factor</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/character">as.character</a></span>(mpg<span class="op">$</span>year))</a>
+<a class="sourceLine" id="cb11-2" title="2">model &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/lm">lm</a></span>(hwy <span class="op">~</span><span class="st"> </span>displ <span class="op">+</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/AsIs">I</a></span>(displ<span class="op">^</span><span class="dv">2</span>) <span class="op">+</span><span class="st"> </span>displ<span class="op">:</span>year <span class="op">+</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/AsIs">I</a></span>(displ<span class="op">^</span><span class="dv">2</span>)<span class="op">:</span>year, <span class="dt">data =</span> mpg)</a>
+<a class="sourceLine" id="cb11-3" title="3"></a>
+<a class="sourceLine" id="cb11-4" title="4"><span class="kw">ggplot</span>(<span class="dt">data =</span> mpg, <span class="kw">aes</span>(<span class="dt">x =</span> displ, <span class="dt">y =</span> hwy, <span class="dt">col =</span> year)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb11-5" title="5"><span class="st">    </span><span class="kw">geom_point</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb11-6" title="6"><span class="st">    </span><span class="kw">stat_function</span>(<span class="dt">fun=</span><span class="cf">function</span>(x) </a>
+<a class="sourceLine" id="cb11-7" title="7">        model<span class="op">$</span>coefficients[<span class="dv">1</span>] <span class="op">+</span><span class="st"> </span>model<span class="op">$</span>coefficients[<span class="dv">2</span>]<span class="op">*</span>x <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb11-8" title="8"><span class="st">            </span>model<span class="op">$</span>coefficients[<span class="dv">3</span>]<span class="op">*</span>x<span class="op">^</span><span class="dv">2</span>, </a>
+<a class="sourceLine" id="cb11-9" title="9">        <span class="kw">aes</span>(<span class="dt">col =</span> <span class="st">'1999'</span>)) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb11-10" title="10"><span class="st">    </span><span class="kw">stat_function</span>(<span class="dt">fun=</span><span class="cf">function</span>(x) </a>
+<a class="sourceLine" id="cb11-11" title="11">        model<span class="op">$</span>coefficients[<span class="dv">1</span>] <span class="op">+</span><span class="st"> </span>model<span class="op">$</span>coefficients[<span class="dv">2</span>]<span class="op">*</span>x <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb11-12" title="12"><span class="st">            </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/AsIs">I</a></span>(x<span class="op">^</span><span class="dv">2</span>)<span class="op">*</span>model<span class="op">$</span>coefficients[<span class="dv">5</span>]<span class="op">+</span>model<span class="op">$</span>coefficients[<span class="dv">3</span>]<span class="op">*</span>x<span class="op">^</span><span class="dv">2</span> <span class="op">+</span><span class="st"> </span>model<span class="op">$</span>coefficients[<span class="dv">4</span>]<span class="op">*</span>x, </a>
+<a class="sourceLine" id="cb11-13" title="13">        <span class="kw">aes</span>(<span class="dt">col =</span> <span class="st">'2008'</span>))</a></code></pre></div>
 <p><img src="ggLinearModel_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="co">#ggLinearModel(mpg, displ, hwy, year, poly = 2)</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1"><span class="kw"><a href="../reference/ggLinearModel.html">ggLinearModel</a></span>(mpg, displ, hwy, year, <span class="dt">poly =</span> <span class="dv">2</span>)</a></code></pre></div>
+<p><img src="ggLinearModel_files/figure-html/unnamed-chunk-4-2.png" width="700"></p>
 </div>
 <div id="polynomial-model-with-fewer-interactions" class="section level3">
 <h3 class="hasAnchor">
 <a href="#polynomial-model-with-fewer-interactions" class="anchor"></a>polynomial model with fewer interactions</h3>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>model &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span>(hwy <span class="op">~</span><span class="st"> </span>displ <span class="op">+</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(displ<span class="op">^</span><span class="dv">2</span>) <span class="op">+</span><span class="st"> </span>displ<span class="op">:</span>year, <span class="dt">data =</span> mpg)</span>
-<span id="cb9-2"><a href="#cb9-2"></a></span>
-<span id="cb9-3"><a href="#cb9-3"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> mpg, <span class="kw">aes</span>(<span class="dt">x =</span> displ, <span class="dt">y =</span> hwy, <span class="dt">col =</span> year)) <span class="op">+</span></span>
-<span id="cb9-4"><a href="#cb9-4"></a><span class="st">    </span><span class="kw">geom_point</span>() <span class="op">+</span></span>
-<span id="cb9-5"><a href="#cb9-5"></a><span class="st">    </span><span class="kw">stat_function</span>(<span class="dt">fun=</span><span class="cf">function</span>(x) </span>
-<span id="cb9-6"><a href="#cb9-6"></a>        model<span class="op">$</span>coefficients[<span class="dv">1</span>] <span class="op">+</span><span class="st"> </span>model<span class="op">$</span>coefficients[<span class="dv">2</span>]<span class="op">*</span>x <span class="op">+</span><span class="st"> </span></span>
-<span id="cb9-7"><a href="#cb9-7"></a><span class="st">            </span>model<span class="op">$</span>coefficients[<span class="dv">3</span>]<span class="op">*</span>x<span class="op">^</span><span class="dv">2</span>, </span>
-<span id="cb9-8"><a href="#cb9-8"></a>        <span class="kw">aes</span>(<span class="dt">col =</span> <span class="st">'1999'</span>)) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb9-9"><a href="#cb9-9"></a><span class="st">    </span><span class="kw">stat_function</span>(<span class="dt">fun=</span><span class="cf">function</span>(x) </span>
-<span id="cb9-10"><a href="#cb9-10"></a>        model<span class="op">$</span>coefficients[<span class="dv">1</span>] <span class="op">+</span><span class="st"> </span>model<span class="op">$</span>coefficients[<span class="dv">2</span>]<span class="op">*</span>x <span class="op">+</span><span class="st"> </span></span>
-<span id="cb9-11"><a href="#cb9-11"></a><span class="st">            </span><span class="kw"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(x<span class="op">^</span><span class="dv">2</span>)<span class="op">*</span>model<span class="op">$</span>coefficients[<span class="dv">3</span>] <span class="op">+</span><span class="st"> </span>model<span class="op">$</span>coefficients[<span class="dv">4</span>]<span class="op">*</span>x, </span>
-<span id="cb9-12"><a href="#cb9-12"></a>        <span class="kw">aes</span>(<span class="dt">col =</span> <span class="st">'2008'</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1">model &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/lm">lm</a></span>(hwy <span class="op">~</span><span class="st"> </span>displ <span class="op">+</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/AsIs">I</a></span>(displ<span class="op">^</span><span class="dv">2</span>) <span class="op">+</span><span class="st"> </span>displ<span class="op">:</span>year, <span class="dt">data =</span> mpg)</a>
+<a class="sourceLine" id="cb13-2" title="2"></a>
+<a class="sourceLine" id="cb13-3" title="3"><span class="kw">ggplot</span>(<span class="dt">data =</span> mpg, <span class="kw">aes</span>(<span class="dt">x =</span> displ, <span class="dt">y =</span> hwy, <span class="dt">col =</span> year)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb13-4" title="4"><span class="st">    </span><span class="kw">geom_point</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb13-5" title="5"><span class="st">    </span><span class="kw">stat_function</span>(<span class="dt">fun=</span><span class="cf">function</span>(x) </a>
+<a class="sourceLine" id="cb13-6" title="6">        model<span class="op">$</span>coefficients[<span class="dv">1</span>] <span class="op">+</span><span class="st"> </span>model<span class="op">$</span>coefficients[<span class="dv">2</span>]<span class="op">*</span>x <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb13-7" title="7"><span class="st">            </span>model<span class="op">$</span>coefficients[<span class="dv">3</span>]<span class="op">*</span>x<span class="op">^</span><span class="dv">2</span>, </a>
+<a class="sourceLine" id="cb13-8" title="8">        <span class="kw">aes</span>(<span class="dt">col =</span> <span class="st">'1999'</span>)) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb13-9" title="9"><span class="st">    </span><span class="kw">stat_function</span>(<span class="dt">fun=</span><span class="cf">function</span>(x) </a>
+<a class="sourceLine" id="cb13-10" title="10">        model<span class="op">$</span>coefficients[<span class="dv">1</span>] <span class="op">+</span><span class="st"> </span>model<span class="op">$</span>coefficients[<span class="dv">2</span>]<span class="op">*</span>x <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb13-11" title="11"><span class="st">            </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/AsIs">I</a></span>(x<span class="op">^</span><span class="dv">2</span>)<span class="op">*</span>model<span class="op">$</span>coefficients[<span class="dv">3</span>] <span class="op">+</span><span class="st"> </span>model<span class="op">$</span>coefficients[<span class="dv">4</span>]<span class="op">*</span>x, </a>
+<a class="sourceLine" id="cb13-12" title="12">        <span class="kw">aes</span>(<span class="dt">col =</span> <span class="st">'2008'</span>))</a></code></pre></div>
 <p><img src="ggLinearModel_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="co">#ggLinearModel(mpg, displ, hwy, year, poly = 2, interactions = 1)</span></span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1"><span class="kw"><a href="../reference/ggLinearModel.html">ggLinearModel</a></span>(mpg, displ, hwy, year, <span class="dt">poly =</span> <span class="dv">2</span>, <span class="dt">interactions =</span> <span class="dv">1</span>)</a></code></pre></div>
+<p><img src="ggLinearModel_files/figure-html/unnamed-chunk-5-2.png" width="700"></p>
 </div>
 </div>
 <div id="added-features" class="section level1">
@@ -190,17 +197,22 @@
 <h3 class="hasAnchor">
 <a href="#confidence-interval-and-prediction-interval" class="anchor"></a>confidence interval and prediction interval</h3>
 <p>Setting ci or pi to TRUE will add a confidence interval, and setting level to a number between 0 and 1 will change the confidence level of the interval.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="co">#ggLinearModel(CO2, conc, uptake, Type, ci = T)</span></span>
-<span id="cb11-2"><a href="#cb11-2"></a><span class="co">#ggLinearModel(CO2, conc, uptake, Type, pi = T)</span></span>
-<span id="cb11-3"><a href="#cb11-3"></a><span class="co">#ggLinearModel(CO2, conc, uptake, Type, pi = T, level = .5)</span></span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1"><span class="kw"><a href="../reference/ggLinearModel.html">ggLinearModel</a></span>(CO2, conc, uptake, Type, <span class="dt">ci =</span> T)</a></code></pre></div>
+<p><img src="ggLinearModel_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" title="1"><span class="kw"><a href="../reference/ggLinearModel.html">ggLinearModel</a></span>(CO2, conc, uptake, Type, <span class="dt">pi =</span> T)</a></code></pre></div>
+<p><img src="ggLinearModel_files/figure-html/unnamed-chunk-6-2.png" width="700"></p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" title="1"><span class="kw"><a href="../reference/ggLinearModel.html">ggLinearModel</a></span>(CO2, conc, uptake, Type, <span class="dt">pi =</span> T, <span class="dt">level =</span> <span class="fl">.5</span>)</a></code></pre></div>
+<p><img src="ggLinearModel_files/figure-html/unnamed-chunk-6-3.png" width="700"></p>
 </div>
 <div id="label-name-changing" class="section level3">
 <h3 class="hasAnchor">
 <a href="#label-name-changing" class="anchor"></a>Label name changing</h3>
 <p>Although <code><a href="../reference/ggLinearModel.html">ggLinearModel()</a></code> will return a <code>ggplot</code> object you can still add a title, x-axis label, y-axis label, and legend title within <code><a href="../reference/ggLinearModel.html">ggLinearModel()</a></code></p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="co">#ggLinearModel(mtcars, wt, mpg, cyl, </span></span>
-<span id="cb12-2"><a href="#cb12-2"></a>              <span class="co">#title = "The Affect of a car's weight on the MPG", xlabel = 'Weight (lbs)', </span></span>
-<span id="cb12-3"><a href="#cb12-3"></a>              <span class="co">#ylabel = 'Miles per Gallon', legendTitle = 'Number of Cylinders in engine')</span></span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" title="1"><span class="kw"><a href="../reference/ggLinearModel.html">ggLinearModel</a></span>(mtcars, wt, mpg, cyl, </a>
+<a class="sourceLine" id="cb18-2" title="2">              <span class="dt">title =</span> <span class="st">"The Affect of a car's weight on the MPG"</span>, <span class="dt">xlabel =</span> <span class="st">'Weight (1,000 </span></a>
+<a class="sourceLine" id="cb18-3" title="3"><span class="st">lbs)'</span>, </a>
+<a class="sourceLine" id="cb18-4" title="4">              <span class="dt">ylabel =</span> <span class="st">'Miles per Gallon'</span>, <span class="dt">legendTitle =</span> <span class="st">'Number of Cylinders in engine'</span>)</a></code></pre></div>
+<p><img src="ggLinearModel_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
 </div>
 </div>
   </div>
@@ -220,20 +232,17 @@
 </div>
 
 
-
       <footer><div class="copyright">
   <p>Developed by Jack Langston.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.9100.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
 </div>
-
       </footer>
 </div>
 
   
-
 
   </body>
 </html>

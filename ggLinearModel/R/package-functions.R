@@ -251,7 +251,7 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
     {
         if (length(newx) == length(newy) && length(newy) == length(newcat))
         {
-            modelString <- paste('newy ~ poly(newx, degrees = poly, raw = TRUE) + newcat +')
+            modelString <- paste(y, '~ poly(', x, ', degrees = poly, raw = TRUE) +', cat, ' +')
             for (i in 1:interactions)
             {
                 modelString <- paste(modelString, 'newcat:I(newx^', i, ')')
@@ -1179,8 +1179,12 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
     x <- as_label(enquo(x))
     y <- as_label(enquo(y))
     cat <- as_label(enquo(cat))
+    # x <- enquo(x)
+    # y <- enquo(y)
+    # cat <- enquo(cat)
     if (length(newx) == length(newy) && length(newy) == length(newcat))
     {
+        # my_formula <- expr({{y}} ~ {{x}} * {{cat}})
         model <- lm(newy ~ newx * newcat, data = data)
         b <- model$coefficients[1]
         m <- model$coefficients[2]
