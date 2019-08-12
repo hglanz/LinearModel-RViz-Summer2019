@@ -133,7 +133,8 @@ ggLinearModel(CO2, conc, uptake, Type, pi = T, level = .5)
 Although `ggLinearModel()` will return a `ggplot` object you can still add a title, x-axis label, y-axis label, and legend title within `ggLinearModel()`
 ```{r}
 ggLinearModel(mtcars, wt, mpg, cyl, 
-              title = "The Affect of a car's weight on the MPG", xlabel = 'Weight (lbs)', 
+              title = "The Affect of a car's weight on the MPG", xlabel = 'Weight (1,000 
+lbs)', 
               ylabel = 'Miles per Gallon', legendTitle = 'Number of Cylinders in engine')
 ```
 

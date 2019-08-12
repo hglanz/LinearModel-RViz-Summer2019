@@ -85,6 +85,7 @@ ggLinearModel(CO2, conc, uptake, Type, pi = T, level = .5)
 
 ## ------------------------------------------------------------------------
 ggLinearModel(mtcars, wt, mpg, cyl, 
-              title = "The Affect of a car's weight on the MPG", xlabel = 'Weight (lbs)', 
+              title = "The Affect of a car's weight on the MPG", xlabel = 'Weight (1,000 
+lbs)', 
               ylabel = 'Miles per Gallon', legendTitle = 'Number of Cylinders in engine')
 

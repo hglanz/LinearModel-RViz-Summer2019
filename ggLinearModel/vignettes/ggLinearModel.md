@@ -1,7 +1,7 @@
 ---
 title: "ggLinearModel"
 author: "Jack Langston"
-date: "2019-08-11"
+date: "2019-08-12"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{ggLinearModel}
@@ -179,7 +179,8 @@ Although `ggLinearModel()` will return a `ggplot` object you can still add a tit
 
 ```r
 ggLinearModel(mtcars, wt, mpg, cyl, 
-              title = "The Affect of a car's weight on the MPG", xlabel = 'Weight (lbs)', 
+              title = "The Affect of a car's weight on the MPG", xlabel = 'Weight (1,000 
+lbs)', 
               ylabel = 'Miles per Gallon', legendTitle = 'Number of Cylinders in engine')
 ```
 
