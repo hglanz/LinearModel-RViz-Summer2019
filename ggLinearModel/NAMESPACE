@@ -3,7 +3,6 @@
 export(ggLinearModel)
 export(rl_full_model)
 export(rl_linear)
-export(rl_plotly)
 export(rl_poly_full_model)
 export(rl_poly_same_intercept)
 export(rl_poly_same_line)

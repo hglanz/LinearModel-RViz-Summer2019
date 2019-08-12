@@ -4,11 +4,10 @@
 \alias{ggLinearModel}
 \title{ggLinearModel}
 \usage{
-ggLinearModel(data, x, y, cat = NULL, plotly = FALSE,
-  same_slope = FALSE, same_intercept = FALSE, poly = 1,
-  interactions = poly, ci = FALSE, pi = FALSE, interactive = FALSE,
-  title = NULL, xlabel = NULL, ylabel = NULL, legendTitle = NULL,
-  level = 0.95)
+ggLinearModel(data, x, y, cat, plotly = FALSE, same_slope = FALSE,
+  same_intercept = FALSE, poly = 1, interactions = poly,
+  ci = FALSE, pi = FALSE, interactive = FALSE, title = NULL,
+  xlabel = NULL, ylabel = NULL, legendTitle = NULL, level = 0.95)
 }
 \arguments{
 \item{data}{a R data frame. tibbles will work}

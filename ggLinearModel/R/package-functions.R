@@ -25,7 +25,7 @@
 #'
 #' @examples
 #' ggLinearModel(iris, Sepal.Length, Sepal.Width, Species)
-ggLinearModel <- function(data, x, y, cat = NULL, plotly = FALSE, same_slope = FALSE, same_intercept = FALSE,
+ggLinearModel <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_intercept = FALSE,
                poly = 1, interactions = poly, ci = FALSE, pi = FALSE, interactive = FALSE,
                title = NULL, xlabel = NULL, ylabel = NULL, legendTitle = NULL, level = .95)
 {
@@ -206,61 +206,6 @@ rl_polynomial <- function(data, x, y, cat, poly, interactions = poly, plotly = F
     plot
 }
 
-#' rl plotly
-#'
-#' @param data a R data frame. tibbles will work
-#' @param x variable name of the x (predicting) variable, must be a column name in the data table
-#' @param y variable name of the y (response) variable, must be a column name in the data table
-#' @param cat variable name of the categorical variable, must be a column name in the data table
-#' @param same_slope boolean if they want the regression lines to have the same slope. Set to FALSE
-#' @param same_intercept boolean if they want the regression lines to have the same intercept Set to FALSE
-#' @param poly  a integer value to declare how many polynomial variables the use wants. Set to 1, i.e. no polynomial
-#' @param interactions a integer value for if the user wants to include interactions in the polynomial model. Note: only matters when poly > 1 and interactions <= poly. Set to 0
-#' @param ci boolean to add a confidence interval to the graph. Set to FALSE
-#' @param pi boolean to add a prediction interval to the graph. Set to FALSE
-#' @param interactive boolean to make interactive. Set to FALSE
-#' @param title a string to change the title of the graph. Set to x name vs y name
-#' @param xlabel a string for the label of the x axis. Set to the x variable name
-#' @param ylabel a string for the label of the y axis. Set to the y variable name
-#' @param legendTitle a string for the label of the legend. Set to the categorical variable name
-#' @param level a number between 0-1 for the interval percentage of the confidence and prediction intervals. Set to .95
-#'
-#' @return a plotly object
-#' @export
-#'
-#' @examples
-#' rl_plotly(iris, Sepal.Length, Sepal.Width, Species)
-rl_plotly <- function(data, x, y, cat, same_slope = FALSE, same_intercept = FALSE,
-                      poly = 1, interactions = poly, ci = FALSE, pi = FALSE, interactive = FALSE,
-                      title = NULL, xlabel = NULL,
-                      ylabel = NULL, legendTitle = NULL, level = .95)
-{
-    if (is_tibble(data))
-    {
-        data <- as.data.frame(data)
-    }
-    if (is.null(title))
-    {
-        title <- paste(as_label(enquo(x)), 'vs.', as_label(enquo(y)))
-    }
-    if (is.null(xlabel))
-    {
-        xlabel <- as_label(enquo(x))
-    }
-    if (is.null(ylabel))
-    {
-        ylabel <- as_label(enquo(y))
-    }
-    if (is.null(legendTitle))
-    {
-        legendTitle <- as_label(enquo(cat))
-    }
-
-    ggLinearModel(data, {{x}}, {{y}}, {{cat}}, plotly = TRUE, same_slope = same_slope, same_intercept = same_intercept,
-       poly = poly, interactions = interactions, ci = ci, pi = pi, interactive = interactive, title = title,
-       xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
-}
-
 #' rl polynomial full model
 #'
 #' \code{rl_poly_full_model(data, x, y, cat, poly ...)} creates a ggplot (or plotly) object. It is designed to create visualizations of various types of linear models with polynomial predictors. Inserting a datatable, x variable, y variable, and categorical variable will produce a graph with a different least squares line for each level in the categorical variable. You can modify the graph by changing the values for various parameters.
@@ -291,6 +236,7 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
                                title = paste(x, 'vs.', y), xlabel = x, ylabel = y, legendTitle = cat,
                                level = .95)
 {
+
     if (is_tibble(data))
     {
         data <- as.data.frame(data)
