@@ -1699,8 +1699,6 @@ rl_same_line <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALSE
 
         plot <- ggplot()
 
-        print(model)
-
         for (i in 1:(length(model$coefficients)))
         {
             if (is.na(model$coefficients[i]))
