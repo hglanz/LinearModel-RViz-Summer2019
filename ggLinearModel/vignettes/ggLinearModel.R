@@ -1,9 +1,8 @@
-## ----setup, include = FALSE----------------------------------------------
+## ----setup, echo = FALSE, message = FALSE, warning = FALSE---------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
-
 library(tidyverse)
 library(ggLinearModel)
 
@@ -50,7 +49,6 @@ ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, same_intercept = TRUE)
 ## ------------------------------------------------------------------------
 mpg$year <- as.factor(as.character(mpg$year))
 model <- lm(hwy ~ displ + I(displ^2) + displ:year + I(displ^2):year, data = mpg)
-
 ggplot(data = mpg, aes(x = displ, y = hwy, col = year)) +
     geom_point() +
     stat_function(fun=function(x) 
@@ -65,7 +63,6 @@ ggLinearModel(mpg, displ, hwy, year, poly = 2)
 
 ## ------------------------------------------------------------------------
 model <- lm(hwy ~ displ + I(displ^2) + displ:year, data = mpg)
-
 ggplot(data = mpg, aes(x = displ, y = hwy, col = year)) +
     geom_point() +
     stat_function(fun=function(x) 

@@ -10,7 +10,7 @@ library(ggiraph)
 #plotly is boolean if they want the graph in plotly. TRUE returns plotly graph, FALSE returns ggplot. Set to FALSE
 #same_slope is boolean if they want the regression lines to have the same slope. Set to FALSE
 #same_intercept is boolean if they want the regression lines to have the same intercept Set to FALSE
-#poly is a integer value to declare how many polynomial variables the use wants. Set to 1, i.e. no polynomial 
+#poly is a integer value to declare how many polynomial variables the use wants. Set to 1, i.e. no polynomial
 #interactions is a integer value for if the user wants to include interactions in the polynomial model. Note only matters when poly > 1 and inteactions <= poly. Set to 0
 #interactive is boolean to make interactive, defaults to false
 #title is a string to change the title of the graph, defaults to x name vs y name
@@ -216,7 +216,7 @@ rl_polynomial <- function(data, x, y, cat, poly, interactions = poly, plotly = F
             plot <- rl_poly_same_line(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, poly = poly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
         }
     }
-    
+
     plot
 }
 
@@ -313,7 +313,7 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
                                    x, " = ", fit[['I(newx^1)']], "\n",
                                    y, " = ", fit[['newy']], "\n",
                                    cat, " = ", fit[['newcat']])
-            
+
             for (i in 1:(length(model$coefficients)))
             {
                 if (is.na(model$coefficients[i]))
@@ -330,12 +330,12 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
                     {
                         model$coefficients[i] <- 0
                         print('Some aspects of this model may be incorrect')
-                        
+
                     }
                 }
             }
             plot <- ggplot()
-            
+
             if (ci == TRUE)
             {
                 plot <- add_ci_poly(plot, data, {{x}}, newcat, model, level = level)
@@ -344,17 +344,17 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
             {
                 plot <- add_pi_poly(plot, data, {{x}}, newcat, model, level = level)
             }
-            
+
             if (!plotly)
             {
                 xvecs <- list()
                 yvecs <- list()
-                
+
                 xvecs[[length(levels(newcat))]] <- seq(from = min(data[newcat == levels(newcat)[length(levels(newcat))],]%>% pull({{x}})),
                                                        to = max(data[newcat == levels(newcat)[length(levels(newcat))],]%>% pull({{x}})),
                                                        by = ((max(data[newcat == levels(newcat)[length(levels(newcat))],]%>% pull({{x}}))-
                                                                   min(data[newcat == levels(newcat)[length(levels(newcat))],]%>% pull({{x}})))/1001))
-                
+
                 slopeString <- ''
                 for (i in 1:poly)
                 {
@@ -364,7 +364,7 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
                 }
                 catEff <- model$coefficients[paste('newcat', levels(newcat)[length(levels(newcat))], sep = '')]
                 yvecs[[length(levels(newcat))]] <- b + catEff + eval(parse(text = slopeString))
-                
+
                 tooltips <- list()
                 for (i in 1:length(levels(newcat)))
                 {
@@ -382,7 +382,7 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
                     for (j in 1:poly)
                     {
                         coef <- paste('newcat', levels(newcat)[i], ':I(newx^', j, ')', sep = '')
-                        
+
                         if (j != 1)
                         {
                             if (j > interactions || i == length(levels(newcat)))
@@ -412,7 +412,7 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
                         }
                     }
                 }
-                
+
                 plot <- plot + geom_point_interactive(data = data,
                                                       aes(x = newx, y = newy,
                                                           col = newcat, tooltip = tooltip)) +
@@ -420,7 +420,7 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
                                               y = yvecs[[length(levels(newcat))]],
                                               color = levels(newcat)[length(levels(newcat))]),
                                           tooltip = tooltips[[length(levels(newcat))]])
-                
+
                 slopeString <- ''
                 for (i in 1:poly)
                 {
@@ -428,14 +428,14 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
                     newSlopeString <- paste('model$coefficients[', coef, "]*xvecs[[i]]^", i, sep = '')
                     slopeString <- paste(slopeString, newSlopeString, sep = ' + ')
                 }
-                
+
                 for (i in 1:(length(levels(newcat))-1))
                 {
                     xvecs[[i]] <- seq(from = min(data[newcat == levels(newcat)[i],]%>% pull({{x}})),
                                       to = max(data[newcat == levels(newcat)[i],]%>% pull({{x}})),
                                       by = (max(data[newcat == levels(newcat)[i],]%>% pull({{x}}))-
                                                 min(data[newcat == levels(newcat)[i],]%>% pull({{x}})))/1001)
-                    
+
                     interactionsString <- ''
                     for (j in 1:interactions)
                     {
@@ -443,7 +443,7 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
                         newInteractionsString <- paste('model$coefficients[', coef, "]*(xvecs[[", i,"]]^", j, ')', sep = '')
                         interactionsString <- paste(interactionsString, newInteractionsString, sep = ' + ')
                     }
-                    
+
                     if (i == 1)
                     {
                         yvecs[[i]] <- b + eval(parse(text = slopeString)) + eval(parse(text = interactionsString))
@@ -451,7 +451,7 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
                                                                         y = yvecs[[i]],
                                                                         color = shQuote(levels(newcat)[i])),
                                                              tooltip = tooltips[[i]])
-                        
+
                     } else
                     {
                         yvecs[[i]] <- b + model$coefficients[paste('newcat', levels(newcat)[i], sep = '')] + eval(parse(text = slopeString)) + eval(parse(text = interactionsString))
@@ -470,7 +470,7 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
                     newSlopeString <- paste('model$coefficients[', coef, "]*x^", i, sep = '')
                     slopeString <- paste(slopeString, newSlopeString, sep = ' + ')
                 }
-                
+
                 catEff <- model$coefficients[paste('newcat', levels(newcat)[length(levels(newcat))], sep = '')]
                 plot <- plot +
                     geom_point(data = data, aes(x = newx, y = newy, col = newcat)) +
@@ -478,7 +478,7 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
                                   aes(col = levels(newcat)[length(levels(newcat))]),
                                   xlim = c(min(data[data %>% pull({{cat}}) == levels(newcat)[length(levels(newcat))],]%>% pull({{x}})),
                                            max(data[data %>% pull({{cat}}) == levels(newcat)[length(levels(newcat))],]%>% pull({{x}}))))
-                
+
                 statFunctions <- list()
                 catEffects <- list()
                 for (i in 1:(length(levels(newcat))-1))
@@ -505,29 +505,29 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
                                                 '],]%>% pull({{x}})),max(data[data %>% pull({{cat}}) == levels(newcat)[', i,
                                                 '],]%>% pull({{x}}))))', sep = '')
                 }
-                
+
                 for (i in 1:(length(levels(newcat))-1))
                 {
                     plot <- plot + eval(parse(text = statFunctions[[i]]))
                 }
             }
-            
+
         } else
         {
             stop('Please enter valid parameters')
         }
-        
+
         plot <- plot + ggtitle(title) + xlab(xlabel) + ylab(ylabel) + labs(color = legendTitle, fill = legendTitle)
-        
+
         if (interactive == TRUE)
         {
-            
-            
+
+
             tooltip_css <- "background-color:white;padding:10px;border-radius:10px 20px 10px 20px;"
             hover_css="r:4px;cursor:pointer;stroke:black;stroke-width:2px;"
             selected_css = "fill:#FF3333;stroke:black;"
-            
-            
+
+
             plot <- ggiraph(code=print(plot),
                             tooltip_extra_css=tooltip_css,
                             tooltip_opacity=.75,
@@ -601,7 +601,7 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
             fit <- model$model
             fit$data_id <- rownames(fit)
             data$tooltip <- paste0(fit$data_id, "\n", x, " = ", fit[['I(newx^1)']], "\n", y, " = ", fit[['newy']], "\n", cat, " = ", fit[['newcat']])
-            
+
             for (i in 1:(length(model$coefficients)))
             {
                 if (is.na(model$coefficients[i]))
@@ -618,13 +618,13 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
                     {
                         model$coefficients[i] <- 0
                         print('Some aspects of this model may be incorrect')
-                        
+
                     }
                 }
             }
-            
+
             plot <- ggplot()
-            
+
             if (ci == TRUE)
             {
                 plot <- add_ci_poly(plot, data, {{x}}, newcat, model, level = level)
@@ -633,17 +633,17 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
             {
                 plot <- add_pi_poly(plot, data, {{x}}, newcat, model, level = level)
             }
-            
+
             if (!plotly)
             {
                 xvecs <- list()
                 yvecs <- list()
-                
+
                 xvecs[[length(levels(newcat))]] <- seq(from = min(data[newcat == levels(newcat)[length(levels(newcat))],]%>% pull({{x}})),
                                                        to = max(data[newcat == levels(newcat)[length(levels(newcat))],]%>% pull({{x}})),
                                                        by = ((max(data[newcat == levels(newcat)[length(levels(newcat))],]%>% pull({{x}}))-
                                                                   min(data[newcat == levels(newcat)[length(levels(newcat))],]%>% pull({{x}})))/1001))
-                
+
                 slopeString <- ''
                 for (i in 1:poly)
                 {
@@ -651,9 +651,9 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
                     newSlopeString <- paste('model$coefficients[', coef, "]*xvecs[[length(levels(newcat))]]^", i, sep = '')
                     slopeString <- paste(slopeString, newSlopeString, sep = ' + ')
                 }
-                
+
                 yvecs[[length(levels(newcat))]] <- b + eval(parse(text = slopeString))
-                
+
                 tooltips <- list()
                 for (i in 1:length(levels(newcat)))
                 {
@@ -662,7 +662,7 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
                     for (j in 1:poly)
                     {
                         coef <- paste('newcat', levels(newcat)[i], ':I(newx^', j, ')', sep = '')
-                        
+
                         if (j != 1)
                         {
                             if (j > interactions || i == length(levels(newcat)))
@@ -692,7 +692,7 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
                         }
                     }
                 }
-                
+
                 plot <- plot + geom_point_interactive(data = data,
                                                       aes(x = newx, y = newy,
                                                           col = newcat, tooltip = tooltip)) +
@@ -700,7 +700,7 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
                                               y = yvecs[[length(levels(newcat))]],
                                               color = levels(newcat)[length(levels(newcat))]),
                                           tooltip = tooltips[[length(levels(newcat))]])
-                
+
                 slopeString <- ''
                 for (i in 1:poly)
                 {
@@ -708,14 +708,14 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
                     newSlopeString <- paste('model$coefficients[', coef, "]*xvecs[[i]]^", i, sep = '')
                     slopeString <- paste(slopeString, newSlopeString, sep = ' + ')
                 }
-                
+
                 for (i in 1:(length(levels(newcat))-1))
                 {
                     xvecs[[i]] <- seq(from = min(data[newcat == levels(newcat)[i],]%>% pull({{x}})),
                                       to = max(data[newcat == levels(newcat)[i],]%>% pull({{x}})),
                                       by = (max(data[newcat == levels(newcat)[i],]%>% pull({{x}}))-
                                                 min(data[newcat == levels(newcat)[i],]%>% pull({{x}})))/1001)
-                    
+
                     interactionsString <- ''
                     for (j in 1:interactions)
                     {
@@ -723,7 +723,7 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
                         newInteractionsString <- paste('model$coefficients[', coef, "]*(xvecs[[", i,"]]^", j, ')', sep = '')
                         interactionsString <- paste(interactionsString, newInteractionsString, sep = ' + ')
                     }
-                    
+
                     yvecs[[i]] <- b + eval(parse(text = slopeString)) + eval(parse(text = interactionsString))
                     plot <- plot + geom_path_interactive(aes_string(x = xvecs[[i]],
                                                                     y = yvecs[[i]],
@@ -739,14 +739,14 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
                     newSlopeString <- paste('model$coefficients[', coef, "]*x^", i, sep = '')
                     slopeString <- paste(slopeString, newSlopeString, sep = ' + ')
                 }
-                
+
                 plot <- ggplot(data = data, aes(x = newx, y = newy, col = newcat)) +
                     geom_point() +
                     stat_function(fun = function(x) b + eval(parse(text = slopeString)),
                                   aes(col = levels(newcat)[length(levels(newcat))]),
                                   xlim = c(min(data[data %>% pull({{cat}}) == levels(newcat)[length(levels(newcat))],]%>% pull({{x}})),
                                            max(data[data %>% pull({{cat}}) == levels(newcat)[length(levels(newcat))],]%>% pull({{x}}))))
-                
+
                 statFunctions <- list()
                 for (i in 1:(length(levels(newcat))-1))
                 {
@@ -764,7 +764,7 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
                                                 '],]%>% pull({{x}})),max(data[data %>% pull({{cat}}) == levels(newcat)[', i,
                                                 '],]%>% pull({{x}}))))', sep = '')
                 }
-                
+
                 for (i in 1:(length(levels(newcat))-1))
                 {
                     plot <- plot + eval(parse(text = statFunctions[[i]]))
@@ -774,18 +774,18 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
         {
             stop('Please enter valid parameters')
         }
-        
+
         plot <- plot + ggtitle(title) + xlab(xlabel) + ylab(ylabel) + labs(color = legendTitle, fill = legendTitle)
-        
+
         if (interactive == TRUE)
         {
-            
-            
+
+
             tooltip_css <- "background-color:white;padding:10px;border-radius:10px 20px 10px 20px;"
             hover_css="r:4px;cursor:pointer;stroke:black;stroke-width:2px;"
             selected_css = "fill:#FF3333;stroke:black;"
-            
-            
+
+
             plot <- ggiraph(code=print(plot),
                             tooltip_extra_css=tooltip_css,
                             tooltip_opacity=.75,
@@ -844,7 +844,7 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE
     if (length(newx) == length(newy) && length(newy) == length(newcat))
     {
         plot <- ggplot()
-        
+
         model <- lm(newy ~ poly(newx, degrees = poly, raw = TRUE) + newcat, data = data)
         b <- model$coefficients[1]
         fit <- model$model
@@ -853,7 +853,7 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE
                                x, " = ", fit[,2][,1], "\n",
                                y, " = ", fit[['newy']], "\n",
                                cat, " = ", fit[['newcat']])
-        
+
         for (i in 1:(length(model$coefficients)))
         {
             if (is.na(model$coefficients[i]))
@@ -870,11 +870,11 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE
                 {
                     model$coefficients[i] <- 0
                     print('Some aspects of this model may be incorrect')
-                    
+
                 }
             }
         }
-        
+
         if (ci == TRUE)
         {
             plot <- add_ci_poly(plot, data, {{x}}, newcat, model, level = level)
@@ -883,17 +883,17 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE
         {
             plot <- add_pi_poly(plot, data, {{x}}, newcat, model, level = level)
         }
-        
+
         if (!plotly)
         {
             xvecs <- list()
             yvecs <- list()
-            
+
             xvecs[[length(levels(newcat))]] <- seq(from = min(data[newcat == levels(newcat)[length(levels(newcat))],]%>% pull({{x}})),
                                                    to = max(data[newcat == levels(newcat)[length(levels(newcat))],]%>% pull({{x}})),
                                                    by = ((max(data[newcat == levels(newcat)[length(levels(newcat))],]%>% pull({{x}}))-
                                                               min(data[newcat == levels(newcat)[length(levels(newcat))],]%>% pull({{x}})))/1001))
-            
+
             slopeString <- ''
             for (i in 1:poly)
             {
@@ -901,10 +901,10 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE
                 newSlopeString <- paste('model$coefficients[', coef, "]*xvecs[[length(levels(newcat))]]^", i, sep = '')
                 slopeString <- paste(slopeString, newSlopeString, sep = ' + ')
             }
-            
+
             catEff <- model$coefficients[paste('newcat', levels(newcat)[length(levels(newcat))], sep = '')]
             yvecs[[length(levels(newcat))]] <- b + catEff + eval(parse(text = slopeString))
-            
+
             tooltips <- list()
             for (i in 1:length(levels(newcat)))
             {
@@ -926,7 +926,7 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE
                                            '*', x, '^', j, sep = '')
                 }
             }
-            
+
             plot <- plot + geom_point_interactive(data = data,
                                                   aes(x = newx, y = newy,
                                                       col = newcat, tooltip = tooltip)) +
@@ -934,7 +934,7 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE
                                           y = yvecs[[length(levels(newcat))]],
                                           color = levels(newcat)[length(levels(newcat))]),
                                       tooltip = tooltips[[length(levels(newcat))]])
-            
+
             slopeString <- ''
             for (i in 1:poly)
             {
@@ -942,14 +942,14 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE
                 newSlopeString <- paste('model$coefficients[', coef, "]*xvecs[[i]]^", i, sep = '')
                 slopeString <- paste(slopeString, newSlopeString, sep = ' + ')
             }
-            
+
             for (i in 1:(length(levels(newcat))-1))
             {
                 xvecs[[i]] <- seq(from = min(data[newcat == levels(newcat)[i],]%>% pull({{x}})),
                                   to = max(data[newcat == levels(newcat)[i],]%>% pull({{x}})),
                                   by = (max(data[newcat == levels(newcat)[i],]%>% pull({{x}}))-
                                             min(data[newcat == levels(newcat)[i],]%>% pull({{x}})))/1001)
-                
+
                 if (i == 1)
                 {
                     yvecs[[i]] <- b + eval(parse(text = slopeString))
@@ -957,7 +957,7 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE
                                                                     y = yvecs[[i]],
                                                                     color = shQuote(levels(newcat)[i])),
                                                          tooltip = tooltips[[i]])
-                    
+
                 } else
                 {
                     yvecs[[i]] <- b + model$coefficients[paste('newcat', levels(newcat)[i], sep = '')] + eval(parse(text = slopeString))
@@ -976,13 +976,13 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE
                 newSlopeString <- paste('model$coefficients[', coef, "]*x^", i, sep = '')
                 slopeString <- paste(slopeString, newSlopeString, sep = ' + ')
             }
-            
+
             plot <- geom_point(data = data, aes(x = newx, y = newy, col = newcat)) +
                 stat_function(fun = function(x) b + eval(parse(text = slopeString)),
                               aes(col = levels(newcat)[1]),
                               xlim = c(min(data[data %>% pull({{cat}}) == levels(newcat)[1],]%>% pull({{x}})),
                                        max(data[data %>% pull({{cat}}) == levels(newcat)[1],]%>% pull({{x}}))))
-            
+
             statFunctions <- list()
             for (i in 1:(length(levels(newcat))-1))
             {
@@ -992,40 +992,40 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE
                                           '],]%>% pull({{x}})),max(data[data %>% pull({{cat}}) == levels(newcat)[1+', i,
                                           '],]%>% pull({{x}}))))', sep = '')
             }
-            
+
             for (i in 1:(length(levels(newcat))-1))
             {
                 plot <- plot + eval(parse(text = statFunctions[i]))
             }
         }
-        
-        
+
+
         plot <- plot + ggtitle(title) + xlab(xlabel) + ylab(ylabel) + labs(color = legendTitle, fill = legendTitle)
-        
+
         if (interactive == TRUE)
         {
             tooltip_css <- "background-color:white;padding:10px;border-radius:10px 20px 10px 20px;"
             hover_css="r:4px;cursor:pointer;stroke:black;stroke-width:2px;"
             selected_css = "fill:#FF3333;stroke:black;"
-            
-            
+
+
             plot <- ggiraph(code=print(plot),
                             tooltip_extra_css=tooltip_css,
                             tooltip_opacity=.75,
                             zoom_max=10,
                             hover_css=hover_css,
                             selected_css=selected_css)
-            
+
         } else if (plotly == TRUE)
         {
             plot <- ggplotly(plot, names = Species)
         }
-        
+
     } else
     {
         stop('Please enter valid parameters')
     }
-    
+
     plot
 }
 
@@ -1070,9 +1070,9 @@ rl_poly_same_line <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE,
     if (length(newx) == length(newy) && length(newy) == length(newcat))
     {
         plot <- ggplot()
-        
+
         model <- lm(newy ~ poly(newx, degrees = poly, raw = TRUE), data = data)
-        
+
         if (ci == TRUE)
         {
             plot <- add_ci_poly(plot, data, {{x}}, newcat, model, level = level, one_line = TRUE)
@@ -1081,15 +1081,15 @@ rl_poly_same_line <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE,
         {
             plot <- add_pi_poly(plot, data, {{x}}, newcat, model, level = level, one_line = TRUE)
         }
-        
+
         b <- model$coefficients[1]
         fit <- model$model
         fit$data_id <- rownames(fit)
         data$tooltip <- paste0(fit$data_id, "\n",
                                x, " = ", fit[,2][,1], "\n",
                                y, " = ", fit[['newy']])
-        
-        
+
+
         for (i in 1:(length(model$coefficients)))
         {
             if (is.na(model$coefficients[i]))
@@ -1106,17 +1106,17 @@ rl_poly_same_line <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE,
                 {
                     model$coefficients[i] <- 0
                     print('Some aspects of this model may be incorrect')
-                    
+
                 }
             }
         }
-        
+
         if (!plotly)
         {
             xvec <- seq(from = min(newx),
                         to = max(newx),
                         by = (max(newx)-min(newx))/1001)
-            
+
             yvec <- 0
             tooltip <- paste(y, '=', sprintf("%.3f",b))
             for (i in 1:poly)
@@ -1130,7 +1130,7 @@ rl_poly_same_line <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE,
                 yvec <- yvec + model$coefficients[1+i]*(xvec^i)
             }
             yvec <- yvec + b
-            
+
             plot <- plot + geom_point_interactive(data = data,
                                                   aes(x = newx, y = newy,
                                                       col = newcat, tooltip = tooltip)) +
@@ -1147,7 +1147,7 @@ rl_poly_same_line <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE,
                 newSlopeString <- paste('model$coefficients[', coef, "]*x^", i, sep = '')
                 slopeString <- paste(slopeString, newSlopeString, sep = ' + ')
             }
-            
+
             plot <- ggplot(data = data, aes(x = newx, y = newy, col = newcat)) +
                 geom_point() +
                 stat_function(color = 'black', fun = function(x) b + eval(parse(text = slopeString)))
@@ -1156,18 +1156,18 @@ rl_poly_same_line <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE,
     {
         stop('Please enter valid parameters')
     }
-    
+
     plot <- plot + ggtitle(title) + xlab(xlabel) + ylab(ylabel) + labs(color = legendTitle, fill = legendTitle)
-    
+
     if (interactive == TRUE)
     {
-        
-        
+
+
         tooltip_css <- "background-color:white;padding:10px;border-radius:10px 20px 10px 20px;"
         hover_css="r:4px;cursor:pointer;stroke:black;stroke-width:2px;"
         selected_css = "fill:#FF3333;stroke:black;"
-        
-        
+
+
         plot <- ggiraph(code=print(plot),
                         tooltip_extra_css=tooltip_css,
                         tooltip_opacity=.75,
@@ -1178,7 +1178,7 @@ rl_poly_same_line <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE,
     {
         plot <- ggplotly(plot, names = Species)
     }
-    
+
     plot
 }
 
@@ -1218,17 +1218,21 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
     x <- as_label(enquo(x))
     y <- as_label(enquo(y))
     cat <- as_label(enquo(cat))
+    # x <- enquo(x)
+    # y <- enquo(y)
+    # cat <- enquo(cat)
     if (length(newx) == length(newy) && length(newy) == length(newcat))
     {
+        # my_formula <- expr({{y}} ~ {{x}} * {{cat}})
         model <- lm(newy ~ newx * newcat, data = data)
         b <- model$coefficients[1]
         m <- model$coefficients[2]
         fit <- model$model
         fit$data_id <- rownames(fit)
         data$tooltip <- paste0(fit$data_id, "\n", x, " = ", fit[['newx']], "\n", y, " = ", fit[['newy']], "\n", cat, " = ", fit[['newcat']])
-        
+
         plot <- ggplot()
-        
+
         for (i in 1:(length(model$coefficients)))
         {
             if (is.na(model$coefficients[i]))
@@ -1237,7 +1241,7 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
                 print('Some aspects of this model may be incorrect')
             }
         }
-        
+
         if (ci == TRUE)
         {
             for (i in 1:(length(levels(newcat))))
@@ -1246,10 +1250,10 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
                 xmax <- max(data[newcat == levels(newcat)[i],] %>% pull({{x}}))
                 xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
                 newdata <- cbind.data.frame(newx = xval, newcat = levels(newcat)[i])
-                
+
                 result <- predict(model, newdata, interval = 'confidence', level = level,
                                   type = "response", se.fit = TRUE)
-                
+
                 plot <- plot + geom_ribbon(aes_string(x = xval,
                                                       ymin = result$fit[,'lwr'],
                                                       ymax = result$fit[,'upr']),
@@ -1264,17 +1268,17 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
                 xmax <- max(data[newcat == levels(newcat)[i],]%>% pull({{x}}))
                 xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
                 newdata <- cbind.data.frame(newx = xval, newcat = levels(newcat)[i])
-                
+
                 result <- predict(model, newdata, interval = 'prediction', level = level,
                                   type = "response", se.fit = TRUE)
-                
+
                 plot <- plot + geom_ribbon(aes_string(x = xval,
                                                       ymin = result$fit[,'lwr'],
                                                       ymax = result$fit[,'upr']),
                                            alpha = .35)
             }
         }
-        
+
         if (!plotly)
         {
             plot <- plot + geom_point_interactive(data = data,
@@ -1286,13 +1290,13 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
                                              color = levels(newcat)[1],
                                              tooltip = paste(levels(newcat)[1], '\n ', y, '=', sprintf('%.3f',m),
                                                              '*', x, '+', sprintf('%.3f',b), sep = ' ')))
-            
+
             tooltips <- list()
             for (i in 2:length(levels(newcat)))
             {
                 tooltips[[i]] <-  paste(levels(newcat)[i], '\n', y, '=', sprintf("%.3f",m+model$coefficients[i+length(levels(newcat))]), '*', x, '+', sprintf("%.3f",b+model$coefficients[i+1]), sep = ' ')
             }
-            
+
             for (i in 1:(length(levels(newcat))-1))
             {
                 plot <- plot + geom_segment_interactive(aes_string(x = min(data[newcat == levels(newcat)[i+1],]%>% pull({{x}})),
@@ -1302,7 +1306,7 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
                                                                    color = shQuote(levels(newcat)[i+1])),
                                                         tooltip = tooltips[i+1])
             }
-            
+
         } else
         {
             plot <- plot + geom_point(data = data,
@@ -1312,7 +1316,7 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
                                  y = min(data[newcat == levels(newcat)[1],]%>% pull({{x}}))*m+b,
                                  yend = max(data[newcat == levels(newcat)[1],]%>% pull({{x}}))*m+b,
                                  color = levels(newcat)[1]))
-            
+
             for (i in 1:(length(levels(newcat))-1))
             {
                 plot <- plot + geom_segment(aes_string(x = min(data[newcat == levels(newcat)[i+1],]%>% pull({{x}})),
@@ -1322,16 +1326,16 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
                                                        color = shQuote(levels(newcat)[i+1])))
             }
         }
-        
+
         plot <- plot + ggtitle(title) + xlab(xlabel) + ylab(ylabel) + labs(color = legendTitle, fill = legendTitle)
-        
+
         if (interactive == TRUE)
         {
             tooltip_css <- "background-color:white;padding:10px;border-radius:10px 20px 10px 20px;"
             hover_css="r:4px;cursor:pointer;stroke:black;stroke-width:2px;"
             selected_css = "fill:#FF3333;stroke:black;"
-            
-            
+
+
             plot <- ggiraph(code=print(plot),
                             tooltip_extra_css=tooltip_css,
                             tooltip_opacity=.75,
@@ -1343,7 +1347,7 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
             plot <- ggplotly(plot, names = Species)
         }
         plot
-        
+
     } else
     {
         stop('Please enter valid parameters')
@@ -1394,9 +1398,9 @@ rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = 
         fit <- model$model
         fit$data_id <- rownames(fit)
         data$tooltip <- paste0(fit$data_id, "\n", x, " = ", fit[['newx']], "\n", y, " = ", fit[['newy']], "\n", cat, " = ", fit[['newcat']])
-        
+
         plot <- ggplot()
-        
+
         for (i in 1:(length(model$coefficients)))
         {
             if (is.na(model$coefficients[i]))
@@ -1405,8 +1409,8 @@ rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = 
                 print('Some aspects of this model may be incorrect')
             }
         }
-        
-        
+
+
         if (ci == TRUE)
         {
             for (i in 1:(length(levels(newcat))))
@@ -1415,10 +1419,10 @@ rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = 
                 xmax <- max(data[newcat == levels(newcat)[i],]%>% pull({{x}}))
                 xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
                 newdata <- cbind.data.frame(newx = xval, newcat = levels(newcat)[i])
-                
+
                 result <- predict(model, newdata, interval = 'confidence', level = level,
                                   type = "response", se.fit = TRUE)
-                
+
                 plot <- plot + geom_ribbon(aes_string(x = xval,
                                                       ymin = result$fit[,'lwr'],
                                                       ymax = result$fit[,'upr']),
@@ -1433,17 +1437,17 @@ rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = 
                 xmax <- max(data[newcat == levels(newcat)[i],]%>% pull({{x}}))
                 xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
                 newdata <- cbind.data.frame(newx = xval, newcat = levels(newcat)[i])
-                
+
                 result <- predict(model, newdata, interval = 'prediction', level = level,
                                   type = "response", se.fit = TRUE)
-                
+
                 plot <- plot + geom_ribbon(aes_string(x = xval,
                                                       ymin = result$fit[,'lwr'],
                                                       ymax = result$fit[,'upr']),
                                            alpha = .35)
             }
         }
-        
+
         if (!plotly)
         {
             plot <- plot + geom_point_interactive(data = data,
@@ -1454,14 +1458,14 @@ rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = 
                                              yend = b+m*max(data[newcat == levels(newcat)[1],]%>% pull({{x}})),
                                              color = levels(newcat)[1],
                                              tooltip = paste(levels(newcat)[1], '\n ', y, '=', sprintf('%.3f',m), '*', x, '+', sprintf('%.3f',b), sep = ' ')))
-            
+
             tooltips <- list()
             for (i in 2:length(levels(newcat)))
             {
                 tooltips[[i]] <-  paste(levels(newcat)[i], "\n", y, '=', sprintf("%.3f",m+model$coefficients[i+1]), '*', x, '+', sprintf("%.3f",b), sep = ' ')
             }
-            
-            
+
+
             for (i in 1:(length(levels(newcat))-1))
             {
                 plot <- plot + geom_segment_interactive(aes_string(x = min(data[newcat == levels(newcat)[i+1],]%>% pull({{x}})),
@@ -1479,7 +1483,7 @@ rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = 
                                  y = b+m*min(data[newcat == levels(newcat)[1],]%>% pull({{x}})),
                                  yend = b+m*max(data[newcat == levels(newcat)[1],]%>% pull({{x}})),
                                  color = levels(newcat)[1]))
-            
+
             for (i in 1:(length(levels(newcat))-1))
             {
                 plot <- plot + geom_segment(aes_string(x = min(data[newcat == levels(newcat)[i+1],]%>% pull({{x}})),
@@ -1489,29 +1493,29 @@ rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = 
                                                        color = shQuote(levels(newcat)[1+i])))
             }
         }
-        
+
         plot <- plot + ggtitle(title) + xlab(xlabel) + ylab(ylabel) + labs(color = legendTitle, fill = legendTitle)
-        
+
         if (interactive == TRUE)
         {
             tooltip_css <- "background-color:white;padding:10px;border-radius:10px 20px 10px 20px;"
             hover_css="r:4px;cursor:pointer;stroke:black;stroke-width:2px;"
             selected_css = "fill:#FF3333;stroke:black;"
-            
-            
+
+
             plot <- ggiraph(code=print(plot),
                             tooltip_extra_css=tooltip_css,
                             tooltip_opacity=.75,
                             zoom_max=10,
                             hover_css=hover_css,
                             selected_css=selected_css)
-            
+
         } else if (plotly == TRUE)
         {
             plot <- ggplotly(plot)
         }
         plot
-        
+
     } else
     {
         stop('Please enter valid parameters')
@@ -1553,7 +1557,7 @@ rl_same_slope <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
     x <- as_label(enquo(x))
     y <- as_label(enquo(y))
     cat <- as_label(enquo(cat))
-    
+
     if (length(newx) == length(newy) && length(newy) == length(newcat))
     {
         model <- lm(newy ~ newx + newcat, data = data)
@@ -1562,7 +1566,7 @@ rl_same_slope <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
         fit <- model$model
         fit$data_id <- rownames(fit)
         data$tooltip <- paste0(fit$data_id, "\n", x, " = ", fit[['newx']], "\n", y, " = ", fit[['newy']], "\n", cat, " = ", fit[['newcat']])
-        
+
         plot <- ggplot()
         for (i in 1:(length(model$coefficients)))
         {
@@ -1572,7 +1576,7 @@ rl_same_slope <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
                 print('Some aspects of this model may be incorrect')
             }
         }
-        
+
         if (ci == TRUE)
         {
             for (i in 1:(length(levels(newcat))))
@@ -1581,10 +1585,10 @@ rl_same_slope <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
                 xmax <- max(data[newcat == levels(newcat)[i],]%>% pull({{x}}))
                 xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
                 newdata <- cbind.data.frame(newx = xval, newcat = levels(newcat)[i])
-                
+
                 result <- predict(model, newdata, interval = 'confidence', level = level,
                                   type = "response", se.fit = TRUE)
-                
+
                 plot <- plot + geom_ribbon(aes_string(x = xval,
                                                       ymin = result$fit[,'lwr'],
                                                       ymax = result$fit[,'upr']),
@@ -1599,17 +1603,17 @@ rl_same_slope <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
                 xmax <- max(data[newcat == levels(newcat)[i],]%>% pull({{x}}))
                 xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
                 newdata <- cbind.data.frame(newx = xval, newcat = levels(newcat)[i])
-                
+
                 result <- predict(model, newdata, interval = 'prediction', level = level,
                                   type = "response", se.fit = TRUE)
-                
+
                 plot <- plot + geom_ribbon(aes_string(x = xval,
                                                       ymin = result$fit[,'lwr'],
                                                       ymax = result$fit[,'upr']),
                                            alpha = .35)
             }
         }
-        
+
         if (!plotly)
         {
             plot <- plot + geom_point_interactive(data = data,
@@ -1625,7 +1629,7 @@ rl_same_slope <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
             {
                 tooltips[[i]] <-  paste(levels(newcat)[i], "\n", y, '=', sprintf("%.3f",m), '*', x, '+', sprintf("%.3f",b+model$coefficients[i+1]), sep = ' ')
             }
-            
+
             for (i in 1:(length(levels(newcat))-1))
             {
                 plot <- plot + geom_segment_interactive(aes_string(x = min(data[newcat == levels(newcat)[1+i],]%>% pull({{x}})),
@@ -1644,7 +1648,7 @@ rl_same_slope <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
                                      y = min(data[newcat == levels(newcat)[1],]%>% pull({{x}}))*m+b,
                                      yend = max(data[newcat == levels(newcat)[1],]%>% pull({{x}}))*m+b,
                                      color = levels(newcat)[1]))
-                
+
                 for (i in 1:(length(levels(newcat))-1))
                 {
                     plot <- plot + geom_segment(aes_string(x = min(data[newcat == levels(newcat)[1+i],]%>% pull({{x}})),
@@ -1655,18 +1659,18 @@ rl_same_slope <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
                 }
             }
         }
-        
-        
+
+
         plot <- plot + ggtitle(title) + xlab(xlabel) + ylab(ylabel) + labs(color = legendTitle, fill = legendTitle)
-        
-        
+
+
         if (interactive == TRUE)
         {
             tooltip_css <- "background-color:white;padding:10px;border-radius:10px 20px 10px 20px;"
             hover_css="r:4px;cursor:pointer;stroke:black;stroke-width:2px;"
             selected_css = "fill:#FF3333;stroke:black;"
-            
-            
+
+
             plot <- ggiraph(code=print(plot),
                             tooltip_extra_css=tooltip_css,
                             tooltip_opacity=.75,
@@ -1681,9 +1685,9 @@ rl_same_slope <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
     {
         stop('Please enter valid parameters')
     }
-    
-    
-    
+
+
+
     plot
 }
 
@@ -1729,11 +1733,11 @@ rl_same_line <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALSE
         data$tooltip <- paste0(fit$data_id, "\n",
                                x, " = ", fit[['newx']], "\n",
                                y, " = ", fit[['newy']])
-        
+
         plot <- ggplot()
-        
+
         print(model)
-        
+
         for (i in 1:(length(model$coefficients)))
         {
             if (is.na(model$coefficients[i]))
@@ -1742,18 +1746,18 @@ rl_same_line <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALSE
                 print('Some aspects of this model may be incorrect')
             }
         }
-        
-        
+
+
         if (ci == TRUE)
         {
             xmin <- min(data %>% pull({{x}}))
             xmax <- max(data %>% pull({{x}}))
             xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
             newdata <- cbind.data.frame(newx = xval)
-            
+
             result <- predict(model, newdata, interval = 'confidence', level = level,
                               type = "response", se.fit = TRUE)
-            
+
             plot <- plot + geom_ribbon(aes_string(x = xval,
                                                   ymin = result$fit[,'lwr'],
                                                   ymax = result$fit[,'upr']),
@@ -1765,16 +1769,16 @@ rl_same_line <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALSE
             xmax <- max(data %>% pull({{x}}))
             xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
             newdata <- cbind.data.frame(newx = xval)
-            
+
             result <- predict(model, newdata, interval = 'prediction', level = level,
                               type = "response", se.fit = TRUE)
-            
+
             plot <- plot + geom_ribbon(aes_string(x = xval,
                                                   ymin = result$fit[,'lwr'],
                                                   ymax = result$fit[,'upr']),
                                        alpha = .35)
         }
-        
+
         if (!plotly)
         {
             plot <- plot + geom_point_interactive(data = data,
@@ -1790,34 +1794,34 @@ rl_same_line <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALSE
                                  xend = max(newx),
                                  y = min(newx)*model$coefficients[2] + model$coefficients[1],
                                  yend = max(newx)*model$coefficients[2] + model$coefficients[1]))
-            
+
         }
         plot <- plot + ggtitle(title) + xlab(xlabel) + ylab(ylabel) + labs(color = legendTitle, fill = legendTitle)
-        
+
         if (interactive == TRUE)
         {
             tooltip_css <- "background-color:white;padding:10px;border-radius:10px 20px 10px 20px;"
             hover_css="r:4px;cursor:pointer;stroke:black;stroke-width:2px;"
             selected_css = "fill:#FF3333;stroke:black;"
-            
-            
+
+
             plot <- ggiraph(code=print(plot),
                             tooltip_extra_css=tooltip_css,
                             tooltip_opacity=.75,
                             zoom_max=10,
                             hover_css=hover_css,
                             selected_css=selected_css)
-            
+
         } else if (plotly == TRUE)
         {
             plot <- ggplotly(plot)
         }
-        
+
     } else
     {
         stop('Please enter valid parameters')
     }
-    
+
     plot
 }
 
@@ -1843,13 +1847,13 @@ add_ci_poly <- function(plot, data, x, newcat, model, level = .95, one_line = FA
             xmax <- max(data[newcat == levels(newcat)[i],]%>% pull({{x}}))
             xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
             newdata <- data.frame(newx = xval, newcat = levels(newcat)[i])
-            
+
             result <- predict(model, newdata, interval = 'confidence', level = level,
                               type = "response", se.fit = TRUE)
-            
+
             ymin <- result$fit[,'lwr']
             ymax <- result$fit[,'upr']
-            
+
             plot <- plot + geom_ribbon(aes_string(x = xval,
                                                   ymin = ymin,
                                                   ymax = ymax),
@@ -1861,13 +1865,13 @@ add_ci_poly <- function(plot, data, x, newcat, model, level = .95, one_line = FA
         xmax <- max(data %>% pull({{x}}))
         xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
         newdata <- cbind.data.frame(newx = xval)
-        
+
         result <- predict(model, newdata, interval = 'confidence', level = level,
                           type = "response", se.fit = TRUE)
-        
+
         ymin <- result$fit[,'lwr']
         ymax <- result$fit[,'upr']
-        
+
         plot <- plot + geom_ribbon(aes(x = xval,
                                        ymin = ymin,
                                        ymax = ymax),
@@ -1897,13 +1901,13 @@ add_pi_poly <- function(plot, data, x, newcat, model, level = .95, one_line = FA
             xmax <- max(data[newcat == levels(newcat)[i],] %>% pull({{x}}))
             xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
             newdata <- data.frame(newx = xval, newcat = levels(newcat)[i])
-            
+
             result <- predict(model, newdata, interval = 'prediction', level = level,
                               type = "response", se.fit = TRUE)
-            
+
             ymin <- result$fit[,'lwr']
             ymax <- result$fit[,'upr']
-            
+
             plot <- plot + geom_ribbon(aes_string(x = xval,
                                                   ymin = ymin,
                                                   ymax = ymax),
@@ -1915,13 +1919,13 @@ add_pi_poly <- function(plot, data, x, newcat, model, level = .95, one_line = FA
         xmax <- max(data %>% pull({{x}}))
         xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
         newdata <- cbind.data.frame(newx = xval)
-        
+
         result <- predict(model, newdata, interval = 'prediction', level = level,
                           type = "response", se.fit = TRUE)
-        
+
         ymin <- result$fit[,'lwr']
         ymax <- result$fit[,'upr']
-        
+
         plot <- plot + geom_ribbon(aes(x = xval,
                                        ymin = ymin,
                                        ymax = ymax),
@@ -1929,5 +1933,3 @@ add_pi_poly <- function(plot, data, x, newcat, model, level = .95, one_line = FA
     }
     plot
 }
-
-rl_full_model(iris, Sepal.Length, Sepal.Width, Species, plotly = T)

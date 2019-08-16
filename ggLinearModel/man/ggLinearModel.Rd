@@ -7,7 +7,8 @@
 ggLinearModel(data, x, y, cat, plotly = FALSE, same_slope = FALSE,
   same_intercept = FALSE, poly = 1, interactions = poly,
   ci = FALSE, pi = FALSE, interactive = FALSE, title = NULL,
-  xlabel = NULL, ylabel = NULL, legendTitle = NULL, level = 0.95)
+  xlabel = NULL, ylabel = NULL, legendTitle = NULL, level = 0.95,
+  coefficients = FALSE)
 }
 \arguments{
 \item{data}{a R data frame. tibbles will work}
@@ -43,6 +44,8 @@ ggLinearModel(data, x, y, cat, plotly = FALSE, same_slope = FALSE,
 \item{legendTitle}{a string for the label of the legend. Set to the categorical variable name}
 
 \item{level}{a number between 0-1 for the interval percentage of the confidence and prediction intervals. Set to .95}
+
+\item{coefficients}{a boolean to print the coefficients of the model. Set to FALSE}
 }
 \value{
 a ggplot or plotly object

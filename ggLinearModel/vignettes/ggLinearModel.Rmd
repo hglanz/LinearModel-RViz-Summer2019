@@ -14,7 +14,6 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
-
 library(tidyverse)
 library(ggLinearModel)
 ```
@@ -88,7 +87,6 @@ Using `ggLinearModel()` you can make models with any number of polynomial predic
 ```{r}
 mpg$year <- as.factor(as.character(mpg$year))
 model <- lm(hwy ~ displ + I(displ^2) + displ:year + I(displ^2):year, data = mpg)
-
 ggplot(data = mpg, aes(x = displ, y = hwy, col = year)) +
     geom_point() +
     stat_function(fun=function(x) 
@@ -105,7 +103,6 @@ ggLinearModel(mpg, displ, hwy, year, poly = 2)
 ### polynomial model with fewer interactions
 ```{r}
 model <- lm(hwy ~ displ + I(displ^2) + displ:year, data = mpg)
-
 ggplot(data = mpg, aes(x = displ, y = hwy, col = year)) +
     geom_point() +
     stat_function(fun=function(x) 
@@ -138,3 +135,8 @@ lbs)',
               ylabel = 'Miles per Gallon', legendTitle = 'Number of Cylinders in engine')
 ```
 
+### Coefficients
+`ggLinearModel(..., coefficients = TRUE)` will print the coefficients used to create the models and LSRL.
+```{r}
+ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, coefficients = T)
+```

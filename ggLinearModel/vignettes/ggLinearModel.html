@@ -295,7 +295,6 @@ ggplot(data = iris, aes(x = Sepal.Length, y = Sepal.Width, col = Species)) +
 
 <pre><code class="r">mpg$year &lt;- as.factor(as.character(mpg$year))
 model &lt;- lm(hwy ~ displ + I(displ^2) + displ:year + I(displ^2):year, data = mpg)
-
 ggplot(data = mpg, aes(x = displ, y = hwy, col = year)) +
     geom_point() +
     stat_function(fun=function(x) 
@@ -318,7 +317,6 @@ ggplot(data = mpg, aes(x = displ, y = hwy, col = year)) +
 <h3>polynomial model with fewer interactions</h3>
 
 <pre><code class="r">model &lt;- lm(hwy ~ displ + I(displ^2) + displ:year, data = mpg)
-
 ggplot(data = mpg, aes(x = displ, y = hwy, col = year)) +
     geom_point() +
     stat_function(fun=function(x) 

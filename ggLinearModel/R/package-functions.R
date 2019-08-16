@@ -19,15 +19,17 @@
 #' @param ylabel a string for the label of the y axis. Set to the y variable name
 #' @param legendTitle a string for the label of the legend. Set to the categorical variable name
 #' @param level a number between 0-1 for the interval percentage of the confidence and prediction intervals. Set to .95
+#' @param coefficients a boolean to print the coefficients of the model. Set to FALSE
 #'
 #' @return a ggplot or plotly object
 #' @export
 #'
 #' @examples
 #' ggLinearModel(iris, Sepal.Length, Sepal.Width, Species)
-ggLinearModel <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_intercept = FALSE,
-               poly = 1, interactions = poly, ci = FALSE, pi = FALSE, interactive = FALSE,
-               title = NULL, xlabel = NULL, ylabel = NULL, legendTitle = NULL, level = .95)
+ggLinearModel <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE,
+                          same_intercept = FALSE, poly = 1, interactions = poly, ci = FALSE, pi = FALSE,
+                          interactive = FALSE, title = NULL, xlabel = NULL, ylabel = NULL, legendTitle = NULL,
+                          level = .95, coefficients = FALSE, model = FALSE)
 {
     if (is_tibble(data))
     {
@@ -51,192 +53,55 @@ ggLinearModel <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, s
     }
     if (poly > 1)
     {
-        plot <- rl_polynomial(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, same_slope = same_slope, same_intercept = same_intercept, poly = poly, interactions = interactions, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
-    } else
-    {
-        plot <- rl_linear(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, same_slope = same_slope, same_intercept = same_intercept, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
-    }
-    plot
-}
-
-
-#' rl linear
-#'
-#' \code{rl_linear(data, x, y, cat, ...)} creates a ggplot (or plotly) object. It is designed to create visualizations of various types of linear models. Inserting a datatable, x variable, y variable, and categorical variable will produce a graph with a different least squares line for each level in the categorical variable. You can modify the graph by changing the values for various parameters.
-#'
-#' @param data a R data frame. tibbles will work
-#' @param x variable name of the x (predicting) variable, must be a column name in the data table
-#' @param y variable name of the y (response) variable, must be a column name in the data table
-#' @param cat variable name of the categorical variable, must be a column name in the data table
-#' @param plotly boolean if they want the graph in plotly. TRUE returns plotly graph, FALSE returns ggplot. Set to FALSE
-#' @param same_slope boolean if they want the regression lines to have the same slope. Set to FALSE
-#' @param same_intercept boolean if they want the regression lines to have the same intercept Set to FALSE
-#' @param ci boolean to add a confidence interval to the graph. Set to FALSE
-#' @param pi boolean to add a prediction interval to the graph. Set to FALSE
-#' @param interactive boolean to make interactive. Set to FALSE
-#' @param title a string to change the title of the graph. Set to x name vs y name
-#' @param xlabel a string for the label of the x axis. Set to the x variable name
-#' @param ylabel a string for the label of the y axis. Set to the y variable name
-#' @param legendTitle a string for the label of the legend. Set to the categorical variable name
-#' @param level a number between 0-1 for the interval percentage of the confidence and prediction intervals. Set to .95
-#'
-#' @return a ggplot or plotly object
-#' @export
-#'
-#' @examples
-#' ggLinearModel(iris, Sepal.Length, Sepal.Width, Species)
-rl_linear <- function(data, x, y, cat, plotly = FALSE, same_slope = FALSE, same_intercept = FALSE,
-                      ci = FALSE, pi = FALSE, interactive = FALSE, title = NULL, xlabel = NULL,
-                      ylabel = NULL, legendTitle = NULL, level = .95)
-{
-    if (is_tibble(data))
-    {
-        data <- as.data.frame(data)
-    }
-    if (is.null(title))
-    {
-        title <- paste(as_label(enquo(x)), 'vs.', as_label(enquo(y)))
-    }
-    if (is.null(xlabel))
-    {
-        xlabel <- as_label(enquo(x))
-    }
-    if (is.null(ylabel))
-    {
-        ylabel <- as_label(enquo(y))
-    }
-    if (is.null(legendTitle))
-    {
-        legendTitle <- as_label(enquo(cat))
-    }
-    if (same_slope == FALSE)
-    {
-        if (same_intercept == FALSE)
+        if (same_slope == FALSE)
         {
-            plot <- rl_full_model(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
+            if (same_intercept == FALSE)
+            {
+                returned <- rl_poly_full_model(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, poly = poly, interactions = interactions, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level, coefficients = coefficients, model = model)
+            } else
+            {
+                returned <- rl_poly_same_intercept(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, poly = poly, interactions = interactions, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level, coefficients = coefficients, model = model)
+            }
         } else
         {
-            plot <- rl_same_intercept(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
+            if (same_intercept == FALSE)
+            {
+                returned <- rl_poly_same_slope(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, poly = poly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level, coefficients = coefficients, model = model)
+            } else
+            {
+                returned <- rl_poly_same_line(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, poly = poly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level, coefficients = coefficients, model = model)
+            }
         }
     } else
     {
-        if (same_intercept == FALSE)
+        if (same_slope == FALSE)
         {
-            plot <- rl_same_slope(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
+            if (same_intercept == FALSE)
+            {
+                returned <- rl_full_model(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level, coefficients = coefficients, model = model)
+            } else
+            {
+                returned <- rl_same_intercept(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level, coefficients = coefficients, model = model)
+            }
         } else
         {
-            plot <- rl_same_line(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
+            if (same_intercept == FALSE)
+            {
+                returned <- rl_same_slope(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level, coefficients = coefficients, model = model)
+            } else
+            {
+                returned <- rl_same_line(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level, coefficients = coefficients, model = model)
+            }
         }
     }
-    plot
+    return(returned)
 }
 
-#' rl polynomial
-#'
-#' \code{rl_polynomial(data, x, y, cat, poly ...)} creates a ggplot (or plotly) object. It is designed to create visualizations of various types of linear models with polynomial predictors. Inserting a datatable, x variable, y variable, and categorical variable will produce a graph with a different least squares line for each level in the categorical variable. You can modify the graph by changing the values for various parameters.
-#'
-#' @param data a R data frame. tibbles will work
-#' @param x variable name of the x (predicting) variable, must be a column name in the data table
-#' @param y variable name of the y (response) variable, must be a column name in the data table
-#' @param cat variable name of the categorical variable, must be a column name in the data table
-#' @param plotly boolean if they want the graph in plotly. TRUE returns plotly graph, FALSE returns ggplot. Set to FALSE
-#' @param same_slope boolean if they want the regression lines to have the same slope. Set to FALSE
-#' @param same_intercept boolean if they want the regression lines to have the same intercept Set to FALSE
-#' @param poly  a integer value to declare how many polynomial variables the use wants. Set to 1, i.e. no polynomial
-#' @param interactions a integer value for if the user wants to include interactions in the polynomial model. Note: only matters when poly > 1 and interactions <= poly. Set to 0
-#' @param ci boolean to add a confidence interval to the graph, defaults to FALSE
-#' @param pi boolean to add a prediction interval to the graph, defaults to FALSE
-#' @param interactive boolean to make interactive, defaults to FALSE
-#' @param title a string to change the title of the graph, defaults to x name vs y name
-#' @param xlabel a string for the label of the x axis, defaults to the x variable name
-#' @param ylabel a string for the label of the y axis, defaults to the y variable name
-#' @param legendTitle a string for the label of the legend, defaults to the categorical variable name
-#' @param level a number between 0-1 for the interval percentage of the confidence and prediction intervals, defaults to .95
-#'
-#' @return a ggplot or plotly object
-#' @export
-#'
-#' @examples
-#' ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, poly = 2)
-rl_polynomial <- function(data, x, y, cat, poly, interactions = poly, plotly = FALSE, same_slope = FALSE,
-                          same_intercept = FALSE, ci = FALSE, pi = FALSE, interactive = FALSE,
-                          title = NULL, xlabel = NULL,
-                          ylabel = NULL, legendTitle = NULL, level = .95)
-{
-    if (is_tibble(data))
-    {
-        data <- as.data.frame(data)
-    }
-    if (is.null(title))
-    {
-        title <- paste(as_label(enquo(x)), 'vs.', as_label(enquo(y)))
-    }
-    if (is.null(xlabel))
-    {
-        xlabel <- as_label(enquo(x))
-    }
-    if (is.null(ylabel))
-    {
-        ylabel <- as_label(enquo(y))
-    }
-    if (is.null(legendTitle))
-    {
-        legendTitle <- as_label(enquo(cat))
-    }
-    if (same_slope == FALSE)
-    {
-        if (same_intercept == FALSE)
-        {
-            plot <- rl_poly_full_model(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, poly = poly, interactions = interactions, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
-        } else
-        {
-            plot <- rl_poly_same_intercept(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, poly = poly, interactions = interactions, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
-        }
-    } else
-    {
-        if (same_intercept == FALSE)
-        {
-            plot <- rl_poly_same_slope(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, poly = poly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
-        } else
-        {
-            plot <- rl_poly_same_line(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, poly = poly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level)
-        }
-    }
-
-    plot
-}
-
-#' rl polynomial full model
-#'
-#' \code{rl_poly_full_model(data, x, y, cat, poly ...)} creates a ggplot (or plotly) object. It is designed to create visualizations of various types of linear models with polynomial predictors. Inserting a datatable, x variable, y variable, and categorical variable will produce a graph with a different least squares line for each level in the categorical variable. You can modify the graph by changing the values for various parameters.
-#'
-#' @param data a R data frame. tibbles will work
-#' @param x variable name of the x (predicting) variable, must be a column name in the data table
-#' @param y variable name of the y (response) variable, must be a column name in the data table
-#' @param cat variable name of the categorical variable, must be a column name in the data table
-#' @param plotly boolean if they want the graph in plotly. TRUE returns plotly graph, FALSE returns ggplot. Set to FALSE
-#' @param poly  a integer value to declare how many polynomial variables the use wants. Set to 1, i.e. no polynomial
-#' @param interactions a integer value for if the user wants to include interactions in the polynomial model. Note: only matters when poly > 1 and interactions <= poly. Set to 0
-#' @param ci boolean to add a confidence interval to the graph. Set to FALSE
-#' @param pi boolean to add a prediction interval to the graph. Set to FALSE
-#' @param interactive boolean to make interactive. Set to FALSE
-#' @param title a string to change the title of the graph. Set to x name vs y name
-#' @param xlabel a string for the label of the x axis. Set to the x variable name
-#' @param ylabel a string for the label of the y axis. Set to the y variable name
-#' @param legendTitle a string for the label of the legend. Set to the categorical variable name
-#' @param level a number between 0-1 for the interval percentage of the confidence and prediction intervals. Set to .95
-#'
-#' @return a ggplot or plotly object
-#' @export
-#'
-#' @examples
-#' rl_poly_full_model(iris, Sepal.Length, Sepal.Width, Species, poly = 2)
 rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotly = FALSE, ci = FALSE,
                                pi = FALSE, interactive = FALSE,
                                title = paste(x, 'vs.', y), xlabel = x, ylabel = y, legendTitle = cat,
-                               level = .95)
+                               level = .95, coefficients = FALSE, model = FALSE)
 {
-
     if (is_tibble(data))
     {
         data <- as.data.frame(data)
@@ -251,40 +116,40 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
     {
         if (length(newx) == length(newy) && length(newy) == length(newcat))
         {
-            modelString <- paste(y, '~ poly(', x, ', degrees = poly, raw = TRUE) +', cat, ' +')
+            modString <- paste('newy ~ poly(newx, degrees = poly, raw = TRUE) + newcat +')
             for (i in 1:interactions)
             {
-                modelString <- paste(modelString, 'newcat:I(newx^', i, ')')
+                modString <- paste(modString, 'newcat:I(newx^', i, ')')
                 if (i != interactions)
                 {
-                    modelString <- paste(modelString, '+')
+                    modString <- paste(modString, '+')
                 }
             }
-            model <- lm(eval(parse(text = modelString)), data = data)
-            b <- model$coefficients[1]
-            fit <- model$model
+            mod <- lm(eval(parse(text = modString)), data = data)
+            b <- mod$coefficients[1]
+            fit <- mod$model
             fit$data_id <- rownames(fit)
             data$tooltip <- paste0(fit$data_id, "\n",
                                    x, " = ", fit[['I(newx^1)']], "\n",
                                    y, " = ", fit[['newy']], "\n",
                                    cat, " = ", fit[['newcat']])
 
-            for (i in 1:(length(model$coefficients)))
+            for (i in 1:(length(mod$coefficients)))
             {
-                if (is.na(model$coefficients[i]))
+                if (is.na(mod$coefficients[i]))
                 {
                     if (i >= (poly+length(levels(newcat))))
                     {
                         j <- i - poly - length(levels(newcat))
                         if (j/(length(levels(newcat))) != round(j/(length(levels(newcat)))))
                         {
-                            model$coefficients[i] <- 0
-                            print('Some aspects of this model may be incorrect')
+                            mod$coefficients[i] <- 0
+                            print('Some aspects of this model may be incorrect. The model is missing a few coefficients')
                         }
                     } else
                     {
-                        model$coefficients[i] <- 0
-                        print('Some aspects of this model may be incorrect')
+                        mod$coefficients[i] <- 0
+                        print('Some aspects of this model may be incorrect. The model is missing a few coefficients')
 
                     }
                 }
@@ -293,11 +158,11 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
 
             if (ci == TRUE)
             {
-                plot <- add_ci_poly(plot, data, {{x}}, newcat, model, level = level)
+                plot <- add_ci_poly(plot, data, {{x}}, newcat, mod, level = level)
             }
             if (pi == TRUE)
             {
-                plot <- add_pi_poly(plot, data, {{x}}, newcat, model, level = level)
+                plot <- add_pi_poly(plot, data, {{x}}, newcat, mod, level = level)
             }
 
             if (!plotly)
@@ -314,10 +179,10 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
                 for (i in 1:poly)
                 {
                     coef <- paste("'poly(newx, degrees = poly, raw = TRUE)", i, "'", sep = '')
-                    newSlopeString <- paste('model$coefficients[', coef, "]*xvecs[[length(levels(newcat))]]^", i, sep = '')
+                    newSlopeString <- paste('mod$coefficients[', coef, "]*xvecs[[length(levels(newcat))]]^", i, sep = '')
                     slopeString <- paste(slopeString, newSlopeString, sep = ' + ')
                 }
-                catEff <- model$coefficients[paste('newcat', levels(newcat)[length(levels(newcat))], sep = '')]
+                catEff <- mod$coefficients[paste('newcat', levels(newcat)[length(levels(newcat))], sep = '')]
                 yvecs[[length(levels(newcat))]] <- b + catEff + eval(parse(text = slopeString))
 
                 tooltips <- list()
@@ -328,7 +193,7 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
                     if (i != 1)
                     {
                         tooltips[[i]] <- paste(tooltips[[i]],
-                                               sprintf('%.3f', b + model$coef[poly + i]), sep = ' ')
+                                               sprintf('%.3f', b + mod$coef[poly + i]), sep = ' ')
                     } else
                     {
                         tooltips[[i]] <- paste(tooltips[[i]],
@@ -343,12 +208,12 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
                             if (j > interactions || i == length(levels(newcat)))
                             {
                                 tooltips[[i]] <- paste(tooltips[[i]], ' + ',
-                                                       sprintf("%.3f", model$coefficients[1+j]),
+                                                       sprintf("%.3f", mod$coefficients[1+j]),
                                                        '*', x, '^', j, sep = '')
                             } else
                             {
                                 tooltips[[i]] <- paste(tooltips[[i]], ' + ',
-                                                       sprintf("%.3f", model$coefficients[1+j]+model$coefficients[coef]),
+                                                       sprintf("%.3f", mod$coefficients[1+j]+mod$coefficients[coef]),
                                                        '*', x, '^', j, sep = '')
                             }
                         } else
@@ -356,12 +221,12 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
                             if (i != length(levels(newcat)))
                             {
                                 tooltips[[i]] <- paste(tooltips[[i]], ' + ',
-                                                       sprintf("%.3f", model$coefficients[2]+model$coefficients[coef]),
+                                                       sprintf("%.3f", mod$coefficients[2]+mod$coefficients[coef]),
                                                        '*', x, sep = '')
                             } else
                             {
                                 tooltips[[i]] <- paste(tooltips[[i]], ' + ',
-                                                       sprintf("%.3f", model$coefficients[2]),
+                                                       sprintf("%.3f", mod$coefficients[2]),
                                                        '*', x, sep = '')
                             }
                         }
@@ -380,7 +245,7 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
                 for (i in 1:poly)
                 {
                     coef <- paste("'poly(newx, degrees = poly, raw = TRUE)", i, "'", sep = '')
-                    newSlopeString <- paste('model$coefficients[', coef, "]*xvecs[[i]]^", i, sep = '')
+                    newSlopeString <- paste('mod$coefficients[', coef, "]*xvecs[[i]]^", i, sep = '')
                     slopeString <- paste(slopeString, newSlopeString, sep = ' + ')
                 }
 
@@ -395,7 +260,7 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
                     for (j in 1:interactions)
                     {
                         coef <- poly + length(levels(newcat))*j + i
-                        newInteractionsString <- paste('model$coefficients[', coef, "]*(xvecs[[", i,"]]^", j, ')', sep = '')
+                        newInteractionsString <- paste('mod$coefficients[', coef, "]*(xvecs[[", i,"]]^", j, ')', sep = '')
                         interactionsString <- paste(interactionsString, newInteractionsString, sep = ' + ')
                     }
 
@@ -409,7 +274,7 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
 
                     } else
                     {
-                        yvecs[[i]] <- b + model$coefficients[paste('newcat', levels(newcat)[i], sep = '')] + eval(parse(text = slopeString)) + eval(parse(text = interactionsString))
+                        yvecs[[i]] <- b + mod$coefficients[paste('newcat', levels(newcat)[i], sep = '')] + eval(parse(text = slopeString)) + eval(parse(text = interactionsString))
                         plot <- plot + geom_path_interactive(aes_string(x = xvecs[[i]],
                                                                         y = yvecs[[i]],
                                                                         color = shQuote(levels(newcat)[i])),
@@ -422,11 +287,11 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
                 for (i in 1:poly)
                 {
                     coef <- paste("'poly(newx, degrees = poly, raw = TRUE)", i, "'", sep = '')
-                    newSlopeString <- paste('model$coefficients[', coef, "]*x^", i, sep = '')
+                    newSlopeString <- paste('mod$coefficients[', coef, "]*x^", i, sep = '')
                     slopeString <- paste(slopeString, newSlopeString, sep = ' + ')
                 }
 
-                catEff <- model$coefficients[paste('newcat', levels(newcat)[length(levels(newcat))], sep = '')]
+                catEff <- mod$coefficients[paste('newcat', levels(newcat)[length(levels(newcat))], sep = '')]
                 plot <- plot +
                     geom_point(data = data, aes(x = newx, y = newy, col = newcat)) +
                     stat_function(fun = function(x) b + catEff + eval(parse(text = slopeString)),
@@ -440,7 +305,7 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
                 {
                     if (i != 1)
                     {
-                        catEffects[[i]] <- model$coefficients[paste('newcat', levels(newcat)[i], sep = '')]
+                        catEffects[[i]] <- mod$coefficients[paste('newcat', levels(newcat)[i], sep = '')]
                     } else
                     {
                         catEffects[[i]] <- 0
@@ -451,7 +316,7 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
                     for (j in 1:interactions)
                     {
                         statFunctions[[i]] <- paste(statFunctions[[i]],
-                                                    " + model$coefficients['newcat",
+                                                    " + mod$coefficients['newcat",
                                                     levels(newcat)[i], ":I(newx^",
                                                     j, ")']*x^", j, sep = '')
                     }
@@ -474,6 +339,50 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
 
         plot <- plot + ggtitle(title) + xlab(xlabel) + ylab(ylabel) + labs(color = legendTitle, fill = legendTitle)
 
+        if ((model == TRUE) || (coefficients == TRUE))
+        {
+            nameList <- list()
+            nameList[[1]] <- '(Intercept)'
+            nameList[[2]] <- x
+            j <- 2
+            polys <- list()
+            polys[[1]] <- x
+            for (i in 3:(poly+1))
+            {
+                polys[[i-1]] <- paste(x, '^', j, sep = '')
+                nameList[[i]] <- polys[[i-1]]
+                j <- j + 1
+            }
+            levels <- list()
+            for (i in 1:length(levels(newcat)))
+            {
+                levels[[i]] <- paste(cat, levels(newcat)[i], sep = '')
+            }
+            for (i in (poly+2):(poly+length(levels(newcat))))
+            {
+                nameList[[i]] <- levels[[i-poly]]
+            }
+            j <- 1
+            k <- 1
+            for (i in (1+poly+length(levels(newcat))):length(mod$coef))
+            {
+                coef <- paste(levels[[j]], ':', polys[[k]],sep = '')
+                nameList[[i]] <- coef
+                j <- j + 1
+                if (j > length(levels(newcat)))
+                {
+                    j <- 1
+                    k <- k + 1
+                }
+            }
+
+            names(mod$coefficients) <- nameList
+            if (model == FALSE)
+            {
+                print(mod$coefficients)
+            }
+        }
+
         if (interactive == TRUE)
         {
 
@@ -495,39 +404,23 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
         }
     } else
     {
-        plot <- rl_poly_same_line(data, x, y, cat, poly, plotly)
+        plot <- rl_poly_same_line(data, x, y, cat, poly, plotly = plotly, ci = ci, pi = pi,
+                                  interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel,
+                                  legendTitle = legendTitle, level = level, coefficients = coefficients)
     }
-    plot
+    if (model == TRUE)
+    {
+        return(list(model = mod, plot = plot))
+    } else
+    {
+        plot
+    }
 }
-#' rl polynomial same intercept
-#'
-#' \code{rl_poly_same_intercept(data, x, y, cat, poly ...)} creates a ggplot (or plotly) object. It is designed to create visualizations of linear models with polynomial predictors and all LSRL having the same intercept. Inserting a datatable, x variable, y variable, and categorical variable will produce a graph with a different least squares line for each level in the categorical variable. You can modify the graph by changing the values for various parameters.
-#'
-#' @param data a R data frame. tibbles will work
-#' @param x variable name of the x (predicting) variable, must be a column name in the data table
-#' @param y variable name of the y (response) variable, must be a column name in the data table
-#' @param cat variable name of the categorical variable, must be a column name in the data table
-#' @param plotly boolean if they want the graph in plotly. TRUE returns plotly graph, FALSE returns ggplot. Set to FALSE
-#' @param poly  a integer value to declare how many polynomial variables the use wants. Set to 1, i.e. no polynomial
-#' @param interactions a integer value for if the user wants to include interactions in the polynomial model. Note: only matters when poly > 1 and interactions <= poly. Set to 0
-#' @param ci boolean to add a confidence interval to the graph. Set to FALSE
-#' @param pi boolean to add a prediction interval to the graph. Set to FALSE
-#' @param interactive boolean to make interactive. Set to FALSE
-#' @param title a string to change the title of the graph. Set to x name vs y name
-#' @param xlabel a string for the label of the x axis. Set to the x variable name
-#' @param ylabel a string for the label of the y axis. Set to the y variable name
-#' @param legendTitle a string for the label of the legend. Set to the categorical variable name
-#' @param level a number between 0-1 for the interval percentage of the confidence and prediction intervals. Set to .95
-#'
-#' @return a ggplot or plotly object
-#' @export
-#'
-#' @examples
-#' rl_poly_same_intercept(iris, Sepal.Length, Sepal.Width, Species, poly = 2)
+
 rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, plotly = FALSE, ci = FALSE,
                                    pi = FALSE, interactive = FALSE,
                                    title = paste(x, 'vs.', y), xlabel = x, ylabel = y, legendTitle = cat,
-                                   level = .95)
+                                   level = .95, coefficients = FALSE, model = FALSE)
 {
     if (is_tibble(data))
     {
@@ -543,37 +436,37 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
     {
         if (length(newx) == length(newy) && length(newy) == length(newcat))
         {
-            modelString <- paste('newy ~ poly(newx, degrees = poly, raw = TRUE)+')
+            modString <- paste('newy ~ poly(newx, degrees = poly, raw = TRUE)+')
             for (i in 1:interactions)
             {
-                modelString <- paste(modelString, 'newcat:I(newx^', i, ')')
+                modString <- paste(modString, 'newcat:I(newx^', i, ')')
                 if (i != interactions)
                 {
-                    modelString <- paste(modelString, '+')
+                    modString <- paste(modString, '+')
                 }
             }
-            model <- lm(eval(parse(text = modelString)), data = data)
-            b <- model$coefficients[1]
-            fit <- model$model
+            mod <- lm(eval(parse(text = modString)), data = data)
+            b <- mod$coefficients[1]
+            fit <- mod$model
             fit$data_id <- rownames(fit)
             data$tooltip <- paste0(fit$data_id, "\n", x, " = ", fit[['I(newx^1)']], "\n", y, " = ", fit[['newy']], "\n", cat, " = ", fit[['newcat']])
 
-            for (i in 1:(length(model$coefficients)))
+            for (i in 1:(length(mod$coefficients)))
             {
-                if (is.na(model$coefficients[i]))
+                if (is.na(mod$coefficients[i]))
                 {
                     if (i >= poly)
                     {
                         j <- i - poly -1
                         if (j/(length(levels(newcat))) != round(j/(length(levels(newcat)))))
                         {
-                            model$coefficients[i] <- 0
-                            print('Some aspects of this model may be incorrect')
+                            mod$coefficients[i] <- 0
+                            print('Some aspects of this model may be incorrect. The model is missing a few coefficients')
                         }
                     } else
                     {
-                        model$coefficients[i] <- 0
-                        print('Some aspects of this model may be incorrect')
+                        mod$coefficients[i] <- 0
+                        print('Some aspects of this model may be incorrect. The model is missing a few coefficients')
 
                     }
                 }
@@ -583,11 +476,11 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
 
             if (ci == TRUE)
             {
-                plot <- add_ci_poly(plot, data, {{x}}, newcat, model, level = level)
+                plot <- add_ci_poly(plot, data, {{x}}, newcat, mod, level = level)
             }
             if (pi == TRUE)
             {
-                plot <- add_pi_poly(plot, data, {{x}}, newcat, model, level = level)
+                plot <- add_pi_poly(plot, data, {{x}}, newcat, mod, level = level)
             }
 
             if (!plotly)
@@ -604,7 +497,7 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
                 for (i in 1:poly)
                 {
                     coef <- paste("'poly(newx, degrees = poly, raw = TRUE)", i, "'", sep = '')
-                    newSlopeString <- paste('model$coefficients[', coef, "]*xvecs[[length(levels(newcat))]]^", i, sep = '')
+                    newSlopeString <- paste('mod$coefficients[', coef, "]*xvecs[[length(levels(newcat))]]^", i, sep = '')
                     slopeString <- paste(slopeString, newSlopeString, sep = ' + ')
                 }
 
@@ -624,12 +517,12 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
                             if (j > interactions || i == length(levels(newcat)))
                             {
                                 tooltips[[i]] <- paste(tooltips[[i]], ' + ',
-                                                       sprintf("%.3f", model$coefficients[1+j]),
+                                                       sprintf("%.3f", mod$coefficients[1+j]),
                                                        '*', x, '^', j, sep = '')
                             } else
                             {
                                 tooltips[[i]] <- paste(tooltips[[i]], ' + ',
-                                                       sprintf("%.3f", model$coefficients[1+j]+model$coefficients[coef]),
+                                                       sprintf("%.3f", mod$coefficients[1+j]+mod$coefficients[coef]),
                                                        '*', x, '^', j, sep = '')
                             }
                         } else
@@ -637,12 +530,12 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
                             if (i != length(levels(newcat)))
                             {
                                 tooltips[[i]] <- paste(tooltips[[i]], ' + ',
-                                                       sprintf("%.3f", model$coefficients[2]+model$coefficients[coef]),
+                                                       sprintf("%.3f", mod$coefficients[2]+mod$coefficients[coef]),
                                                        '*', x, sep = '')
                             } else
                             {
                                 tooltips[[i]] <- paste(tooltips[[i]], ' + ',
-                                                       sprintf("%.3f", model$coefficients[2]),
+                                                       sprintf("%.3f", mod$coefficients[2]),
                                                        '*', x, sep = '')
                             }
                         }
@@ -661,7 +554,7 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
                 for (i in 1:poly)
                 {
                     coef <- paste("'poly(newx, degrees = poly, raw = TRUE)", i, "'", sep = '')
-                    newSlopeString <- paste('model$coefficients[', coef, "]*xvecs[[i]]^", i, sep = '')
+                    newSlopeString <- paste('mod$coefficients[', coef, "]*xvecs[[i]]^", i, sep = '')
                     slopeString <- paste(slopeString, newSlopeString, sep = ' + ')
                 }
 
@@ -676,7 +569,7 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
                     for (j in 1:interactions)
                     {
                         coef <- paste("'newcat", levels(newcat)[i], ":I(newx^", j, ")'", sep = '')
-                        newInteractionsString <- paste('model$coefficients[', coef, "]*(xvecs[[", i,"]]^", j, ')', sep = '')
+                        newInteractionsString <- paste('mod$coefficients[', coef, "]*(xvecs[[", i,"]]^", j, ')', sep = '')
                         interactionsString <- paste(interactionsString, newInteractionsString, sep = ' + ')
                     }
 
@@ -692,7 +585,7 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
                 for (i in 1:poly)
                 {
                     coef <- paste("'poly(newx, degrees = poly, raw = TRUE)", i, "'", sep = '')
-                    newSlopeString <- paste('model$coefficients[', coef, "]*x^", i, sep = '')
+                    newSlopeString <- paste('mod$coefficients[', coef, "]*x^", i, sep = '')
                     slopeString <- paste(slopeString, newSlopeString, sep = ' + ')
                 }
 
@@ -711,7 +604,7 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
                     for (j in 1:interactions)
                     {
                         statFunctions[[i]] <- paste(statFunctions[[i]],
-                                                    " + model$coefficients['newcat",
+                                                    " + mod$coefficients['newcat",
                                                     levels(newcat)[i], ":I(newx^",
                                                     j, ")']*x^", j, sep = '')
                     }
@@ -732,6 +625,43 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
         }
 
         plot <- plot + ggtitle(title) + xlab(xlabel) + ylab(ylabel) + labs(color = legendTitle, fill = legendTitle)
+
+        if ((model == TRUE) || (coefficients == TRUE))
+        {
+            nameList <- list()
+            nameList[[1]] <- '(Intercept)'
+            nameList[[2]] <- x
+            j <- 2
+            polys <- list()
+            polys[[1]] <- x
+            for (i in 3:(poly+1))
+            {
+                polys[[i-1]] <- paste(x, '^', j, sep = '')
+                nameList[[i]] <- polys[[i-1]]
+                j <- j + 1
+            }
+            levels <- list()
+            for (i in 1:length(levels(newcat)))
+            {
+                levels[[i]] <- paste(cat, levels(newcat)[i], sep = '')
+            }
+            j <- 1
+            k <- 1
+            for (i in (poly+2):length(mod$coef))
+            {
+                coef <- paste(levels[[j]], ':', polys[[k]],sep = '')
+                nameList[[i]] <- coef
+                j <- j + 1
+                if (j > length(levels(newcat)))
+                {
+                    j <- 1
+                    k <- k + 1
+                }
+            }
+
+            names(mod$coefficients) <- nameList
+            print(mod$coefficients)
+        }
 
         if (interactive == TRUE)
         {
@@ -756,37 +686,19 @@ rl_poly_same_intercept <- function(data, x, y, cat, poly, interactions = poly, p
     {
         plot <- rl_poly_same_line(data, x, y, cat, poly, plotly)
     }
-    plot
+    if (model == TRUE)
+    {
+        return(list(model = mod, plot = plot))
+    } else
+    {
+        plot
+    }
 }
 
-#' rl polynomial same slope
-#'
-#'\code{rl_poly_same_slope(data, x, y, cat, poly ...)} creates a ggplot (or plotly) object. It is designed to create visualizations of linear models with polynomial predictors and all LSRL having the same slope Inserting a datatable, x variable, y variable, and categorical variable will produce a graph with a different least squares line for each level in the categorical variable. You can modify the graph by changing the values for various parameters.
-#'
-#' @param data a R data frame. tibbles will work
-#' @param x variable name of the x (predicting) variable, must be a column name in the data table
-#' @param y variable name of the y (response) variable, must be a column name in the data table
-#' @param cat variable name of the categorical variable, must be a column name in the data table
-#' @param plotly boolean if they want the graph in plotly. TRUE returns plotly graph, FALSE returns ggplot. Set to FALSE
-#' @param poly  a integer value to declare how many polynomial variables the use wants. Set to 1, i.e. no polynomial
-#' @param ci boolean to add a confidence interval to the graph. Set to FALSE
-#' @param pi boolean to add a prediction interval to the graph. Set to FALSE
-#' @param interactive boolean to make interactive. Set to FALSE
-#' @param title a string to change the title of the graph. Set to x name vs y name
-#' @param xlabel a string for the label of the x axis. Set to the x variable name
-#' @param ylabel a string for the label of the y axis. Set to the y variable name
-#' @param legendTitle a string for the label of the legend. Set to the categorical variable name
-#' @param level a number between 0-1 for the interval percentage of the confidence and prediction intervals. Set to .95
-#'
-#' @return a ggplot or plotly object
-#' @export
-#'
-#' @examples
-#' rl_poly_same_slope(iris, Sepal.Length, Sepal.Width, Species, poly = 2)
 rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE,
                                pi = FALSE, interactive = FALSE,
                                title = paste(x, 'vs.', y), xlabel = x, ylabel = y, legendTitle = cat,
-                               level = .95)
+                               level = .95, coefficients = FALSE, model = FALSE)
 {
     if (is_tibble(data))
     {
@@ -802,31 +714,31 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE
     {
         plot <- ggplot()
 
-        model <- lm(newy ~ poly(newx, degrees = poly, raw = TRUE) + newcat, data = data)
-        b <- model$coefficients[1]
-        fit <- model$model
+        mod <- lm(newy ~ poly(newx, degrees = poly, raw = TRUE) + newcat, data = data)
+        b <- mod$coefficients[1]
+        fit <- mod$model
         fit$data_id <- rownames(fit)
         data$tooltip <- paste0(fit$data_id, "\n",
                                x, " = ", fit[,2][,1], "\n",
                                y, " = ", fit[['newy']], "\n",
                                cat, " = ", fit[['newcat']])
 
-        for (i in 1:(length(model$coefficients)))
+        for (i in 1:(length(mod$coefficients)))
         {
-            if (is.na(model$coefficients[i]))
+            if (is.na(mod$coefficients[i]))
             {
                 if (i >= (poly+length(levels(newcat))))
                 {
                     j <- i - poly - length(levels(newcat))
                     if (j/(length(levels(newcat))) != round(j/(length(levels(newcat)))))
                     {
-                        model$coefficients[i] <- 0
-                        print('Some aspects of this model may be incorrect')
+                        mod$coefficients[i] <- 0
+                        print('Some aspects of this model may be incorrect. The model is missing a few coefficients')
                     }
                 } else
                 {
-                    model$coefficients[i] <- 0
-                    print('Some aspects of this model may be incorrect')
+                    mod$coefficients[i] <- 0
+                    print('Some aspects of this model may be incorrect. The model is missing a few coefficients')
 
                 }
             }
@@ -834,11 +746,11 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE
 
         if (ci == TRUE)
         {
-            plot <- add_ci_poly(plot, data, {{x}}, newcat, model, level = level)
+            plot <- add_ci_poly(plot, data, {{x}}, newcat, mod, level = level)
         }
         if (pi == TRUE)
         {
-            plot <- add_pi_poly(plot, data, {{x}}, newcat, model, level = level)
+            plot <- add_pi_poly(plot, data, {{x}}, newcat, mod, level = level)
         }
 
         if (!plotly)
@@ -855,11 +767,11 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE
             for (i in 1:poly)
             {
                 coef <- paste("'poly(newx, degrees = poly, raw = TRUE)", i, "'", sep = '')
-                newSlopeString <- paste('model$coefficients[', coef, "]*xvecs[[length(levels(newcat))]]^", i, sep = '')
+                newSlopeString <- paste('mod$coefficients[', coef, "]*xvecs[[length(levels(newcat))]]^", i, sep = '')
                 slopeString <- paste(slopeString, newSlopeString, sep = ' + ')
             }
 
-            catEff <- model$coefficients[paste('newcat', levels(newcat)[length(levels(newcat))], sep = '')]
+            catEff <- mod$coefficients[paste('newcat', levels(newcat)[length(levels(newcat))], sep = '')]
             yvecs[[length(levels(newcat))]] <- b + catEff + eval(parse(text = slopeString))
 
             tooltips <- list()
@@ -870,19 +782,19 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE
                 if (i != 1)
                 {
                     tooltips[[i]] <- paste(tooltips[[i]],
-                                           sprintf('%.3f', b + model$coef[poly + i]), sep = ' ')
+                                           sprintf('%.3f', b + mod$coef[poly + i]), sep = ' ')
                 } else
                 {
                     tooltips[[i]] <- paste(tooltips[[i]],
                                            sprintf('%.3f', b), sep = ' ')
                 }
                 tooltips[[i]] <- paste(tooltips[[i]], ' + ',
-                                       sprintf("%.3f", model$coefficients[2]),
+                                       sprintf("%.3f", mod$coefficients[2]),
                                        '*', x, sep = '')
                 for (j in 2:poly)
                 {
                     tooltips[[i]] <- paste(tooltips[[i]], ' + ',
-                                           sprintf("%.3f", model$coefficients[1+j]),
+                                           sprintf("%.3f", mod$coefficients[1+j]),
                                            '*', x, '^', j, sep = '')
                 }
             }
@@ -899,7 +811,7 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE
             for (i in 1:poly)
             {
                 coef <- paste("'poly(newx, degrees = poly, raw = TRUE)", i, "'", sep = '')
-                newSlopeString <- paste('model$coefficients[', coef, "]*xvecs[[i]]^", i, sep = '')
+                newSlopeString <- paste('mod$coefficients[', coef, "]*xvecs[[i]]^", i, sep = '')
                 slopeString <- paste(slopeString, newSlopeString, sep = ' + ')
             }
 
@@ -920,7 +832,7 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE
 
                 } else
                 {
-                    yvecs[[i]] <- b + model$coefficients[paste('newcat', levels(newcat)[i], sep = '')] + eval(parse(text = slopeString))
+                    yvecs[[i]] <- b + mod$coefficients[paste('newcat', levels(newcat)[i], sep = '')] + eval(parse(text = slopeString))
                     plot <- plot + geom_path_interactive(aes_string(x = xvecs[[i]],
                                                                     y = yvecs[[i]],
                                                                     color = shQuote(levels(newcat)[i])),
@@ -933,7 +845,7 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE
             for (i in 1:poly)
             {
                 coef <- paste("'poly(newx, degrees = poly, raw = TRUE)", i, "'", sep = '')
-                newSlopeString <- paste('model$coefficients[', coef, "]*x^", i, sep = '')
+                newSlopeString <- paste('mod$coefficients[', coef, "]*x^", i, sep = '')
                 slopeString <- paste(slopeString, newSlopeString, sep = ' + ')
             }
 
@@ -946,7 +858,7 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE
             statFunctions <- list()
             for (i in 1:(length(levels(newcat))-1))
             {
-                statFunctions[i] <- paste("stat_function(fun = function(x) b + eval(parse(text = slopeString)) + model$coefficients[", i, "+1+", poly, "], aes(col = (levels(newcat)[", i, "+1]))")
+                statFunctions[i] <- paste("stat_function(fun = function(x) b + eval(parse(text = slopeString)) + mod$coefficients[", i, "+1+", poly, "], aes(col = (levels(newcat)[", i, "+1]))")
                 statFunctions[i] <- paste(statFunctions[i],
                                           ', xlim = c(min(data[data %>% pull({{cat}}) == levels(newcat)[1+', i,
                                           '],]%>% pull({{x}})),max(data[data %>% pull({{cat}}) == levels(newcat)[1+', i,
@@ -961,6 +873,37 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE
 
 
         plot <- plot + ggtitle(title) + xlab(xlabel) + ylab(ylabel) + labs(color = legendTitle, fill = legendTitle)
+
+        if ((model == TRUE) || (coefficients == TRUE))
+        {
+            nameList <- list()
+            nameList[[1]] <- '(Intercept)'
+            nameList[[2]] <- x
+            j <- 2
+            polys <- list()
+            polys[[1]] <- x
+            for (i in 3:(poly+1))
+            {
+                polys[[i-1]] <- paste(x, '^', j, sep = '')
+                nameList[[i]] <- polys[[i-1]]
+                j <- j + 1
+            }
+            levels <- list()
+            for (i in 1:length(levels(newcat)))
+            {
+                levels[[i]] <- paste(cat, levels(newcat)[i], sep = '')
+            }
+            for (i in (poly+2):(poly+length(levels(newcat))))
+            {
+                nameList[[i]] <- levels[[i-poly]]
+            }
+
+            names(mod$coefficients) <- nameList
+            if (model == FALSE)
+            {
+                print(mod$coefficients)
+            }
+        }
 
         if (interactive == TRUE)
         {
@@ -986,37 +929,19 @@ rl_poly_same_slope <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE
         stop('Please enter valid parameters')
     }
 
-    plot
+    if (model == TRUE)
+    {
+        return(list(model = mod, plot = plot))
+    } else
+    {
+        plot
+    }
 }
 
-#' rl polynomial same line
-#'
-#' \code{rl_poly_same_intercept(data, x, y, cat, poly ...)} creates a ggplot (or plotly) object. It is designed to create visualizations of linear models with polynomial predictors and just one LSRL. Inserting a datatable, x variable, y variable, and categorical variable will produce a graph with 1 LSRL. You can modify the graph by changing the values for various parameters.
-#'
-#' @param data a R data frame. tibbles will work
-#' @param x variable name of the x (predicting) variable, must be a column name in the data table
-#' @param y variable name of the y (response) variable, must be a column name in the data table
-#' @param cat variable name of the categorical variable, must be a column name in the data table
-#' @param plotly boolean if they want the graph in plotly. TRUE returns plotly graph, FALSE returns ggplot. Set to FALSE
-#' @param poly a integer value to declare how many polynomial variables the use wants. Set to 1, i.e. no polynomial
-#' @param ci boolean to add a confidence interval to the graph. Set to FALSE
-#' @param pi boolean to add a prediction interval to the graph. Set to FALSE
-#' @param interactive boolean to make interactive. Set to FALSE
-#' @param title a string to change the title of the graph. Set to x name vs y name
-#' @param xlabel a string for the label of the x axis. Set to the x variable name
-#' @param ylabel a string for the label of the y axis. Set to the y variable name
-#' @param legendTitle a string for the label of the legend. Set to the categorical variable name
-#' @param level a number between 0-1 for the interval percentage of the confidence and prediction intervals. Set to .95
-#'
-#' @return a ggplot or plotly object
-#' @export
-#'
-#' @examples
-#' rl_poly_same_line(iris, Sepal.Length, Sepal.Width, Species, poly = 2)
 rl_poly_same_line <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE,
                               pi = FALSE, interactive = FALSE,
                               title = paste(x, 'vs.', y), xlabel = x, ylabel = y, legendTitle = cat,
-                              level = .95)
+                              level = .95, coefficients = FALSE, model = FALSE)
 {
     if (is_tibble(data))
     {
@@ -1025,48 +950,48 @@ rl_poly_same_line <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE,
     newx <- data %>% pull({{x}})
     newy <- data %>% pull({{y}})
     newcat <- as.factor(as.character(data %>% pull({{cat}})))
+    cat <- as_label(enquo(cat))
     x <- as_label(enquo(x))
     y <- as_label(enquo(y))
-    cat <- as_label(enquo(cat))
-    if (length(newx) == length(newy) && length(newy) == length(newcat))
+    if (length(newx) == length(newy))
     {
         plot <- ggplot()
 
-        model <- lm(newy ~ poly(newx, degrees = poly, raw = TRUE), data = data)
+        mod <- lm(newy ~ poly(newx, degrees = poly, raw = TRUE), data = data)
 
         if (ci == TRUE)
         {
-            plot <- add_ci_poly(plot, data, {{x}}, newcat, model, level = level, one_line = TRUE)
+            plot <- add_ci_poly(plot, data, {{x}}, newcat, mod, level = level, one_line = TRUE)
         }
         if (pi == TRUE)
         {
-            plot <- add_pi_poly(plot, data, {{x}}, newcat, model, level = level, one_line = TRUE)
+            plot <- add_pi_poly(plot, data, {{x}}, newcat, mod, level = level, one_line = TRUE)
         }
 
-        b <- model$coefficients[1]
-        fit <- model$model
+        b <- mod$coefficients[1]
+        fit <- mod$model
         fit$data_id <- rownames(fit)
         data$tooltip <- paste0(fit$data_id, "\n",
                                x, " = ", fit[,2][,1], "\n",
                                y, " = ", fit[['newy']])
 
 
-        for (i in 1:(length(model$coefficients)))
+        for (i in 1:(length(mod$coefficients)))
         {
-            if (is.na(model$coefficients[i]))
+            if (is.na(mod$coefficients[i]))
             {
                 if (i >= (poly+length(levels(newcat))))
                 {
                     j <- i - poly - length(levels(newcat))
                     if (j/(length(levels(newcat))) != round(j/(length(levels(newcat)))))
                     {
-                        model$coefficients[i] <- 0
-                        print('Some aspects of this model may be incorrect')
+                        mod$coefficients[i] <- 0
+                        print('Some aspects of this model may be incorrect. The model is missing a few coefficients')
                     }
                 } else
                 {
-                    model$coefficients[i] <- 0
-                    print('Some aspects of this model may be incorrect')
+                    mod$coefficients[i] <- 0
+                    print('Some aspects of this model may be incorrect. The model is missing a few coefficients')
 
                 }
             }
@@ -1084,11 +1009,11 @@ rl_poly_same_line <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE,
             {
                 if (i != 1)
                 {
-                    tooltip <- paste(tooltip, ' + ', sprintf("%.3f",model$coefficients[1+i]), ' * ', x, '^', i, sep = '')
+                    tooltip <- paste(tooltip, ' + ', sprintf("%.3f",mod$coefficients[1+i]), ' * ', x, '^', i, sep = '')
                 } else
                 {
-                    tooltip <- paste(tooltip, '+', sprintf("%.3f",model$coefficients[1+i]), '*', x, sep = ' ')                }
-                yvec <- yvec + model$coefficients[1+i]*(xvec^i)
+                    tooltip <- paste(tooltip, '+', sprintf("%.3f",mod$coefficients[1+i]), '*', x, sep = ' ')                }
+                yvec <- yvec + mod$coefficients[1+i]*(xvec^i)
             }
             yvec <- yvec + b
 
@@ -1105,7 +1030,7 @@ rl_poly_same_line <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE,
             for (i in 1:poly)
             {
                 coef <- paste("'poly(newx, degrees = poly, raw = TRUE)", i, "'", sep = '')
-                newSlopeString <- paste('model$coefficients[', coef, "]*x^", i, sep = '')
+                newSlopeString <- paste('mod$coefficients[', coef, "]*x^", i, sep = '')
                 slopeString <- paste(slopeString, newSlopeString, sep = ' + ')
             }
 
@@ -1120,9 +1045,29 @@ rl_poly_same_line <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE,
 
     plot <- plot + ggtitle(title) + xlab(xlabel) + ylab(ylabel) + labs(color = legendTitle, fill = legendTitle)
 
+    if ((model == TRUE) || (coefficients == TRUE))
+    {
+        nameList <- list()
+        nameList[[1]] <- '(Intercept)'
+        nameList[[2]] <- x
+        j <- 2
+        polys <- list()
+        polys[[1]] <- x
+        for (i in 3:(poly+1))
+        {
+            polys[[i-1]] <- paste(x, '^', j, sep = '')
+            nameList[[i]] <- polys[[i-1]]
+            j <- j + 1
+        }
+
+        names(mod$coefficients) <- nameList
+        if (model == FALSE)
+        {
+            print(mod$coefficients)
+        }
+    }
     if (interactive == TRUE)
     {
-
 
         tooltip_css <- "background-color:white;padding:10px;border-radius:10px 20px 10px 20px;"
         hover_css="r:4px;cursor:pointer;stroke:black;stroke-width:2px;"
@@ -1140,34 +1085,18 @@ rl_poly_same_line <- function(data, x, y, cat, poly, plotly = FALSE, ci = FALSE,
         plot <- ggplotly(plot, names = Species)
     }
 
-    plot
+    if (model == TRUE)
+    {
+        return(list(model = mod, plot = plot))
+    } else
+    {
+        plot
+    }
 }
 
-#' rl full model
-#'
-#' \code{rl_full_model(data, x, y, cat, ...)} creates a ggplot (or plotly) object. It is designed to create visualizations of linear models. Inserting a datatable, x variable, y variable, and categorical variable will produce a graph with a different least squares line for each level in the categorical variable. You can modify the graph by changing the values for various parameters.
-#'
-#' @param data a R data frame. tibbles will work
-#' @param x variable name of the x (predicting) variable, must be a column name in the data table
-#' @param y variable name of the y (response) variable, must be a column name in the data table
-#' @param cat variable name of the categorical variable, must be a column name in the data table
-#' @param plotly boolean if they want the graph in plotly. TRUE returns plotly graph, FALSE returns ggplot. Set to FALSE
-#' @param ci boolean to add a confidence interval to the graph. Set to FALSE
-#' @param pi boolean to add a prediction interval to the graph. Set to FALSE
-#' @param interactive boolean to make interactive. Set to FALSE
-#' @param title a string to change the title of the graph. Set to x name vs y name
-#' @param xlabel a string for the label of the x axis. Set to the x variable name
-#' @param ylabel a string for the label of the y axis. Set to the y variable name
-#' @param legendTitle a string for the label of the legend. Set to the categorical variable name
-#' @param level a number between 0-1 for the interval percentage of the confidence and prediction intervals. Set to .95
-#'
-#' @return a ggplot or plotly object
-#' @export
-#'
-#' @examples
-#' ggLinearModel(iris, Sepal.Length, Sepal.Width, Species)
 rl_full_model <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALSE, interactive = FALSE,
-                          title = paste(x, 'vs.', y), xlabel = x, ylabel = y, legendTitle = cat, level = .95)
+                          title = paste(x, 'vs.', y), xlabel = x, ylabel = y, legendTitle = cat,
+                          level = .95, coefficients = FALSE, model = FALSE)
 {
     if (is_tibble(data))
     {
@@ -1179,27 +1108,23 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
     x <- as_label(enquo(x))
     y <- as_label(enquo(y))
     cat <- as_label(enquo(cat))
-    # x <- enquo(x)
-    # y <- enquo(y)
-    # cat <- enquo(cat)
     if (length(newx) == length(newy) && length(newy) == length(newcat))
     {
-        # my_formula <- expr({{y}} ~ {{x}} * {{cat}})
-        model <- lm(newy ~ newx * newcat, data = data)
-        b <- model$coefficients[1]
-        m <- model$coefficients[2]
-        fit <- model$model
+        mod <- lm(newy ~ newx * newcat, data = data)
+        b <- mod$coefficients[1]
+        m <- mod$coefficients[2]
+        fit <- mod$model
         fit$data_id <- rownames(fit)
         data$tooltip <- paste0(fit$data_id, "\n", x, " = ", fit[['newx']], "\n", y, " = ", fit[['newy']], "\n", cat, " = ", fit[['newcat']])
 
         plot <- ggplot()
 
-        for (i in 1:(length(model$coefficients)))
+        for (i in 1:(length(mod$coefficients)))
         {
-            if (is.na(model$coefficients[i]))
+            if (is.na(mod$coefficients[i]))
             {
-                model$coefficients[i] <- 0
-                print('Some aspects of this model may be incorrect')
+                mod$coefficients[i] <- 0
+                print('Some aspects of this model may be incorrect. The model is missing a few coefficients')
             }
         }
 
@@ -1212,7 +1137,7 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
                 xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
                 newdata <- cbind.data.frame(newx = xval, newcat = levels(newcat)[i])
 
-                result <- predict(model, newdata, interval = 'confidence', level = level,
+                result <- predict(mod, newdata, interval = 'confidence', level = level,
                                   type = "response", se.fit = TRUE)
 
                 plot <- plot + geom_ribbon(aes_string(x = xval,
@@ -1230,7 +1155,7 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
                 xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
                 newdata <- cbind.data.frame(newx = xval, newcat = levels(newcat)[i])
 
-                result <- predict(model, newdata, interval = 'prediction', level = level,
+                result <- predict(mod, newdata, interval = 'prediction', level = level,
                                   type = "response", se.fit = TRUE)
 
                 plot <- plot + geom_ribbon(aes_string(x = xval,
@@ -1255,15 +1180,15 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
             tooltips <- list()
             for (i in 2:length(levels(newcat)))
             {
-                tooltips[[i]] <-  paste(levels(newcat)[i], '\n', y, '=', sprintf("%.3f",m+model$coefficients[i+length(levels(newcat))]), '*', x, '+', sprintf("%.3f",b+model$coefficients[i+1]), sep = ' ')
+                tooltips[[i]] <-  paste(levels(newcat)[i], '\n', y, '=', sprintf("%.3f",m+mod$coefficients[i+length(levels(newcat))]), '*', x, '+', sprintf("%.3f",b+mod$coefficients[i+1]), sep = ' ')
             }
 
             for (i in 1:(length(levels(newcat))-1))
             {
                 plot <- plot + geom_segment_interactive(aes_string(x = min(data[newcat == levels(newcat)[i+1],]%>% pull({{x}})),
                                                                    xend = max(data[newcat == levels(newcat)[i+1],]%>% pull({{x}})),
-                                                                   y = min(data[newcat == levels(newcat)[i+1],]%>% pull({{x}}))*(m+model$coefficients[i+length(levels(newcat))+1])+b+model$coefficients[i+2],
-                                                                   yend = max(data[newcat == levels(newcat)[i+1],]%>% pull({{x}}))*(m+model$coefficients[i+length(levels(newcat))+1])+b+model$coefficients[i+2],
+                                                                   y = min(data[newcat == levels(newcat)[i+1],]%>% pull({{x}}))*(m+mod$coefficients[i+length(levels(newcat))+1])+b+mod$coefficients[i+2],
+                                                                   yend = max(data[newcat == levels(newcat)[i+1],]%>% pull({{x}}))*(m+mod$coefficients[i+length(levels(newcat))+1])+b+mod$coefficients[i+2],
                                                                    color = shQuote(levels(newcat)[i+1])),
                                                         tooltip = tooltips[i+1])
             }
@@ -1282,13 +1207,36 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
             {
                 plot <- plot + geom_segment(aes_string(x = min(data[newcat == levels(newcat)[i+1],]%>% pull({{x}})),
                                                        xend = max(data[newcat == levels(newcat)[i+1],]%>% pull({{x}})),
-                                                       y = min(data[newcat == levels(newcat)[i+1],]%>% pull({{x}}))*(m+model$coefficients[i+length(levels(newcat))+1])+b+model$coefficients[i+2],
-                                                       yend = max(data[newcat == levels(newcat)[i+1],]%>% pull({{x}}))*(m+model$coefficients[i+length(levels(newcat))+1])+b+model$coefficients[i+2],
+                                                       y = min(data[newcat == levels(newcat)[i+1],]%>% pull({{x}}))*(m+mod$coefficients[i+length(levels(newcat))+1])+b+mod$coefficients[i+2],
+                                                       yend = max(data[newcat == levels(newcat)[i+1],]%>% pull({{x}}))*(m+mod$coefficients[i+length(levels(newcat))+1])+b+mod$coefficients[i+2],
                                                        color = shQuote(levels(newcat)[i+1])))
             }
         }
 
         plot <- plot + ggtitle(title) + xlab(xlabel) + ylab(ylabel) + labs(color = legendTitle, fill = legendTitle)
+
+        if ((model == TRUE) || (coefficients == TRUE))
+        {
+            nameList <- list()
+            nameList[[1]] <- '(Intercept)'
+            nameList[[2]] <- x
+            levels <- list()
+            for (i in 3:(1+length(levels(newcat))))
+            {
+                levels[[i-1]] <- paste(cat, levels(newcat)[i-1], sep = '')
+                nameList[[i]] <- levels[[i-1]]
+            }
+            for (i in (2+length(levels(newcat))):(3+length(levels(newcat))))
+            {
+                nameList[[i]] <- paste(x, ':', levels[[i-3]], sep = '')
+            }
+
+            names(mod$coefficients) <- nameList
+            if (model == FALSE)
+            {
+                print(mod$coefficients)
+            }
+        }
 
         if (interactive == TRUE)
         {
@@ -1307,40 +1255,23 @@ rl_full_model <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
         {
             plot <- ggplotly(plot, names = Species)
         }
-        plot
 
     } else
     {
         stop('Please enter valid parameters')
     }
+    if (model == TRUE)
+    {
+        return(list(model = mod, plot = plot))
+    } else
+    {
+        plot
+    }
 }
 
-#' rl same intercept
-#'
-#' \code{rl_same_intercept(data, x, y, cat, ...)} creates a ggplot (or plotly) object. It is designed to create visualizations of linear models where all LSRL have the same intercept. Inserting a datatable, x variable, y variable, and categorical variable will produce a graph with a different least squares line for each level in the categorical variable. You can modify the graph by changing the values for various parameters.
-#'
-#' @param data a R data frame. tibbles will work
-#' @param x variable name of the x (predicting) variable, must be a column name in the data table
-#' @param y variable name of the y (response) variable, must be a column name in the data table
-#' @param cat variable name of the categorical variable, must be a column name in the data table
-#' @param plotly boolean if they want the graph in plotly. TRUE returns plotly graph, FALSE returns ggplot. Set to FALSE
-#' @param ci boolean to add a confidence interval to the graph. Set to FALSE
-#' @param pi boolean to add a prediction interval to the graph. Set to FALSE
-#' @param interactive boolean to make interactive. Set to FALSE
-#' @param title a string to change the title of the graph. Set to x name vs y name
-#' @param xlabel a string for the label of the x axis. Set to the x variable name
-#' @param ylabel a string for the label of the y axis. Set to the y variable name
-#' @param legendTitle a string for the label of the legend. Set to the categorical variable name
-#' @param level a number between 0-1 for the interval percentage of the confidence and prediction intervals. Set to .95
-#'
-#' @return a ggplot or plotly object
-#' @export
-#'
-#' @examples
-#' rl_same_intercept(iris, Sepal.Length, Sepal.Width, Species)
 rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALSE, interactive = FALSE,
                               title = paste(x, 'vs.', y), xlabel = x, ylabel = y, legendTitle = cat,
-                              level = .95)
+                              level = .95, coefficients = FALSE, model = FALSE)
 {
     if (is_tibble(data))
     {
@@ -1354,21 +1285,21 @@ rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = 
     cat <- as_label(enquo(cat))
     if (length(newx) == length(newy) && length(newy) == length(newcat))
     {
-        model <- lm(newy ~ newx + newx:newcat, data = data)
-        b <- model$coefficients[1]
-        m <- model$coefficients[2]
-        fit <- model$model
+        mod <- lm(newy ~ newx + newx:newcat, data = data)
+        b <- mod$coefficients[1]
+        m <- mod$coefficients[2]
+        fit <- mod$model
         fit$data_id <- rownames(fit)
         data$tooltip <- paste0(fit$data_id, "\n", x, " = ", fit[['newx']], "\n", y, " = ", fit[['newy']], "\n", cat, " = ", fit[['newcat']])
 
         plot <- ggplot()
 
-        for (i in 1:(length(model$coefficients)))
+        for (i in 1:(length(mod$coefficients)))
         {
-            if (is.na(model$coefficients[i]))
+            if (is.na(mod$coefficients[i]))
             {
-                model$coefficients[i] <- 0
-                print('Some aspects of this model may be incorrect')
+                mod$coefficients[i] <- 0
+                print('Some aspects of this model may be incorrect. The model is missing a few coefficients')
             }
         }
 
@@ -1382,7 +1313,7 @@ rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = 
                 xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
                 newdata <- cbind.data.frame(newx = xval, newcat = levels(newcat)[i])
 
-                result <- predict(model, newdata, interval = 'confidence', level = level,
+                result <- predict(mod, newdata, interval = 'confidence', level = level,
                                   type = "response", se.fit = TRUE)
 
                 plot <- plot + geom_ribbon(aes_string(x = xval,
@@ -1400,7 +1331,7 @@ rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = 
                 xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
                 newdata <- cbind.data.frame(newx = xval, newcat = levels(newcat)[i])
 
-                result <- predict(model, newdata, interval = 'prediction', level = level,
+                result <- predict(mod, newdata, interval = 'prediction', level = level,
                                   type = "response", se.fit = TRUE)
 
                 plot <- plot + geom_ribbon(aes_string(x = xval,
@@ -1424,7 +1355,7 @@ rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = 
             tooltips <- list()
             for (i in 2:length(levels(newcat)))
             {
-                tooltips[[i]] <-  paste(levels(newcat)[i], "\n", y, '=', sprintf("%.3f",m+model$coefficients[i+1]), '*', x, '+', sprintf("%.3f",b), sep = ' ')
+                tooltips[[i]] <-  paste(levels(newcat)[i], "\n", y, '=', sprintf("%.3f",m+mod$coefficients[i+1]), '*', x, '+', sprintf("%.3f",b), sep = ' ')
             }
 
 
@@ -1432,8 +1363,8 @@ rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = 
             {
                 plot <- plot + geom_segment_interactive(aes_string(x = min(data[newcat == levels(newcat)[i+1],]%>% pull({{x}})),
                                                                    xend = max(data[newcat == levels(newcat)[i+1],]%>% pull({{x}})),
-                                                                   y = b+(model$coefficients[i+2]+m)*min(data[newcat == levels(newcat)[i+1],]%>% pull({{x}})),
-                                                                   yend = b+(model$coefficients[i+2]+m)*max(data[newcat == levels(newcat)[i+1],]%>% pull({{x}})),
+                                                                   y = b+(mod$coefficients[i+2]+m)*min(data[newcat == levels(newcat)[i+1],]%>% pull({{x}})),
+                                                                   yend = b+(mod$coefficients[i+2]+m)*max(data[newcat == levels(newcat)[i+1],]%>% pull({{x}})),
                                                                    color = shQuote(levels(newcat)[1+i])),
                                                         tooltip = tooltips[[i+1]])
             }
@@ -1451,13 +1382,32 @@ rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = 
             {
                 plot <- plot + geom_segment(aes_string(x = min(data[newcat == levels(newcat)[i+1],]%>% pull({{x}})),
                                                        xend = max(data[newcat == levels(newcat)[i+1],]%>% pull({{x}})),
-                                                       y = b+(model$coefficients[i+2]+m)*min(data[newcat == levels(newcat)[i+1],]%>% pull({{x}})),
-                                                       yend = b+(model$coefficients[i+2]+m)*max(data[newcat == levels(newcat)[i+1],]%>% pull({{x}})),
+                                                       y = b+(mod$coefficients[i+2]+m)*min(data[newcat == levels(newcat)[i+1],]%>% pull({{x}})),
+                                                       yend = b+(mod$coefficients[i+2]+m)*max(data[newcat == levels(newcat)[i+1],]%>% pull({{x}})),
                                                        color = shQuote(levels(newcat)[1+i])))
             }
         }
 
         plot <- plot + ggtitle(title) + xlab(xlabel) + ylab(ylabel) + labs(color = legendTitle, fill = legendTitle)
+
+        if ((model == TRUE) || (coefficients == TRUE))
+        {
+            nameList <- list()
+            nameList[[1]] <- '(Intercept)'
+            nameList[[2]] <- x
+            levels <- list()
+            for (i in 3:(1+length(levels(newcat))))
+            {
+                levels[[i-1]] <- paste(cat, levels(newcat)[i-1], sep = '')
+                nameList[[i]] <- paste(x, ':', levels[[i-1]], sep = '')
+            }
+
+            names(mod$coefficients) <- nameList
+            if (model == FALSE)
+            {
+                print(mod$coefficients)
+            }
+        }
 
         if (interactive == TRUE)
         {
@@ -1477,39 +1427,23 @@ rl_same_intercept <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = 
         {
             plot <- ggplotly(plot)
         }
-        plot
 
     } else
     {
         stop('Please enter valid parameters')
     }
+    if (model == TRUE)
+    {
+        return(list(model = mod, plot = plot))
+    } else
+    {
+        plot
+    }
 }
 
-#' rl same slope
-#'
-#' \code{rl_same_slope(data, x, y, cat, ...)} creates a ggplot (or plotly) object. It is designed to create visualizations of linear models where all LSRL have the same slope Inserting a datatable, x variable, y variable, and categorical variable will produce a graph with a different least squares line for each level in the categorical variable. You can modify the graph by changing the values for various parameters.
-#'
-#' @param data a R data frame. tibbles will work
-#' @param x variable name of the x (predicting) variable, must be a column name in the data table
-#' @param y variable name of the y (response) variable, must be a column name in the data table
-#' @param cat variable name of the categorical variable, must be a column name in the data table
-#' @param plotly boolean if they want the graph in plotly. TRUE returns plotly graph, FALSE returns ggplot. Set to FALSE
-#' @param ci boolean to add a confidence interval to the graph. Set to FALSE
-#' @param pi boolean to add a prediction interval to the graph. Set to FALSE
-#' @param interactive boolean to make interactive. Set to FALSE
-#' @param title a string to change the title of the graph. Set to x name vs y name
-#' @param xlabel a string for the label of the x axis. Set to the x variable name
-#' @param ylabel a string for the label of the y axis. Set to the y variable name
-#' @param legendTitle a string for the label of the legend. Set to the categorical variable name
-#' @param level a number between 0-1 for the interval percentage of the confidence and prediction intervals. Set to .95
-#'
-#' @return a ggplot or plotly object
-#' @export
-#'
-#' @examples
-#' rl_same_slope(iris, Sepal.Length, Sepal.Width, Species)
 rl_same_slope <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALSE, interactive = FALSE,
-                          title = paste(x, 'vs.', y), xlabel = x, ylabel = y, legendTitle = cat, level = .95)
+                          title = paste(x, 'vs.', y), xlabel = x, ylabel = y, legendTitle = cat,
+                          level = .95, coefficients = FALSE, model = FALSE)
 {
     if (is_tibble(data))
     {
@@ -1524,20 +1458,20 @@ rl_same_slope <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
 
     if (length(newx) == length(newy) && length(newy) == length(newcat))
     {
-        model <- lm(newy ~ newx + newcat, data = data)
-        b <- model$coefficients[1]
-        m <- model$coefficients[2]
-        fit <- model$model
+        mod <- lm(newy ~ newx + newcat, data = data)
+        b <- mod$coefficients[1]
+        m <- mod$coefficients[2]
+        fit <- mod$model
         fit$data_id <- rownames(fit)
         data$tooltip <- paste0(fit$data_id, "\n", x, " = ", fit[['newx']], "\n", y, " = ", fit[['newy']], "\n", cat, " = ", fit[['newcat']])
 
         plot <- ggplot()
-        for (i in 1:(length(model$coefficients)))
+        for (i in 1:(length(mod$coefficients)))
         {
-            if (is.na(model$coefficients[i]))
+            if (is.na(mod$coefficients[i]))
             {
-                model$coefficients[i] <- 0
-                print('Some aspects of this model may be incorrect')
+                mod$coefficients[i] <- 0
+                print('Some aspects of this model may be incorrect. The model is missing a few coefficients')
             }
         }
 
@@ -1550,7 +1484,7 @@ rl_same_slope <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
                 xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
                 newdata <- cbind.data.frame(newx = xval, newcat = levels(newcat)[i])
 
-                result <- predict(model, newdata, interval = 'confidence', level = level,
+                result <- predict(mod, newdata, interval = 'confidence', level = level,
                                   type = "response", se.fit = TRUE)
 
                 plot <- plot + geom_ribbon(aes_string(x = xval,
@@ -1568,7 +1502,7 @@ rl_same_slope <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
                 xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
                 newdata <- cbind.data.frame(newx = xval, newcat = levels(newcat)[i])
 
-                result <- predict(model, newdata, interval = 'prediction', level = level,
+                result <- predict(mod, newdata, interval = 'prediction', level = level,
                                   type = "response", se.fit = TRUE)
 
                 plot <- plot + geom_ribbon(aes_string(x = xval,
@@ -1591,15 +1525,15 @@ rl_same_slope <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
             tooltips <- list()
             for (i in 2:length(levels(newcat)))
             {
-                tooltips[[i]] <-  paste(levels(newcat)[i], "\n", y, '=', sprintf("%.3f",m), '*', x, '+', sprintf("%.3f",b+model$coefficients[i+1]), sep = ' ')
+                tooltips[[i]] <-  paste(levels(newcat)[i], "\n", y, '=', sprintf("%.3f",m), '*', x, '+', sprintf("%.3f",b+mod$coefficients[i+1]), sep = ' ')
             }
 
             for (i in 1:(length(levels(newcat))-1))
             {
                 plot <- plot + geom_segment_interactive(aes_string(x = min(data[newcat == levels(newcat)[1+i],]%>% pull({{x}})),
                                                                    xend = max(data[newcat == levels(newcat)[1+i],]%>% pull({{x}})),
-                                                                   y = min(data[newcat == levels(newcat)[1+i],]%>% pull({{x}}))*m+model$coefficients[2+i]+b,
-                                                                   yend = max(data[newcat == levels(newcat)[1+i],]%>% pull({{x}}))*m+model$coefficients[2+i]+b,
+                                                                   y = min(data[newcat == levels(newcat)[1+i],]%>% pull({{x}}))*m+mod$coefficients[2+i]+b,
+                                                                   yend = max(data[newcat == levels(newcat)[1+i],]%>% pull({{x}}))*m+mod$coefficients[2+i]+b,
                                                                    color = shQuote(levels(newcat)[1+i])),
                                                         tooltip = tooltips[[i+1]])
             }
@@ -1618,8 +1552,8 @@ rl_same_slope <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
                 {
                     plot <- plot + geom_segment(aes_string(x = min(data[newcat == levels(newcat)[1+i],]%>% pull({{x}})),
                                                            xend = max(data[newcat == levels(newcat)[1+i],]%>% pull({{x}})),
-                                                           y = min(data[newcat == levels(newcat)[1+i],]%>% pull({{x}}))*m+model$coefficients[2+i]+b,
-                                                           yend = max(data[newcat == levels(newcat)[1+i],]%>% pull({{x}}))*m+model$coefficients[2+i]+b,
+                                                           y = min(data[newcat == levels(newcat)[1+i],]%>% pull({{x}}))*m+mod$coefficients[2+i]+b,
+                                                           yend = max(data[newcat == levels(newcat)[1+i],]%>% pull({{x}}))*m+mod$coefficients[2+i]+b,
                                                            color = shQuote(levels(newcat)[1+i])))
                 }
             }
@@ -1628,6 +1562,24 @@ rl_same_slope <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
 
         plot <- plot + ggtitle(title) + xlab(xlabel) + ylab(ylabel) + labs(color = legendTitle, fill = legendTitle)
 
+        if ((model == TRUE) || (coefficients == TRUE))
+        {
+            nameList <- list()
+            nameList[[1]] <- '(Intercept)'
+            nameList[[2]] <- x
+            levels <- list()
+            for (i in 3:(1+length(levels(newcat))))
+            {
+                levels[[i-1]] <- paste(cat, levels(newcat)[i-1], sep = '')
+                nameList[[i]] <- levels[[i-1]]
+            }
+
+            names(mod$coefficients) <- nameList
+            if (model == FALSE)
+            {
+                print(mod$coefficients)
+            }
+        }
 
         if (interactive == TRUE)
         {
@@ -1651,36 +1603,18 @@ rl_same_slope <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALS
         stop('Please enter valid parameters')
     }
 
-
-
-    plot
+    if (model == TRUE)
+    {
+        return(list(model = mod, plot = plot))
+    } else
+    {
+        plot
+    }
 }
 
-#' rl same line
-#'
-#' \code{rl_same_line(data, x, y, cat, ...)} creates a ggplot (or plotly) object. It is designed to create visualizations of linear models with one LSRL. Inserting a datatable, x variable, y variable, and categorical variable will produce a graph with 1 LSRL. You can modify the graph by changing the values for various parameters.
-#'
-#' @param data a R data frame. tibbles will work
-#' @param x variable name of the x (predicting) variable, must be a column name in the data table
-#' @param y variable name of the y (response) variable, must be a column name in the data table
-#' @param cat variable name of the categorical variable, must be a column name in the data table
-#' @param plotly boolean if they want the graph in plotly. TRUE returns plotly graph, FALSE returns ggplot. Set to FALSE
-#' @param ci boolean to add a confidence interval to the graph. Set to FALSE
-#' @param pi boolean to add a prediction interval to the graph. Set to FALSE
-#' @param interactive boolean to make interactive. Set to FALSE
-#' @param title a string to change the title of the graph. Set to x name vs y name
-#' @param xlabel a string for the label of the x axis. Set to the x variable name
-#' @param ylabel a string for the label of the y axis. Set to the y variable name
-#' @param legendTitle a string for the label of the legend. Set to the categorical variable name
-#' @param level a number between 0-1 for the interval percentage of the confidence and prediction intervals. Set to .95
-#'
-#' @return a ggplot or plotly object
-#' @export
-#'
-#' @examples
-#' rl_same_line(iris, Sepal.Length, Sepal.Width, Species)
 rl_same_line <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALSE, interactive = FALSE,
-                         title = paste(x, 'vs.', y), xlabel = x, ylabel = y, legendTitle = cat, level = .95)
+                         title = paste(x, 'vs.', y), xlabel = x, ylabel = y, legendTitle = cat,
+                         level = .95, coefficients = FALSE, model = FALSE)
 {
     if (is_tibble(data))
     {
@@ -1689,13 +1623,13 @@ rl_same_line <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALSE
     newx <- data %>% pull({{x}})
     newy <- data %>% pull({{y}})
     newcat <- as.factor(as.character(data %>% pull({{cat}})))
+    cat <- as_label(enquo(cat))
     x <- as_label(enquo(x))
     y <- as_label(enquo(y))
-    cat <- as_label(enquo(cat))
-    if (length(newx) == length(newy) && length(newy) == length(newcat))
+    if (length(newx) == length(newy))
     {
-        model <- lm(newy ~ newx, data = data)
-        fit <- model$model
+        mod <- lm(newy ~ newx, data = data)
+        fit <- mod$model
         fit$data_id <- rownames(fit)
         data$tooltip <- paste0(fit$data_id, "\n",
                                x, " = ", fit[['newx']], "\n",
@@ -1703,12 +1637,12 @@ rl_same_line <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALSE
 
         plot <- ggplot()
 
-        for (i in 1:(length(model$coefficients)))
+        for (i in 1:(length(mod$coefficients)))
         {
-            if (is.na(model$coefficients[i]))
+            if (is.na(mod$coefficients[i]))
             {
-                model$coefficients[i] <- 0
-                print('Some aspects of this model may be incorrect')
+                mod$coefficients[i] <- 0
+                print('Some aspects of this model may be incorrect. The model is missing a few coefficients')
             }
         }
 
@@ -1720,7 +1654,7 @@ rl_same_line <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALSE
             xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
             newdata <- cbind.data.frame(newx = xval)
 
-            result <- predict(model, newdata, interval = 'confidence', level = level,
+            result <- predict(mod, newdata, interval = 'confidence', level = level,
                               type = "response", se.fit = TRUE)
 
             plot <- plot + geom_ribbon(aes_string(x = xval,
@@ -1735,7 +1669,7 @@ rl_same_line <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALSE
             xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
             newdata <- cbind.data.frame(newx = xval)
 
-            result <- predict(model, newdata, interval = 'prediction', level = level,
+            result <- predict(mod, newdata, interval = 'prediction', level = level,
                               type = "response", se.fit = TRUE)
 
             plot <- plot + geom_ribbon(aes_string(x = xval,
@@ -1750,18 +1684,31 @@ rl_same_line <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALSE
                                                   aes(x = newx, y = newy, col = newcat, tooltip = tooltip)) +
                 geom_segment_interactive(aes(x = min(newx),
                                              xend = max(newx),
-                                             y = min(newx)*model$coefficients[2] + model$coefficients[1],
-                                             yend = max(newx)*model$coefficients[2] + model$coefficients[1],
-                                             tooltip = paste(y, '=', x, '*', sprintf("%.3f",model$coefficients[2]), '+', sprintf("%.3f",model$coefficients[1]))))
+                                             y = min(newx)*mod$coefficients[2] + mod$coefficients[1],
+                                             yend = max(newx)*mod$coefficients[2] + mod$coefficients[1],
+                                             tooltip = paste(y, '=', x, '*', sprintf("%.3f",mod$coefficients[2]), '+', sprintf("%.3f",mod$coefficients[1]))))
         } else {
             plot <- plot + geom_point(data = data, aes(x = newx, y = newy, col = newcat)) +
                 geom_segment(aes(x = min(newx),
                                  xend = max(newx),
-                                 y = min(newx)*model$coefficients[2] + model$coefficients[1],
-                                 yend = max(newx)*model$coefficients[2] + model$coefficients[1]))
+                                 y = min(newx)*mod$coefficients[2] + mod$coefficients[1],
+                                 yend = max(newx)*mod$coefficients[2] + mod$coefficients[1]))
 
         }
         plot <- plot + ggtitle(title) + xlab(xlabel) + ylab(ylabel) + labs(color = legendTitle, fill = legendTitle)
+
+        if ((model == TRUE) || (coefficients == TRUE))
+        {
+            nameList <- list()
+            nameList[[1]] <- '(Intercept)'
+            nameList[[2]] <- x
+
+            names(mod$coefficients) <- nameList
+            if (model == FALSE)
+            {
+                print(mod$coefficients)
+            }
+        }
 
         if (interactive == TRUE)
         {
@@ -1787,24 +1734,16 @@ rl_same_line <- function(data, x, y, cat, plotly = FALSE, ci = FALSE, pi = FALSE
         stop('Please enter valid parameters')
     }
 
-    plot
+    if (model == TRUE)
+    {
+        return(list(model = mod, plot = plot))
+    } else
+    {
+        plot
+    }
 }
 
-
-#' Add a confidence interval
-#'
-#' Add confidence interval to ggplot with specific interval width
-#'
-#' @param plot a ggplot
-#' @param data data table
-#' @param x string of x variable name
-#' @param newcat categorical variable vector
-#' @param model created lm model
-#' @param level level of the interval
-#' @param one_line boolean. Set to TRUE if using rl_poly_same_line, otherwise FALSE
-#'
-#' @return a ggplot
-add_ci_poly <- function(plot, data, x, newcat, model, level = .95, one_line = FALSE)
+add_ci_poly <- function(plot, data, x, newcat, mod, level = .95, one_line = FALSE)
 {
     if (!one_line)
     {
@@ -1815,7 +1754,7 @@ add_ci_poly <- function(plot, data, x, newcat, model, level = .95, one_line = FA
             xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
             newdata <- data.frame(newx = xval, newcat = levels(newcat)[i])
 
-            result <- predict(model, newdata, interval = 'confidence', level = level,
+            result <- predict(mod, newdata, interval = 'confidence', level = level,
                               type = "response", se.fit = TRUE)
 
             ymin <- result$fit[,'lwr']
@@ -1833,7 +1772,7 @@ add_ci_poly <- function(plot, data, x, newcat, model, level = .95, one_line = FA
         xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
         newdata <- cbind.data.frame(newx = xval)
 
-        result <- predict(model, newdata, interval = 'confidence', level = level,
+        result <- predict(mod, newdata, interval = 'confidence', level = level,
                           type = "response", se.fit = TRUE)
 
         ymin <- result$fit[,'lwr']
@@ -1847,20 +1786,7 @@ add_ci_poly <- function(plot, data, x, newcat, model, level = .95, one_line = FA
     plot
 }
 
-#' Add a prediction interval
-#'
-#' Add prediction interval to ggplot with specific interval width
-#'
-#' @param plot a ggplot
-#' @param data data table
-#' @param x string of x variable name
-#' @param newcat categorical variable vector
-#' @param model created lm model
-#' @param level level of the interval
-#' @param one_line boolean. Set to TRUE if using rl_poly_same_line, otherwise FALSE
-#'
-#' @return a ggplot
-add_pi_poly <- function(plot, data, x, newcat, model, level = .95, one_line = FALSE)
+add_pi_poly <- function(plot, data, x, newcat, mod, level = .95, one_line = FALSE)
 {
     if (!one_line)
     {
@@ -1871,7 +1797,7 @@ add_pi_poly <- function(plot, data, x, newcat, model, level = .95, one_line = FA
             xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
             newdata <- data.frame(newx = xval, newcat = levels(newcat)[i])
 
-            result <- predict(model, newdata, interval = 'prediction', level = level,
+            result <- predict(mod, newdata, interval = 'prediction', level = level,
                               type = "response", se.fit = TRUE)
 
             ymin <- result$fit[,'lwr']
@@ -1889,7 +1815,7 @@ add_pi_poly <- function(plot, data, x, newcat, model, level = .95, one_line = FA
         xval <- seq(from = xmin, to = xmax, by = (xmax-xmin)/999)
         newdata <- cbind.data.frame(newx = xval)
 
-        result <- predict(model, newdata, interval = 'prediction', level = level,
+        result <- predict(mod, newdata, interval = 'prediction', level = level,
                           type = "response", se.fit = TRUE)
 
         ymin <- result$fit[,'lwr']

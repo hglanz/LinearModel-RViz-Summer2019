@@ -1,7 +1,7 @@
 ---
 title: "ggLinearModel"
 author: "Jack Langston"
-date: "2019-08-12"
+date: "2019-08-14"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{ggLinearModel}
@@ -105,7 +105,6 @@ Using `ggLinearModel()` you can make models with any number of polynomial predic
 ```r
 mpg$year <- as.factor(as.character(mpg$year))
 model <- lm(hwy ~ displ + I(displ^2) + displ:year + I(displ^2):year, data = mpg)
-
 ggplot(data = mpg, aes(x = displ, y = hwy, col = year)) +
     geom_point() +
     stat_function(fun=function(x) 
@@ -130,7 +129,6 @@ ggLinearModel(mpg, displ, hwy, year, poly = 2)
 
 ```r
 model <- lm(hwy ~ displ + I(displ^2) + displ:year, data = mpg)
-
 ggplot(data = mpg, aes(x = displ, y = hwy, col = year)) +
     geom_point() +
     stat_function(fun=function(x) 
@@ -185,4 +183,3 @@ lbs)',
 ```
 
 ![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7-1.png)
-
