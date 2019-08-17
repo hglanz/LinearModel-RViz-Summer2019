@@ -1,7 +1,7 @@
 ---
 title: "ggLinearModel"
 author: "Jack Langston"
-date: "2019-08-14"
+date: "2019-08-17"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{ggLinearModel}
@@ -183,3 +183,49 @@ lbs)',
 ```
 
 ![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7-1.png)
+
+### Models and their coefficients
+`ggLinearModel(..., coefficients = TRUE)` will print the coefficients used to create the models and LSRL. However, if you want to get the whole model back use `ggLinearModel(..., model = TRUE)` 
+
+```r
+ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, coefficients = T)
+#>                    (Intercept)                   Sepal.Length 
+#>                     -0.5694327                      0.7985283 
+#>              Speciesversicolor               Speciesvirginica 
+#>                      1.4415786                      2.0157381 
+#> Sepal.Length:Speciesversicolor  Sepal.Length:Speciesvirginica 
+#>                     -0.4788090                     -0.5666378
+```
+
+![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8-1.png)
+
+```r
+ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, model = T)
+#> $model
+#> 
+#> Call:
+#> lm(formula = yvar ~ xvar * catvar, data = data)
+#> 
+#> Coefficients:
+#>                    (Intercept)                    Sepal.Length  
+#>                        -0.5694                          0.7985  
+#>              Speciesversicolor                Speciesvirginica  
+#>                         1.4416                          2.0157  
+#> Sepal.Length:Speciesversicolor   Sepal.Length:Speciesvirginica  
+#>                        -0.4788                         -0.5666  
+#> 
+#> 
+#> $plot
+```
+
+![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8-2.png)
+
+### No categorical variable?
+No problem. `ggLinearModel()` works without giving a categorical variable and any parameters you want.
+
+```r
+ggLinearModel(women, height, weight)
+```
+
+![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9-1.png)
+

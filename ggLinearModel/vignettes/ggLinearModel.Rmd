@@ -135,8 +135,16 @@ lbs)',
               ylabel = 'Miles per Gallon', legendTitle = 'Number of Cylinders in engine')
 ```
 
-### Coefficients
-`ggLinearModel(..., coefficients = TRUE)` will print the coefficients used to create the models and LSRL.
+### Models and their coefficients
+`ggLinearModel(..., coefficients = TRUE)` will print the coefficients used to create the models and LSRL. However, if you want to get the whole model back use `ggLinearModel(..., model = TRUE)` 
 ```{r}
 ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, coefficients = T)
+ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, model = T)
 ```
+
+### No categorical variable?
+No problem. `ggLinearModel()` works without giving a categorical variable and any parameters you want.
+```{r}
+ggLinearModel(women, height, weight)
+```
+

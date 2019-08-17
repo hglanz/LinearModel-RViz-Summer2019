@@ -4,11 +4,11 @@
 \alias{ggLinearModel}
 \title{ggLinearModel}
 \usage{
-ggLinearModel(data, x, y, cat, plotly = FALSE, same_slope = FALSE,
-  same_intercept = FALSE, poly = 1, interactions = poly,
-  ci = FALSE, pi = FALSE, interactive = FALSE, title = NULL,
-  xlabel = NULL, ylabel = NULL, legendTitle = NULL, level = 0.95,
-  coefficients = FALSE)
+ggLinearModel(data, x, y, cat = NULL, plotly = FALSE,
+  same_slope = FALSE, same_intercept = FALSE, poly = 1,
+  interactions = poly, ci = FALSE, pi = FALSE, interactive = FALSE,
+  title = NULL, xlabel = NULL, ylabel = NULL, legendTitle = NULL,
+  level = 0.95, coefficients = FALSE, model = FALSE)
 }
 \arguments{
 \item{data}{a R data frame. tibbles will work}
@@ -46,9 +46,11 @@ ggLinearModel(data, x, y, cat, plotly = FALSE, same_slope = FALSE,
 \item{level}{a number between 0-1 for the interval percentage of the confidence and prediction intervals. Set to .95}
 
 \item{coefficients}{a boolean to print the coefficients of the model. Set to FALSE}
+
+\item{model}{a boolean to return the model used to create the LSRL. Set to FALSE}
 }
 \value{
-a ggplot or plotly object
+a ggplot or plotly object, and a model object if requested
 }
 \description{
 \pkg{ggLinearModel()} creates a ggplot (or plotly) object. It is designed to create visualizations of various types of linear models. Inserting a datatable, x variable, y variable, and categorical variable will produce a graph with a different least squares line for each level in the categorical variable. You can modify the graph by changing the values for various parameters.

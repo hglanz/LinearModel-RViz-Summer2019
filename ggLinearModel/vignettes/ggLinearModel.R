@@ -86,3 +86,10 @@ ggLinearModel(mtcars, wt, mpg, cyl,
 lbs)', 
               ylabel = 'Miles per Gallon', legendTitle = 'Number of Cylinders in engine')
 
+## ------------------------------------------------------------------------
+ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, coefficients = T)
+ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, model = T)
+
+## ------------------------------------------------------------------------
+ggLinearModel(women, height, weight)
+
