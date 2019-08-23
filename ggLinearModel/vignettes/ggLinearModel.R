@@ -76,14 +76,14 @@ ggplot(data = mpg, aes(x = displ, y = hwy, col = year)) +
 ggLinearModel(mpg, displ, hwy, year, poly = 2, interactions = 1)
 
 ## ------------------------------------------------------------------------
-ggLinearModel(CO2, conc, uptake, Type, ci = T)
-ggLinearModel(CO2, conc, uptake, Type, pi = T)
-ggLinearModel(CO2, conc, uptake, Type, pi = T, level = .5)
+ggLinearModel(CO2, conc, uptake, Type, ci = TRUE)
+ggLinearModel(CO2, conc, uptake, Type, pi = TRUE)
+ggLinearModel(CO2, conc, uptake, Type, pi = TRUE, level = .5)
+ggLinearModel(CO2, conc, uptake, Type, ci = TRUE, pi = TRUE)
 
 ## ------------------------------------------------------------------------
 ggLinearModel(mtcars, wt, mpg, cyl, 
-              title = "The Affect of a car's weight on the MPG", xlabel = 'Weight (1,000 
-lbs)', 
+              title = "The Affect of a car's weight on the MPG", xlabel = 'Weight (1,000 lbs)', 
               ylabel = 'Miles per Gallon', legendTitle = 'Number of Cylinders in engine')
 
 ## ------------------------------------------------------------------------
@@ -92,4 +92,9 @@ ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, model = T)
 
 ## ------------------------------------------------------------------------
 ggLinearModel(women, height, weight)
+
+## ------------------------------------------------------------------------
+plot <- ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, same_slope = TRUE)
+plot + geom_smooth(data = iris, aes(x = Sepal.Length, y = Sepal.Width), method = 'lm', se = FALSE) + 
+  ggtitle('Categorical LSRL compared to overall LSRL')
 

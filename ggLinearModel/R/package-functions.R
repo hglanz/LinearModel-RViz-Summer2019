@@ -71,23 +71,59 @@ ggLinearModel <- function(data, x, y, cat = NULL, plotly = FALSE, same_slope = F
         }
     } else if (poly > 1)
     {
-        if (same_slope == FALSE)
+        if (interactions <= poly)
         {
-            if (same_intercept == FALSE)
+            if (interactions == 0)
             {
-                returned <- rl_poly_full_model(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, poly = poly, interactions = interactions, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level, coefficients = coefficients, model = model)
+                if (same_intercept == TRUE)
+                {
+                    returned <- rl_poly_same_line(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, poly = poly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level, coefficients = coefficients, model = model)
+
+                } else
+                {
+                    returned <- rl_poly_same_slope(data, {{x}}, {{y}}, {{cat}}, poly, plotly = plotly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level, coefficients = coefficients)
+                }
+            } else if (same_slope == FALSE)
+            {
+                if (same_intercept == FALSE)
+                {
+                    returned <- rl_poly_full_model(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, poly = poly, interactions = interactions, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level, coefficients = coefficients, model = model)
+                } else
+                {
+                    returned <- rl_poly_same_intercept(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, poly = poly, interactions = interactions, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level, coefficients = coefficients, model = model)
+                }
             } else
             {
-                returned <- rl_poly_same_intercept(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, poly = poly, interactions = interactions, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level, coefficients = coefficients, model = model)
+                if (same_intercept == FALSE)
+                {
+                    returned <- rl_poly_same_slope(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, poly = poly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level, coefficients = coefficients, model = model)
+                } else
+                {
+                    returned <- rl_poly_same_line(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, poly = poly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level, coefficients = coefficients, model = model)
+                }
             }
         } else
         {
-            if (same_intercept == FALSE)
+            interactions <- poly
+            print(paste('The number of interactions must be equal to, or less, thant the number of polynomial predictors. The number of interactions has been changed to', poly))
+            if (same_slope == FALSE)
             {
-                returned <- rl_poly_same_slope(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, poly = poly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level, coefficients = coefficients, model = model)
+                if (same_intercept == FALSE)
+                {
+                    returned <- rl_poly_full_model(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, poly = poly, interactions = interactions, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level, coefficients = coefficients, model = model)
+                } else
+                {
+                    returned <- rl_poly_same_intercept(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, poly = poly, interactions = interactions, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level, coefficients = coefficients, model = model)
+                }
             } else
             {
-                returned <- rl_poly_same_line(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, poly = poly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level, coefficients = coefficients, model = model)
+                if (same_intercept == FALSE)
+                {
+                    returned <- rl_poly_same_slope(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, poly = poly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level, coefficients = coefficients, model = model)
+                } else
+                {
+                    returned <- rl_poly_same_line(data, {{x}}, {{y}}, {{cat}}, plotly = plotly, poly = poly, ci = ci, pi = pi, interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel, legendTitle = legendTitle, level = level, coefficients = coefficients, model = model)
+                }
             }
         }
     } else
@@ -130,7 +166,7 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
     x <- as_label(enquo(x))
     y <- as_label(enquo(y))
     cat <- as_label(enquo(cat))
-    if (interactions > 1)
+    if (interactions >= 1)
     {
         if (length(xvar) == length(yvar) && length(yvar) == length(catvar))
         {
@@ -420,16 +456,9 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
         {
             plot <- ggplotly(plot, names = Species)
         }
-    } else if (interactions == 0)
-    {
-        plot <- rl_poly_same_slope(data, x, y, cat, poly, plotly = plotly, ci = ci, pi = pi,
-                                  interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel,
-                                  legendTitle = legendTitle, level = level, coefficients = coefficients)
     } else
     {
-        plot <- rl_poly_same_line(data, x, y, cat, poly, plotly = plotly, ci = ci, pi = pi,
-                                  interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel,
-                                  legendTitle = legendTitle, level = level, coefficients = coefficients)
+        stop('Not a valid interaction input')
     }
     if (model == TRUE)
     {
