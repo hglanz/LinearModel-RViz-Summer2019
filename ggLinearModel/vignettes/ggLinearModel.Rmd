@@ -16,6 +16,7 @@ knitr::opts_chunk$set(
 )
 library(tidyverse)
 library(ggLinearModel)
+devtools::load_all()
 ```
 
 # ggLinearModel
@@ -40,15 +41,15 @@ Using `ggLinearModel()` we just input our dataset, or tibble, x variable, y vari
 ggplot(data = iris, aes(x = Sepal.Length, y = Sepal.Width, col = Species)) + 
     geom_point() +
     geom_smooth(method = lm, se = FALSE)
-ggLinearModel(iris, Sepal.Length, Sepal.Width, Species)
+ggLinearModel(iris, Sepal.Length, Sepal.Width)
 ```
 
 ### Same slope model
 Now let's assume that you want to create a visualization that shows the regression estimates as lines with the same slope, or when there no interaction effect involved. In `ggplot` we have no easy way to do this. We must first create our own model, and instead of using the `geom_smooth()`. Then we add a new `geom_abline()` for each level in the dataset, with each `geom_abline()` having different inputs for the intercept parameter. This is going to get messy quickly with lots of levels in your categorical variable. Using `ggLinearModel(..., same_slope = TRUE)` the user will get the same process done in much less code, and prevents you from making any mistakes when creating the different `geom_abline()`.
 ```{r}
 model <- lm(Sepal.Width ~ Sepal.Length + Species, data = iris)
-m <- model$coefficients[2] #slope of model
-b <- model$coefficients[1] #setosa intercept
+m <- model$coefficients[2]
+b <- model$coefficients[1]
 ggplot() + 
     geom_point(data = iris, aes(x = Sepal.Length, y = Sepal.Width, col = Species)) +
     geom_abline(aes(slope = m,
@@ -67,8 +68,8 @@ ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, same_slope = TRUE)
 If a user wanted to create a model with the same intercept for each level of the categorical variable they would have to follow the same method as above, but intstead only include an interaction effect and not a categorical effect. Using `ggLinearModel` we can solve this problem but just adding the `ggLinearModel(..., same_intercept = TRUE)` parameter.
 ```{r}
 model <- lm(Sepal.Width ~ Sepal.Length + Sepal.Length:Species, data = iris)
-b <- model$coefficients[1] #intercept of model
-m <- model$coefficients[2] #slope
+b <- model$coefficients[1]
+m <- model$coefficients[2]
 ggplot(data = iris, aes(x = Sepal.Length, y = Sepal.Width, col = Species)) + 
     geom_point() +
     geom_abline(aes(intercept = b,
@@ -134,8 +135,8 @@ ggLinearModel(CO2, conc, uptake, Type, ci = TRUE, pi = TRUE)
 Although `ggLinearModel()` will return a `ggplot` object you can still add a title, x-axis label, y-axis label, and legend title within `ggLinearModel()`.
 ```{r}
 ggLinearModel(mtcars, wt, mpg, cyl, 
-              title = "The Affect of a car's weight on the MPG", xlabel = 'Weight (1,000 lbs)', 
-              ylabel = 'Miles per Gallon', legendTitle = 'Number of Cylinders in engine')
+               title = "The Affect of a car's weight on the MPG", xlabel = 'Weight (1,000 lbs)', 
+               ylabel = 'Miles per Gallon', legendTitle = 'Number of Cylinders in engine')
 ```
 
 ### Models and their coefficients
@@ -156,9 +157,8 @@ ggLinearModel(women, height, weight)
 ```{r}
 plot <- ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, same_slope = TRUE)
 plot + geom_smooth(data = iris, aes(x = Sepal.Length, y = Sepal.Width), method = 'lm', se = FALSE) + 
-  ggtitle('Categorical LSRL compared to overall LSRL')
+   ggtitle('Categorical LSRL compared to overall LSRL')
 ```
-
 
 ### Interactive and plotly features
 You can create plots that will give the user more information about a data point when the point is hovered over. Hovering over a line in the interactive plots will give the equation for the line. You can access these features using this example code `ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, interactive = TRUE)`.
