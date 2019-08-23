@@ -1,7 +1,7 @@
 ---
 title: "ggLinearModel"
 author: "Jack Langston"
-date: "2019-08-17"
+date: "2019-08-22"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{ggLinearModel}
@@ -72,7 +72,7 @@ ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, same_slope = TRUE)
 ![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2-2.png)
 
 ### Same intercept model
-Creating a graph which showcases the data sharing a intercept, but differing slopes, as seen in model with an interaction effect, but not a categorical effect, is complex in `ggplot()`, but easy in `ggLinearModel()` by just adding the `same_intercept = TRUE` parameter.
+Creating a graph which showcases the data sharing a intercept, but differing slopes, as seen in model with an interaction effect, but not a categorical effect, is complex in `ggplot()`, but easy in `ggLinearModel()` by just adding the `ggLinearModel(..., same_intercept = TRUE)` parameter.
 
 ```r
 model <- lm(Sepal.Width ~ Sepal.Length + Sepal.Length:Species, data = iris)
@@ -100,7 +100,7 @@ ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, same_intercept = TRUE)
 ![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3-2.png)
 
 ### Polynomial model
-Using `ggLinearModel()` you can make models with any number of polynomial predictors, and with any number of interactions. 
+Using `ggLinearModel` you can make models with any number of polynomial predictors, and with any number of interactions. Just add the poly parameter to 
 
 ```r
 mpg$year <- as.factor(as.character(mpg$year))
@@ -125,7 +125,8 @@ ggLinearModel(mpg, displ, hwy, year, poly = 2)
 
 ![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-2.png)
 
-### polynomial model with fewer interactions
+### Polynomial model with fewer interactions
+If it doesn't make sense to include a model with as many interaction effects as polynomial predictors you can modify this in the `ggLinearModel` function. As a default when using the polynomial parameter in the `ggLinearModel` function automatically assigns the number of interaction effects to be equal to the number of polynomial predictors. You can change this by setting the interactions parameter to a different number than the what you set poly at. Of course the interactions parameter will not work unless you set the poly parameter.
 
 ```r
 model <- lm(hwy ~ displ + I(displ^2) + displ:year, data = mpg)
@@ -173,7 +174,7 @@ ggLinearModel(CO2, conc, uptake, Type, pi = T, level = .5)
 ![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6-3.png)
 
 ### Label name changing
-Although `ggLinearModel()` will return a `ggplot` object you can still add a title, x-axis label, y-axis label, and legend title within `ggLinearModel()`
+Although `ggLinearModel()` will return a `ggplot` object you can still add a title, x-axis label, y-axis label, and legend title within `ggLinearModel()`.
 
 ```r
 ggLinearModel(mtcars, wt, mpg, cyl, 
@@ -185,7 +186,7 @@ lbs)',
 ![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7-1.png)
 
 ### Models and their coefficients
-`ggLinearModel(..., coefficients = TRUE)` will print the coefficients used to create the models and LSRL. However, if you want to get the whole model back use `ggLinearModel(..., model = TRUE)` 
+`ggLinearModel(..., coefficients = TRUE)` will print the coefficients used to create the models and LSRL. However, if you want to get the whole model back use `ggLinearModel(..., model = TRUE)`.
 
 ```r
 ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, coefficients = T)
@@ -229,3 +230,6 @@ ggLinearModel(women, height, weight)
 
 ![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9-1.png)
 
+### Interactive and plotly features
+You can create plots that will give the user more information about a data point when the point is hovered over. Hovering over a line in the interactive plots will give the equation for the line. You can access these features using this example code `ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, interactive = TRUE)`.
+If you prefer plotly style plots to the ggplots from above you can add the plotly parameter and set it to TRUE as such, `ggLinearModel(..., plotly = TRUE)` This will modify the ggplot object and turn it into a plotly object. 

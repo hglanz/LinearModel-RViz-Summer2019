@@ -56,5 +56,13 @@ a ggplot or plotly object, and a model object if requested
 \pkg{ggLinearModel()} creates a ggplot (or plotly) object. It is designed to create visualizations of various types of linear models. Inserting a datatable, x variable, y variable, and categorical variable will produce a graph with a different least squares line for each level in the categorical variable. You can modify the graph by changing the values for various parameters.
 }
 \examples{
-ggLinearModel(iris, Sepal.Length, Sepal.Width, Species)
+ggLinearModel(iris, Sepal.Length, Sepal.Width)
+ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, ci = TRUE)
+ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, pi = TRUE)
+ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, ci = TRUE, pi = TRUE, level = .5)
+ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, title = 'Sepal Width based on Sepal Width and Species')
+ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, model = TRUE)
+ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, coefficients = TRUE)
+ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, plotly = TRUE)
+ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, interactive = TRUE)
 }

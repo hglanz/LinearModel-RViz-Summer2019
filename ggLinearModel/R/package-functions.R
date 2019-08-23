@@ -26,7 +26,15 @@
 #' @export
 #'
 #' @examples
-#' ggLinearModel(iris, Sepal.Length, Sepal.Width, Species)
+#' ggLinearModel(iris, Sepal.Length, Sepal.Width)
+#' ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, ci = TRUE)
+#' ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, pi = TRUE)
+#' ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, ci = TRUE, pi = TRUE, level = .5)
+#' ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, title = 'Sepal Width based on Sepal Width and Species')
+#' ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, model = TRUE)
+#' ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, coefficients = TRUE)
+#' ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, plotly = TRUE)
+#' ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, interactive = TRUE)
 ggLinearModel <- function(data, x, y, cat = NULL, plotly = FALSE, same_slope = FALSE,
                           same_intercept = FALSE, poly = 1, interactions = poly, ci = FALSE, pi = FALSE,
                           interactive = FALSE, title = NULL, xlabel = NULL, ylabel = NULL, legendTitle = NULL,
@@ -122,7 +130,7 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
     x <- as_label(enquo(x))
     y <- as_label(enquo(y))
     cat <- as_label(enquo(cat))
-    if (interactions > 0)
+    if (interactions > 1)
     {
         if (length(xvar) == length(yvar) && length(yvar) == length(catvar))
         {
@@ -412,6 +420,11 @@ rl_poly_full_model <- function(data, x, y, cat, poly, interactions = poly, plotl
         {
             plot <- ggplotly(plot, names = Species)
         }
+    } else if (interactions == 0)
+    {
+        plot <- rl_poly_same_slope(data, x, y, cat, poly, plotly = plotly, ci = ci, pi = pi,
+                                  interactive = interactive, title = title, xlabel = xlabel, ylabel = ylabel,
+                                  legendTitle = legendTitle, level = level, coefficients = coefficients)
     } else
     {
         plot <- rl_poly_same_line(data, x, y, cat, poly, plotly = plotly, ci = ci, pi = pi,
