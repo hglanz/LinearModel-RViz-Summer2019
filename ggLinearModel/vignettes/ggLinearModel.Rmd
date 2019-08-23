@@ -41,7 +41,7 @@ Using `ggLinearModel()` we just input our dataset, or tibble, x variable, y vari
 ggplot(data = iris, aes(x = Sepal.Length, y = Sepal.Width, col = Species)) + 
     geom_point() +
     geom_smooth(method = lm, se = FALSE)
-ggLinearModel(iris, Sepal.Length, Sepal.Width)
+ggLinearModel(iris, Sepal.Length, Sepal.Width, Species)
 ```
 
 ### Same slope model
