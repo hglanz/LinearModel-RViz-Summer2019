@@ -1,0 +1,26 @@
+---
+title: "index"
+author: "Jack Langston"
+date: "8/30/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+`ggLinearModel` is a R package created to allow users to easily create linear model visualizations and models. `ggLinearModel` will create a basic model with any number of polynomial predictors, a color coded categorical variable, 'parallel lines' model, models with no intercept, and more.
+
+# Installiation
+```{r}
+#install.packages('THE PACKAGE INSTALLATION METHOD')
+```
+
+# Usage
+`ggLinearModel(data, x, y)` will create the most basic graph and model, however adding in various other features will enhance the model and graph. Users can add a categorical variable to create models with more predictors and graphs with multiple regression lines. If someone wanted to create a quadratic model the user can increase the number of polynomial predictors which starts at 1 using the 'poly' parameter. If interaction effects don't make sense to include in a model the user can eliminate them. Users can force the regression lines to have the same slope or the same intercept whenever they see fit. 
+Users can have `ggLinearModel` return the model by making the 'model' parameter set to TRUE. If a user wanted to just view the coefficients they can set the 'coefficient' parameter to TRUE.
+A confidence interval or prediction interval at any level of confidence are both possible with `ggLinearModel`. Setting the 'ci' or 'pi' parameter to TRUE will produce intervals on top of the graph object. The confidence for the intervals is preset to 95%, but using the 'level' parameter it can be changed.
+Check out the interactive parameter to create a ggplot object that shows extra information when points, and lines are hovered over. The plotly parameter will also convert the plot object to a plotly object.
+
+# Acknowledgements
+Thank you to Dr. Hunter Glanz, and the California Polytechnic State University Statistics Department for the funding to create this package. Special thanks to the Frost Summer Scholarship Internship. 
