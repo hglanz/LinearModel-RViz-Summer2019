@@ -66,20 +66,20 @@
 
     
     
-<p><code>ggLinearModel</code> is a R package created to allow users to easily create linear model visualizations and models. <code>ggLinearModel</code> will create a basic model with any number of polynomial predictors, a color coded categorical variable, ‘parallel lines’ model, models with no intercept, and more.</p>
+<p><code>ggLinearModel</code> is an R package created to allow users to create linear model visualizations and models. <code>ggLinearModel</code> will create a basic model with any number of polynomial predictors, a color-coded categorical variable, <code>parallel lines</code> model, models with no intercept, and more.</p>
 <div id="installiation" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#installiation" class="anchor"></a>Installiation</h1></div>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co">#install.packages('THE PACKAGE INSTALLATION METHOD')</span></span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co">#devtools::install_github('THE PACKAGE INSTALLATION METHOD')</span></span></code></pre></div>
 </div>
 <div id="usage" class="section level1">
 <h1 class="hasAnchor">
 <a href="#usage" class="anchor"></a>Usage</h1>
-<p><code><a href="reference/ggLinearModel.html">ggLinearModel(data, x, y)</a></code> will create the most basic graph and model, however adding in various other features will enhance the model and graph. Users can add a categorical variable to create models with more predictors and graphs with multiple regression lines. If someone wanted to create a quadratic model the user can increase the number of polynomial predictors which starts at 1 using the ‘poly’ parameter. If interaction effects don’t make sense to include in a model the user can eliminate them. Users can force the regression lines to have the same slope or the same intercept whenever they see fit. Users can have <code>ggLinearModel</code> return the model by making the ‘model’ parameter set to TRUE. If a user wanted to just view the coefficients they can set the ‘coefficient’ parameter to TRUE. A confidence interval or prediction interval at any level of confidence are both possible with <code>ggLinearModel</code>. Setting the ‘ci’ or ‘pi’ parameter to TRUE will produce intervals on top of the graph object. The confidence for the intervals is preset to 95%, but using the ‘level’ parameter it can be changed. Check out the interactive parameter to create a ggplot object that shows extra information when points, and lines are hovered over. The plotly parameter will also convert the plot object to a plotly object.</p>
+<p><code>ggLinearModel</code> is designed to create the graph and model of almost any type of linear model. Users can add a categorical variable to create models with more predictors and graphs with multiple regression lines. If someone wanted to create a quadratic model the user can increase the number of polynomial predictors which starts at 1 using the <code>poly</code> parameter. If interaction effects don’t make sense to include in a model the user can drop them. Users can force the regression lines to have the same slope or the same intercept whenever they see fit. Users can have <code>ggLinearModel</code> return the model by making the <code>model</code> parameter set to TRUE. If a user wanted to view the coefficients they can set the <code>coefficient</code> parameter to TRUE. A confidence interval or prediction interval at any level of confidence are both possible with <code>ggLinearModel</code>. Setting the <code>ci</code> or <code>pi</code> parameter to TRUE will produce intervals on top of the graph object. The confidence for the intervals is preset to 95%, but using the <code>level</code> parameter the user can change this. Check out the interactive parameter to create a ggplot object that shows extra information when points and lines are being hovered over. The plotly parameter will also convert the plot object to a plotly object.</p>
 </div>
-<div id="acknowledgements" class="section level1">
+<div id="acknowledgments" class="section level1">
 <h1 class="hasAnchor">
-<a href="#acknowledgements" class="anchor"></a>Acknowledgements</h1>
+<a href="#acknowledgments" class="anchor"></a>Acknowledgments</h1>
 <p>Thank you to Dr. Hunter Glanz, and the California Polytechnic State University Statistics Department for the funding to create this package. Special thanks to the Frost Summer Scholarship Internship.</p>
 </div>
   </div>
@@ -97,6 +97,7 @@
 <li>Jack Langston <br><small class="roles"> Maintainer </small>  </li>
 </ul>
 </div>
+
 
       </div>
 

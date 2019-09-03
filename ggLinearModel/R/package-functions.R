@@ -32,6 +32,7 @@
 #' ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, ci = TRUE, pi = TRUE, level = .5)
 #' ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, title = 'Sepal Width based on Sepal Width and Species')
 #' ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, model = TRUE)
+#' ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, poly = 2, interactions = 1)
 #' ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, coefficients = TRUE)
 #' ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, plotly = TRUE)
 #' ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, interactive = TRUE)

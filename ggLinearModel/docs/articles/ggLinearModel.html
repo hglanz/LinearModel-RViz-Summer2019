@@ -66,7 +66,7 @@
       <h1>ggLinearModel</h1>
                         <h4 class="author">Jack Langston</h4>
             
-            <h4 class="date">2019-08-30</h4>
+            <h4 class="date">2019-09-03</h4>
       
       
       <div class="hidden name"><code>ggLinearModel.Rmd</code></div>
@@ -92,11 +92,11 @@
 <div id="old-vs--new" class="section level1">
 <h1 class="hasAnchor">
 <a href="#old-vs--new" class="anchor"></a>Old vs. New</h1>
-<p>Although creating plots in R is super easy thanks to the creation of <code>ggplot</code>, adding multiple different items to a plot can be complex, and require lots of code. In this section you can view the differences in code required to create different types of linear models and then visualize them.</p>
+<p>Although creating plots in R is super easy thanks to the creation of <code>ggplot</code>, adding multiple different items to a plot can be complex, and require lots of code. In this section, you will view the differences in code required to create different types of linear models and then visualize them.</p>
 <div id="the-full-model" class="section level3">
 <h3 class="hasAnchor">
 <a href="#the-full-model" class="anchor"></a>The full model</h3>
-<p>This model is the easiest to code in <code>ggplot</code>, with the most important part is the <code>geom_smooth(method = lm, ...)</code>. This insures that graph adds the least squares regression lines for each category. Using <code><a href="../reference/ggLinearModel.html">ggLinearModel()</a></code> we just input our dataset, or tibble, x variable, y variable, and categorical variable to create the same graph in much less code.</p>
+<p>This model is the easiest to code in <code>ggplot</code>, with the most important part is the <code>geom_smooth(method = lm, ...)</code>. This ensures that the graph adds the least-squares regression lines for each category. Using <code><a href="../reference/ggLinearModel.html">ggLinearModel()</a></code> we just input our dataset, or tibble, x variable, y variable, and categorical variable to create the same graph in much less code.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> iris, <span class="kw">aes</span>(<span class="dt">x =</span> Sepal.Length, <span class="dt">y =</span> Sepal.Width, <span class="dt">col =</span> Species)) <span class="op">+</span><span class="st"> </span></span>
 <span id="cb1-2"><a href="#cb1-2"></a><span class="st">    </span><span class="kw">geom_point</span>() <span class="op">+</span></span>
 <span id="cb1-3"><a href="#cb1-3"></a><span class="st">    </span><span class="kw">geom_smooth</span>(<span class="dt">method =</span> lm, <span class="dt">se =</span> <span class="ot">FALSE</span>)</span></code></pre></div>
@@ -107,7 +107,7 @@
 <div id="same-slope-model" class="section level3">
 <h3 class="hasAnchor">
 <a href="#same-slope-model" class="anchor"></a>Same slope model</h3>
-<p>Now let’s assume that you want to create a visualization that shows the regression estimates as lines with the same slope, or when there no interaction effect involved. In <code>ggplot</code> we have no easy way to do this. We must first create our own model, and instead of using the <code>geom_smooth()</code>. Then we add a new <code>geom_abline()</code> for each level in the dataset, with each <code>geom_abline()</code> having different inputs for the intercept parameter. This is going to get messy quickly with lots of levels in your categorical variable. Using <code><a href="../reference/ggLinearModel.html">ggLinearModel(..., same_slope = TRUE)</a></code> the user will get the same process done in much less code, and prevents you from making any mistakes when creating the different <code>geom_abline()</code>.</p>
+<p>Now let’s assume that you want to create a visualization that shows the regression estimates as lines with the same slope, or when there no interaction effect involved. In <code>ggplot</code> we have no easy way to do this. We must first create our model, and instead of using the <code>geom_smooth()</code>. Then we add a new <code>geom_abline()</code> for each level in the dataset, with each <code>geom_abline()</code> having different inputs for the intercept parameter. This is going to get messy quickly with lots of levels in your categorical variable. Using <code><a href="../reference/ggLinearModel.html">ggLinearModel(..., same_slope = TRUE)</a></code> the user will get the same process done in much less code and prevents you from making any mistakes when creating the different <code>geom_abline()</code>.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>model &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span>(Sepal.Width <span class="op">~</span><span class="st"> </span>Sepal.Length <span class="op">+</span><span class="st"> </span>Species, <span class="dt">data =</span> iris)</span>
 <span id="cb3-2"><a href="#cb3-2"></a>m &lt;-<span class="st"> </span>model<span class="op">$</span>coefficients[<span class="dv">2</span>]</span>
 <span id="cb3-3"><a href="#cb3-3"></a>b &lt;-<span class="st"> </span>model<span class="op">$</span>coefficients[<span class="dv">1</span>]</span>
@@ -129,7 +129,7 @@
 <div id="same-intercept-model" class="section level3">
 <h3 class="hasAnchor">
 <a href="#same-intercept-model" class="anchor"></a>Same intercept model</h3>
-<p>If a user wanted to create a model with the same intercept for each level of the categorical variable they would have to follow the same method as above, but intstead only include an interaction effect and not a categorical effect. Using <code>ggLinearModel</code> we can solve this problem but just adding the <code><a href="../reference/ggLinearModel.html">ggLinearModel(..., same_intercept = TRUE)</a></code> parameter.</p>
+<p>If a user wanted to create a model with the same intercept for each level of the categorical variable they would have to follow the same method as above, but instead, only include an interaction effect and not a categorical effect. Using <code>ggLinearModel</code> we can solve this problem but just adding the <code><a href="../reference/ggLinearModel.html">ggLinearModel(..., same_intercept = TRUE)</a></code> parameter.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>model &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span>(Sepal.Width <span class="op">~</span><span class="st"> </span>Sepal.Length <span class="op">+</span><span class="st"> </span>Sepal.Length<span class="op">:</span>Species, <span class="dt">data =</span> iris)</span>
 <span id="cb5-2"><a href="#cb5-2"></a>b &lt;-<span class="st"> </span>model<span class="op">$</span>coefficients[<span class="dv">1</span>]</span>
 <span id="cb5-3"><a href="#cb5-3"></a>m &lt;-<span class="st"> </span>model<span class="op">$</span>coefficients[<span class="dv">2</span>]</span>
@@ -151,7 +151,7 @@
 <div id="polynomial-model" class="section level3">
 <h3 class="hasAnchor">
 <a href="#polynomial-model" class="anchor"></a>Polynomial model</h3>
-<p>Using <code>ggLinearModel</code> you can make models with any number of polynomial predictors.Just add the <code>poly</code> parameter to the function and assign it to the number of polynomial predictors you want in the model. This is much easier solution then having to add a new <code>stat_function</code> to include each new curved line to the plot object.</p>
+<p>Using <code>ggLinearModel</code> you can make models with any number of polynomial predictors. Just add the <code>poly</code> parameter to the function and assign it to the number of polynomial predictors you want in the model. This is a much easier solution than having to add a new <code>stat_function</code> to include each new curved line to the plot object.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>mpg<span class="op">$</span>year &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/character.html">as.character</a></span>(mpg<span class="op">$</span>year))</span>
 <span id="cb7-2"><a href="#cb7-2"></a>model &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span>(hwy <span class="op">~</span><span class="st"> </span>displ <span class="op">+</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(displ<span class="op">^</span><span class="dv">2</span>) <span class="op">+</span><span class="st"> </span>displ<span class="op">:</span>year <span class="op">+</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(displ<span class="op">^</span><span class="dv">2</span>)<span class="op">:</span>year, <span class="dt">data =</span> mpg)</span>
 <span id="cb7-3"><a href="#cb7-3"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> mpg, <span class="kw">aes</span>(<span class="dt">x =</span> displ, <span class="dt">y =</span> hwy, <span class="dt">col =</span> year)) <span class="op">+</span></span>
@@ -171,7 +171,7 @@
 <div id="polynomial-model-with-fewer-interactions" class="section level3">
 <h3 class="hasAnchor">
 <a href="#polynomial-model-with-fewer-interactions" class="anchor"></a>Polynomial model with fewer interactions</h3>
-<p>If it doesn’t make sense to include a model with as many interaction effects as polynomial predictors you can modify this in the <code>ggLinearModel</code> function. As a default when using the <code>poly</code> parameter in the <code>ggLinearModel</code> function the function automatically assigns the number of interaction effects to be equal to the number of polynomial predictors. You can change this by setting the <code>interactions</code> parameter to a different number than the what you set <code>poly</code> at. Of course the <code>interactions</code> parameter will not work unless you set the <code>poly</code> parameter, and the <code>interactions</code> parameter must be equal or less to the <code>poly</code> parameter.</p>
+<p>If it doesn’t make sense to include a model with as many interaction effects as polynomial predictors you can modify this in the <code>ggLinearModel</code> function. As a default when using the <code>poly</code> parameter in the <code>ggLinearModel</code> function the function automatically assigns the number of interaction effects to be equal to the number of polynomial predictors. You can change this by setting the <code>interactions</code> parameter to a different number than what you set <code>poly</code> at. Of course, the <code>interactions</code> parameter will not work unless you set the <code>poly</code> parameter, and the <code>interactions</code> parameter must be equal or less to the <code>poly</code> parameter.</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>model &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span>(hwy <span class="op">~</span><span class="st"> </span>displ <span class="op">+</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(displ<span class="op">^</span><span class="dv">2</span>) <span class="op">+</span><span class="st"> </span>displ<span class="op">:</span>year, <span class="dt">data =</span> mpg)</span>
 <span id="cb9-2"><a href="#cb9-2"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> mpg, <span class="kw">aes</span>(<span class="dt">x =</span> displ, <span class="dt">y =</span> hwy, <span class="dt">col =</span> year)) <span class="op">+</span></span>
 <span id="cb9-3"><a href="#cb9-3"></a><span class="st">    </span><span class="kw">geom_point</span>() <span class="op">+</span></span>
@@ -194,8 +194,8 @@
 <p><code>ggLinearModel</code> provides the user with multiple extra features to create a visual that tells more than just a plain plot.</p>
 <div id="confidence-interval-and-prediction-interval" class="section level3">
 <h3 class="hasAnchor">
-<a href="#confidence-interval-and-prediction-interval" class="anchor"></a>confidence interval and prediction interval</h3>
-<p>If the user wanted to add interval ribbons to their plot it is as simple as changing a parameter. Setting <code>ci</code> or <code>pi</code> to TRUE will add a confidence interval, and setting <code>level</code> to a number between 0 and 1 will change the confidence level of the interval. As a default the <code>level</code> is preset to .95. The user can add both the <code>ci</code> and <code>pi</code> to the same graph if the desires.</p>
+<a href="#confidence-interval-and-prediction-interval" class="anchor"></a>Confidence Interval and Prediction Interval</h3>
+<p>If the user wanted to add interval ribbons to their plot it is as simple as changing a parameter. Setting <code>ci</code> or <code>pi</code> to TRUE will add a confidence interval, and setting <code>level</code> to a number between 0 and 1 will change the confidence level of the interval. As the default, the <code>level</code> is preset to .95. The user can add both the <code>ci</code> and <code>pi</code> to the same graph if the desires.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="kw"><a href="../reference/ggLinearModel.html">ggLinearModel</a></span>(CO2, conc, uptake, Type, <span class="dt">ci =</span> <span class="ot">TRUE</span>)</span></code></pre></div>
 <p><img src="ggLinearModel_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="kw"><a href="../reference/ggLinearModel.html">ggLinearModel</a></span>(CO2, conc, uptake, Type, <span class="dt">pi =</span> <span class="ot">TRUE</span>)</span></code></pre></div>
@@ -254,7 +254,7 @@
 <div id="adding-on-later" class="section level3">
 <h3 class="hasAnchor">
 <a href="#adding-on-later" class="anchor"></a>Adding on later</h3>
-<p><code>ggLinearModel</code> always will return a plot. So if the user builds a plot using <code>ggLinearModel</code> and then later decides to add on it they can! It can be treated like an other <code>ggplot</code> item. This feature doesn’t work if <code>plotly = TRUE</code>.</p>
+<p><code>ggLinearModel</code> always will return a plot. So if the user builds a plot using <code>ggLinearModel</code> and then later decides to add on it they can! It can be treated like any other <code>ggplot</code> item. This feature doesn’t work if <code>plotly = TRUE</code>.</p>
 <div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a>plot &lt;-<span class="st"> </span><span class="kw"><a href="../reference/ggLinearModel.html">ggLinearModel</a></span>(iris, Sepal.Length, Sepal.Width, Species, <span class="dt">same_slope =</span> <span class="ot">TRUE</span>)</span>
 <span id="cb19-2"><a href="#cb19-2"></a>plot <span class="op">+</span><span class="st"> </span><span class="kw">geom_smooth</span>(<span class="dt">data =</span> iris, <span class="kw">aes</span>(<span class="dt">x =</span> Sepal.Length, <span class="dt">y =</span> Sepal.Width), <span class="dt">method =</span> <span class="st">'lm'</span>, <span class="dt">se =</span> <span class="ot">FALSE</span>) <span class="op">+</span><span class="st"> </span></span>
 <span id="cb19-3"><a href="#cb19-3"></a><span class="st">   </span><span class="kw">ggtitle</span>(<span class="st">'Categorical LSRL compared to overall LSRL'</span>)</span></code></pre></div>
@@ -263,12 +263,13 @@
 <div id="interactive-and-plotly-features" class="section level3">
 <h3 class="hasAnchor">
 <a href="#interactive-and-plotly-features" class="anchor"></a>Interactive and plotly features</h3>
-<p>You can create plots that will give the user more information about a data point when the point is hovered over. Hovering over a line in the interactive plots will give the equation for the line. You can access these features using this example code <code><a href="../reference/ggLinearModel.html">ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, interactive = TRUE)</a></code>. If you prefer plotly style plots to the ggplots from above you can add the plotly parameter and set it to TRUE as such, <code><a href="../reference/ggLinearModel.html">ggLinearModel(..., plotly = TRUE)</a></code> This will modify the ggplot object and turn it into a plotly object.</p>
+<p>You can create plots that will give the user more information about a data point when the user hovers over. Hovering over a line in the interactive plots will give the equation for the line. You can access these features using this example code <code><a href="../reference/ggLinearModel.html">ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, interactive = TRUE)</a></code>. If you prefer plotly style plots to the ggplots from above you can add the plotly parameter and set it to TRUE as such, <code><a href="../reference/ggLinearModel.html">ggLinearModel(..., plotly = TRUE)</a></code> This will modify the ggplot object and turn it into a plotly object.</p>
 </div>
 </div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+
         <div id="tocnav">
       <h2 class="hasAnchor">
 <a href="#tocnav" class="anchor"></a>Contents</h2>

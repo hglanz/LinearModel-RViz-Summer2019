@@ -5,6 +5,7 @@ knitr::opts_chunk$set(
 )
 library(tidyverse)
 library(ggLinearModel)
+devtools::load_all()
 
 ## ------------------------------------------------------------------------
 ggplot(data = iris, aes(x = Sepal.Length, y = Sepal.Width, col = Species)) + 
@@ -14,8 +15,8 @@ ggLinearModel(iris, Sepal.Length, Sepal.Width, Species)
 
 ## ------------------------------------------------------------------------
 model <- lm(Sepal.Width ~ Sepal.Length + Species, data = iris)
-m <- model$coefficients[2] #slope of model
-b <- model$coefficients[1] #setosa intercept
+m <- model$coefficients[2]
+b <- model$coefficients[1]
 ggplot() + 
     geom_point(data = iris, aes(x = Sepal.Length, y = Sepal.Width, col = Species)) +
     geom_abline(aes(slope = m,
@@ -31,8 +32,8 @@ ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, same_slope = TRUE)
 
 ## ------------------------------------------------------------------------
 model <- lm(Sepal.Width ~ Sepal.Length + Sepal.Length:Species, data = iris)
-b <- model$coefficients[1] #intercept of model
-m <- model$coefficients[2] #slope
+b <- model$coefficients[1]
+m <- model$coefficients[2]
 ggplot(data = iris, aes(x = Sepal.Length, y = Sepal.Width, col = Species)) + 
     geom_point() +
     geom_abline(aes(intercept = b,
@@ -83,8 +84,8 @@ ggLinearModel(CO2, conc, uptake, Type, ci = TRUE, pi = TRUE)
 
 ## ------------------------------------------------------------------------
 ggLinearModel(mtcars, wt, mpg, cyl, 
-              title = "The Affect of a car's weight on the MPG", xlabel = 'Weight (1,000 lbs)', 
-              ylabel = 'Miles per Gallon', legendTitle = 'Number of Cylinders in engine')
+               title = "The Affect of a car's weight on the MPG", xlabel = 'Weight (1,000 lbs)', 
+               ylabel = 'Miles per Gallon', legendTitle = 'Number of Cylinders in engine')
 
 ## ------------------------------------------------------------------------
 ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, coefficients = T)
@@ -96,5 +97,5 @@ ggLinearModel(women, height, weight)
 ## ------------------------------------------------------------------------
 plot <- ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, same_slope = TRUE)
 plot + geom_smooth(data = iris, aes(x = Sepal.Length, y = Sepal.Width), method = 'lm', se = FALSE) + 
-  ggtitle('Categorical LSRL compared to overall LSRL')
+   ggtitle('Categorical LSRL compared to overall LSRL')
 
