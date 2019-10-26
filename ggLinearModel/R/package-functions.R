@@ -25,6 +25,9 @@
 #' @return a ggplot or plotly object, and a model object if requested
 #' @export
 #'
+#' @seealso
+#' ./vignettes/ggLinearModel.html
+#'
 #' @examples
 #' ggLinearModel(iris, Sepal.Length, Sepal.Width)
 #' ggLinearModel(iris, Sepal.Length, Sepal.Width, Species, ci = TRUE)

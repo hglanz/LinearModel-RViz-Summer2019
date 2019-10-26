@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Installiation
 ```{r}
-#devtools::install_github('THE PACKAGE INSTALLATION METHOD')
+devtools::install_github("hglanz/LinearModel-RViz-Summer2019/ggLinearModel")
 ```
 
 # Usage
